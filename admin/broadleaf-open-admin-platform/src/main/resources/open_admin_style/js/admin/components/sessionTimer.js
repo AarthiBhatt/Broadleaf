@@ -32,6 +32,11 @@
     var activityCount = 0;
     
     /*
+     * Here we define the path for the `sessionResetTime` cookie to be `/` if this is the root servlet context
+     */
+    var resetTimeCookiePath = (BLC.servletContext) ? BLC.servletContext : '/';
+    
+    /*
      * Here we define that key presses to indicate activity by incrementing the activityCount variable.
      */
     $(document).keypress(function(e) {
@@ -59,8 +64,11 @@
                  */
                 sessionTimeoutInterval = data.serverSessionTimeoutInterval - 60000;
                 resetTime = (new Date()).getTime();
-                $.cookie("sessionResetTime", resetTime - (resetTime % pingInterval) , { path : BLC.servletContext });
+                $.cookie("sessionResetTime", resetTime - (resetTime % pingInterval) , { path : resetTimeCookiePath });
+                
                 BLCAdmin.sessionTimer.updateTimeLeft();
+            }).fail(function(err){
+                BLCAdmin.sessionTimer.invalidateSession();
             });
         },
 
@@ -93,7 +101,7 @@
         },
 
         timeSinceLastReset : function() {
-            return (new Date()).getTime() - $.cookie("sessionResetTime");
+            return (new Date()).getTime() - $.cookie("sessionResetTime", { path: resetTimeCookiePath });
         },
 
         updateTimeLeft : function() {
@@ -104,6 +112,8 @@
         },
 
         invalidateSession : function() {
+            $.doTimeout('update-admin-session');
+            $.removeCookie('sessionResetTime', { path: resetTimeCookiePath });
             BLC.get({
                 url : BLC.servletContext + "/adminLogout.htm"
             }, function(data) {
@@ -112,6 +122,8 @@
                  * After the logout occurs, we redirect to the login page with the sessionTimeout parameter being true.
                  * This yield a red banner on the login screen that indicates the session expired to the user.
                  */
+                window.location.replace(BLC.servletContext + "/login?sessionTimeout=true");
+            }).fail(function(err){
                 window.location.replace(BLC.servletContext + "/login?sessionTimeout=true");
             });
         },
@@ -183,7 +195,7 @@ $(document).ready(function() {
     /*
      * This function provides the proper functionality for the "Stay Logged In" button on the expire message.
      */
-    stayLoggedIn = function() {
+    var stayLoggedIn = function() {
         /*
          * This is used to invalidate the old timeout thread
          */
@@ -201,11 +213,21 @@ $(document).ready(function() {
          * This is used to create a new timeout thread
          */
         $.doTimeout('update-admin-session', BLCAdmin.sessionTimer.getPingInterval(), BLCAdmin.sessionTimer.updateTimer);
-    }
+    };
 
     $("#stay-logged-in").click(function() {
         stayLoggedIn();
         return false;
+    });
+    
+    var sessionLogout = function() {
+        $.doTimeout('update-admin-session');
+        $.removeCookie('sessionResetTime', {path: resetTimeCookiePath});
+    };
+    
+    $("#session-logout").click(function() {
+        sessionLogout();
+        return true;
     });
     
     /*
