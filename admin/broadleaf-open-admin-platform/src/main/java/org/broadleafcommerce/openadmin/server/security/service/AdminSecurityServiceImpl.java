@@ -80,6 +80,9 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Resource(name = "blAdminUserDao")
     protected AdminUserDao adminUserDao;
     
+    /*@Resource(name = "blPunchoutUserDao")
+    protected AdminUserDao adminPunchoutUserDao;*/
+    
     @Resource(name = "blForgotPasswordSecurityTokenDao")
     protected ForgotPasswordSecurityTokenDao forgotPasswordSecurityTokenDao;
 

@@ -144,7 +144,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
     protected Boolean activeStatusFlag = Boolean.TRUE;
 
     /** All roles that this user has */
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRoleImpl.class)
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = AdminRoleImpl.class)
     @JoinTable(name = "BLC_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
@@ -152,7 +152,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
                 operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = AdminPermissionImpl.class)
     @JoinTable(name = "BLC_ADMIN_USER_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)

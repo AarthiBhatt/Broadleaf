@@ -131,7 +131,7 @@ public class AdminPermissionImpl implements AdminPermission {
             order = 2000)
     protected List<AdminPermissionQualifiedEntity> qualifiedEntities = new ArrayList<AdminPermissionQualifiedEntity>();
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = AdminPermissionImpl.class)
     @JoinTable(name = "BLC_ADMIN_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"), inverseJoinColumns = @JoinColumn(name = "CHILD_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
