@@ -229,9 +229,10 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
             // Add item to the skuBundle
             DiscreteOrderItem newSkuBundleItem = (DiscreteOrderItem) baseItem.clone();
             newSkuBundleItem.setSkuBundleItem(skuBundleItem);
+            newSkuBundleItem.setOrder(null);
             newSkuBundleItem.setBundleOrderItem(bundleOrderItem);
             newSkuBundleItem.setQuantity(skuBundleItem.getQuantity());
-            newSkuBundleItem.setOrder(null);
+
 
             bundleOrderItem.getDiscreteOrderItems().add(newSkuBundleItem);
 

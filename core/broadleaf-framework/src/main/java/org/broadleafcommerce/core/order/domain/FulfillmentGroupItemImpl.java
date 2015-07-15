@@ -191,12 +191,18 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     @Override
     public Money getTotalItemAmount() {
-        return convertToMoney(totalItemAmount);
+    	if (totalItemAmount != null) {
+    		return convertToMoney(totalItemAmount);
+    	} else {
+    		return null;
+    	}
     }
 
     @Override
     public void setTotalItemAmount(Money amount) {
-        totalItemAmount = amount.getAmount();
+    	if (amount != null) {
+    		totalItemAmount = amount.getAmount();
+    	}
     }
 
     @Override
@@ -216,7 +222,9 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     @Override
     public void setTotalItemTaxableAmount(Money taxableAmount) {
-        totalItemTaxableAmount = taxableAmount.getAmount();
+    	if (taxableAmount != null) {
+    		totalItemTaxableAmount = taxableAmount.getAmount();
+    	}
     }
 
 

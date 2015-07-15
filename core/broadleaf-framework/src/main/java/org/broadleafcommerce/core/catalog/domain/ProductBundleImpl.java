@@ -56,7 +56,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     protected String pricingModel;
 
     @Column(name = "AUTO_BUNDLE")
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(friendlyName = "productBundleAutoBundle", group="productBundleGroup", requiredOverride = RequiredOverride.NOT_REQUIRED)
     protected Boolean autoBundle = false;
 
     @Column(name = "ITEMS_PROMOTABLE")
@@ -68,8 +68,8 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     protected Boolean bundlePromotable = false;
 
     @Column(name = "BUNDLE_PRIORITY")
-    @AdminPresentation(excluded = true, friendlyName = "productBundlePriority", group="productBundleGroup")
-    protected int priority=99;
+    @AdminPresentation(friendlyName = "productBundlePriority", group="productBundleGroup", requiredOverride = RequiredOverride.NOT_REQUIRED)
+    protected int priority=100;
 
     @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })

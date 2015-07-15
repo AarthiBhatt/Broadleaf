@@ -367,9 +367,9 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
                 orderItem.getDiscreteOrderItemFeePrices().add(cloneFeePrice);
             }
         }
-        if (additionalAttributes != null) {
-            orderItem.getAdditionalAttributes().putAll(additionalAttributes);
-        }
+        //if (additionalAttributes != null) {
+        //    orderItem.getAdditionalAttributes().putAll(additionalAttributes);
+        //}
         orderItem.setBaseRetailPrice(convertToMoney(baseRetailPrice));
         orderItem.setBaseSalePrice(convertToMoney(baseSalePrice));
         orderItem.setBundleOrderItem(bundleOrderItem);
