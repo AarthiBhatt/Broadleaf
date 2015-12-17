@@ -79,7 +79,7 @@ public class CustomerPaymentWrapper extends BaseWrapper implements APIWrapper<Cu
     @XmlElement
     private String paymentGatewayType;
 
-    @XmlElement(name = "element")
+    @XmlElement(name = "additionalField")
     @XmlElementWrapper(name = "additionalFields")
     protected List<MapElementWrapper> additionalFields;
 
