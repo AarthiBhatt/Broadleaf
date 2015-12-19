@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.api.wrapper;
+package org.broadleafcommerce.core.rest.api.v2.wrapper;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Adjustment;
@@ -34,10 +34,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * This is a JAXB wrapper around OrderAdjustmentWrapper.
  * <p/>
- * @deprecated - use {@link org.broadleafcommerce.web.api.v2.wrapper.AdjustmentWrapper}
  * Author: ppatel, bpolster
  */
-@Deprecated
 @XmlRootElement(name = "adjustment")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class AdjustmentWrapper extends BaseWrapper implements APIWrapper<Adjustment> {
@@ -64,7 +62,6 @@ public class AdjustmentWrapper extends BaseWrapper implements APIWrapper<Adjustm
     protected BigDecimal discountAmount;
     
 
-    @Override
     public void wrapDetails(Adjustment model, HttpServletRequest request) {
         if (model == null) {
             return;

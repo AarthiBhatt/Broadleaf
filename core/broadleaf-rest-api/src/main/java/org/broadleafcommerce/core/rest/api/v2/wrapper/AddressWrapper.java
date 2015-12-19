@@ -18,7 +18,7 @@
  * #L%
  */
 
-package org.broadleafcommerce.core.web.api.wrapper;
+package org.broadleafcommerce.core.rest.api.v2.wrapper;
 
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.service.AddressService;
@@ -33,12 +33,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * This is a JAXB wrapper around Address.
  *
- *@deprecated - use {@link org.broadleafcommerce.web.api.v2.wrapper.AddressWrapper}
- *
  * User: Elbert Bautista
  * Date: 4/10/12
  */
-@Deprecated
 @XmlRootElement(name = "address")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, APIUnwrapper<Address> {

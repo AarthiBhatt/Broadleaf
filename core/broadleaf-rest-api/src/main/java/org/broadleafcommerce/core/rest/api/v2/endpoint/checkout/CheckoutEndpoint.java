@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.api.endpoint.checkout;
+package org.broadleafcommerce.core.rest.api.v2.endpoint.checkout;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,10 +28,10 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.OrderPaymentWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
-import org.broadleafcommerce.core.web.api.wrapper.OrderPaymentWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.springframework.http.HttpStatus;
 
@@ -47,13 +47,9 @@ import javax.servlet.http.HttpServletRequest;
  * @GET, @POST, @PUT, and @DELETE are purposely not provided here to allow implementors finer control over 
  * the details of the endpoint.
  * <p/>
- * 
- * @deprecated - use {@link org.broadleafcommerce.web.api.v2.endpoint.checkout.CheckoutEndpoint}
- * 
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@Deprecated
 public abstract class CheckoutEndpoint extends BaseEndpoint {
 
     private static final Log LOG = LogFactory.getLog(CheckoutEndpoint.class);

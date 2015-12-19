@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.api.endpoint.order;
+package org.broadleafcommerce.core.rest.api.v2.endpoint.order;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -35,10 +35,10 @@ import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.rest.api.v2.endpoint.catalog.CatalogEndpoint;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
-import org.broadleafcommerce.core.web.api.endpoint.catalog.CatalogEndpoint;
-import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
@@ -60,12 +60,9 @@ import javax.servlet.http.HttpServletRequest;
  * the details of the endpoint.
  *
  * <p/>
- * 
- * @deprecated - use {@link org.broadleafcommerce.web.api.v2.endpoint.order.CartEndpoint}
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@Deprecated
 public abstract class CartEndpoint extends BaseEndpoint {
 
     @Resource(name="blOrderService")

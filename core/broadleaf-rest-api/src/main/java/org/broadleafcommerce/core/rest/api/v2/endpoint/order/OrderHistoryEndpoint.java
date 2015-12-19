@@ -17,14 +17,14 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.api.endpoint.order;
+package org.broadleafcommerce.core.rest.api.v2.endpoint.order;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
-import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.http.HttpStatus;
@@ -41,13 +41,9 @@ import javax.servlet.http.HttpServletRequest;
  * @GET, @POST, @PUT, and @DELETE are purposely not provided here to allow implementors finer control over 
  * the details of the endpoint.
  * <p/>
- * 
- * @deprecated - use {@link org.broadleafcommerce.web.api.v2.endpoint.order.OrderHistoryEndpoint}
- * 
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@Deprecated
 public abstract class OrderHistoryEndpoint extends BaseEndpoint {
 
     @Resource(name="blOrderService")

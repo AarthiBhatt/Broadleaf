@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.api;
+package org.broadleafcommerce.core.rest.api;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +25,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.SimpleType;
@@ -40,6 +41,7 @@ import java.lang.reflect.Type;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
+@Component("blWrapperOverrideTypeModifier")
 public class WrapperOverrideTypeModifier extends TypeModifier implements ApplicationContextAware {
 
     private static final Log LOG = LogFactory.getLog(WrapperOverrideTypeModifier.class);

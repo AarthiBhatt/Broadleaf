@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.api.endpoint.order;
+package org.broadleafcommerce.core.rest.api.v2.endpoint.order;
 
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -31,12 +31,12 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.FulfillmentGroupItemWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.FulfillmentGroupWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.FulfillmentOptionWrapper;
+import org.broadleafcommerce.core.rest.api.v2.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
-import org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupItemWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.FulfillmentOptionWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.springframework.http.HttpStatus;
 
@@ -52,13 +52,9 @@ import javax.servlet.http.HttpServletRequest;
  * @GET, @POST, @PUT, and @DELETE are purposely not provided here to allow implementors finer control over 
  * the details of the endpoint.
  * <p/>
- * 
- * @deprecated - use {@link org.broadleafcommerce.web.api.v2.endpoint.order.FulfillmentEndpoint}
- * 
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@Deprecated
 public abstract class FulfillmentEndpoint extends BaseEndpoint {
 
     @Resource(name="blCheckoutService")
