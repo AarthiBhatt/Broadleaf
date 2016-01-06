@@ -53,7 +53,7 @@ import javax.servlet.http.HttpServletRequest;
  * the details of the endpoint.
  * <p/>
  * 
- * @deprecated - use {@link org.broadleafcommerce.web.api.v2.endpoint.order.FulfillmentEndpoint}
+ * @deprecated - use {@link com.broadleafcommerce.web.api.v2.endpoint.order.FulfillmentEndpoint}
  * 
  * User: Kelly Tisdell
  * Date: 4/10/12
