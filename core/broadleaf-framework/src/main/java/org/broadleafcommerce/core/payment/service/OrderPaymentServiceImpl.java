@@ -19,6 +19,12 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
+import org.apache.commons.collections.MapUtils;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -26,11 +32,15 @@ import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
+import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -42,6 +52,9 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
 
     @Resource(name = "blCustomerPaymentService")
     protected CustomerPaymentService customerPaymentService;
+
+    @Resource(name = "blAddressService")
+    protected AddressService addressService;
 
     @Override
     @Transactional(value = TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
@@ -99,6 +112,45 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
     @Override
     public PaymentTransaction readTransactionById(Long transactionId) {
         return paymentDao.readTransactionById(transactionId);
+    }
+
+    @Override
+    @Transactional(value = TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
+    public OrderPayment createOrderPaymentFromCustomerPayment(Order order, CustomerPayment customerPayment, Money amount) {
+        OrderPayment orderPayment = create();
+        orderPayment.setOrder(order);
+        Map<String, String> additionalFields = customerPayment.getAdditionalFields();
+        if (MapUtils.isEmpty(additionalFields)) {
+            additionalFields = new HashMap<>();
+        }
+        if (additionalFields.containsKey(PaymentAdditionalFieldType.PAYMENT_TYPE)) {
+            String paymentType = additionalFields.get(PaymentAdditionalFieldType.PAYMENT_TYPE);
+            PaymentType pType = PaymentType.getInstance(paymentType);
+            if (pType != null) {
+                orderPayment.setType(pType);
+            }
+        }
+        orderPayment.setBillingAddress(addressService.copyAddress(customerPayment.getBillingAddress()));
+        if (additionalFields.containsKey(PaymentAdditionalFieldType.GATEWAY_TYPE)) {
+            String gatewayType = additionalFields.get(PaymentAdditionalFieldType.GATEWAY_TYPE);
+            PaymentGatewayType gType = PaymentGatewayType.getInstance(gatewayType);
+            if (gType != null) {
+                orderPayment.setPaymentGatewayType(gType);
+            }
+        }
+
+        orderPayment.setAmount(amount);
+
+        PaymentTransaction unconfirmedTransaction = createTransaction();
+        unconfirmedTransaction.setAmount(amount);
+        unconfirmedTransaction.setType(PaymentTransactionType.UNCONFIRMED);
+        unconfirmedTransaction.setOrderPayment(orderPayment);
+        unconfirmedTransaction.getAdditionalFields().put(PaymentAdditionalFieldType.TOKEN.getType(), customerPayment.getPaymentToken());
+        unconfirmedTransaction.getAdditionalFields().putAll(customerPayment.getAdditionalFields());
+
+        orderPayment.getTransactions().add(unconfirmedTransaction);
+
+        return save(orderPayment);
     }
 
 }

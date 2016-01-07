@@ -19,10 +19,12 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 
 import java.util.List;
 
@@ -52,5 +54,7 @@ public interface OrderPaymentService {
     public PaymentTransaction readTransactionById(Long transactionId);
 
     public PaymentLog createLog();
+
+    public OrderPayment createOrderPaymentFromCustomerPayment(Order order, CustomerPayment customerPayment, Money amount);
 
 }

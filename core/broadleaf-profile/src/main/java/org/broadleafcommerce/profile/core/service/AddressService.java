@@ -48,4 +48,8 @@ public interface AddressService {
      */
     public List<Address> verifyAddress(Address address) throws AddressVerificationException;
 
+    public Address copyAddress(Address orig);
+
+    public Address copyAddress(Address dest, Address orig);
+
 }
