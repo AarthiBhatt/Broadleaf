@@ -221,4 +221,6 @@ public interface OfferService {
     public OrderService getOrderService();
 
     public void setOrderService(OrderService orderService);
+
+    public Boolean deleteOfferCode(OfferCode code);
 }
