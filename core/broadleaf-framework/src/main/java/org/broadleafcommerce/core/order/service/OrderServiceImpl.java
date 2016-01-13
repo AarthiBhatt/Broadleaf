@@ -19,13 +19,6 @@
  */
 package org.broadleafcommerce.core.order.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -83,6 +76,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -371,7 +371,9 @@ public class OrderServiceImpl implements OrderService {
     public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferException {
         preValidateCartOperation(order);
         Set<Offer> addedOffers = offerService.getUniqueOffersFromOrder(order);
-
+        if (extensionManager != null) {
+            extensionManager.getProxy().addOfferCodes(order, offerCodes, priceOrder);
+        }
         if (offerCodes != null && !offerCodes.isEmpty()) {
             for (OfferCode offerCode : offerCodes) {
                 
