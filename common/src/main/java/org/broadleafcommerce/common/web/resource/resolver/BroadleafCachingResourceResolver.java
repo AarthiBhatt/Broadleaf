@@ -154,40 +154,41 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
             if (nullResource != null) {
                 logNullReferenceUrlPatchMatch(resourceUrlPath);
                 return null;
-            } else {
-                key = RESOLVED_URL_PATH_CACHE_KEY_PREFIX + resourceUrlPath + getThemePathFromBRC();
-                nullResource = getCache().get(key, Object.class);
-                if (nullResource != null) {
-                    logNullReferenceUrlPatchMatch(resourceUrlPath);
-                    return null;
-                }
-
-                String resolvedUrlPath = this.cache.get(key, String.class);
-                if (resolvedUrlPath != null) {
-                    if (logger.isTraceEnabled()) {
-                        logger.trace("Found match");
-                    }
-                    response = resolvedUrlPath;
-                }
-
-                resolvedUrlPath = chain.resolveUrlPath(resourceUrlPath, locations);
-                if (resolvedUrlPath != null) {
-                    if (logger.isTraceEnabled()) {
-                        logger.trace("Putting resolved resource URL path in cache");
-                    }
-                    this.cache.put(key, resolvedUrlPath);
-                    response = resolvedUrlPath;
-                }
-
-                if (response == null) {
-                    if (logger.isTraceEnabled()) {
-                        logger.trace(String.format("Putting resolved null reference url " +
-                                "path in cache for '%s'", resourceUrlPath));
-                    }
-                    getCache().put(key, NULL_REFERENCE);
-                }
-                return response;
             }
+
+            key = RESOLVED_URL_PATH_CACHE_KEY_PREFIX_NULL + resourceUrlPath + getThemePathFromBRC();
+            nullResource = getCache().get(key, Object.class);
+            if (nullResource != null) {
+                logNullReferenceUrlPatchMatch(resourceUrlPath);
+                return null;
+            }
+
+            key = RESOLVED_URL_PATH_CACHE_KEY_PREFIX + resourceUrlPath + getThemePathFromBRC();
+            String resolvedUrlPath = this.cache.get(key, String.class);
+            if (resolvedUrlPath != null) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Found match");
+                }
+                response = resolvedUrlPath;
+            }
+
+            resolvedUrlPath = chain.resolveUrlPath(resourceUrlPath, locations);
+            if (resolvedUrlPath != null) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Putting resolved resource URL path in cache");
+                }
+                this.cache.put(key, resolvedUrlPath);
+                response = resolvedUrlPath;
+            }
+
+            if (response == null) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace(String.format("Putting resolved null reference url " +
+                            "path in cache for '%s'", resourceUrlPath));
+                }
+                getCache().put(key, NULL_REFERENCE);
+            }
+            return response;
         } else {
             return chain.resolveUrlPath(resourceUrlPath, locations);
         }
