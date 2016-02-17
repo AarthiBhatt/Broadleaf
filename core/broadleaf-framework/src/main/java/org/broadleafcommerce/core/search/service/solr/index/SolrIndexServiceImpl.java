@@ -66,12 +66,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -79,6 +81,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.annotation.Resource;
 
 
@@ -528,10 +531,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                                 String solrPropertyName = shs.getPropertyNameForIndexField(indexField, fieldType, prefix);
                                 Object value = entry.getValue();
                                 
-                                if (FieldType.isMultiValued(fieldType)) {
-                                    document.addField(solrPropertyName, value);
-                                } else {
-                                    document.setField(solrPropertyName, value);
+                                if (!getBasicFieldNames().contains(solrPropertyName)) {
+                                    if (FieldType.isMultiValued(fieldType)) {
+                                        document.addField(solrPropertyName, value);
+                                    } else {
+                                        document.setField(solrPropertyName, value);
+                                    }
                                 }
                             }
                         }
@@ -603,6 +608,17 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<Long>());
             }
         }
+    }
+    
+    protected List<String> getBasicFieldNames() {
+        return Arrays.asList(
+            shs.getNamespaceFieldName(),
+            shs.getIdFieldName(),
+            shs.getTypeFieldName(),
+            shs.getIndexableIdFieldName(),
+            shs.getExplicitCategoryFieldName(),
+            shs.getCategoryFieldName()
+        );
     }
 
     /**

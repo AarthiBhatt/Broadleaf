@@ -302,7 +302,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public String getCategoryFieldName() {
-        return "category";
+        return "category_ls";
     }
 
     @Override
