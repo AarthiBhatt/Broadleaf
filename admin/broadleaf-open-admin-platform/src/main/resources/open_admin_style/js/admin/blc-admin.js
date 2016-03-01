@@ -362,6 +362,7 @@ var BLCAdmin = (function($) {
 
                         $tabSection.append($closeBtn);
                         $header.hide();
+                        BLCAdmin.initializeFields();
                     }
 
                     // disable submit button if adorned/adornedWith form (must select a listGrid item to enable submission)
