@@ -38,8 +38,8 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
@@ -353,10 +353,8 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
     @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blProducts")
     @BatchSize(size = 50)
-    @AdminPresentationAdornedTargetCollection(friendlyName = "skuAttributesTitle",
-        tab = TabName.Advanced, order = 1000,
-        targetObjectProperty = "sku",
-        gridVisibleFields = { "name", "value" })
+    @AdminPresentationCollection(friendlyName = "skuAttributesTitle",
+        tab = TabName.Advanced, order = 1000)
     protected List<SkuAttribute> skuAttributes = new ArrayList<SkuAttribute>();
 
     @OneToMany(targetEntity = SkuProductOptionValueXrefImpl.class, cascade = CascadeType.ALL, mappedBy = "sku")
@@ -1151,6 +1149,22 @@ public class SkuImpl implements Sku, ProductAdminPresentation {
         }
 
         this.skuAttributes = skuAttributeList;
+    }
+
+    @Override
+    public void putSingleValueAttribute(SkuAttribute skuAttribute) {
+        Map<String, SkuAttribute> multiValueMap = getSkuAttributes();
+
+        multiValueMap.put(skuAttribute.getName(), skuAttribute);
+        setSkuAttributes(multiValueMap);
+    }
+
+    @Override
+    public void addMultiValueAttribute(SkuAttribute skuAttribute) {
+        Map<String, SkuAttribute> multiValueMap = getMultiValueSkuAttributes();
+
+        multiValueMap.put(skuAttribute.getName(), skuAttribute);
+        setSkuAttributes(multiValueMap);
     }
 
     @Override

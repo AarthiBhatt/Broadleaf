@@ -123,6 +123,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     private static final Log LOG = LogFactory.getLog(FormBuilderServiceImpl.class);
 
     public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
+    private static final String MULTI_VALUE_DELIMITER = "\\,";
 
     @Resource(name = "blAdminEntityService")
     protected AdminEntityService adminEntityService;
@@ -275,7 +276,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (fmd.getFieldType().equals(SupportedFieldType.EXPLICIT_ENUMERATION) ||
                 fmd.getFieldType().equals(SupportedFieldType.BROADLEAF_ENUMERATION) ||
                 fmd.getFieldType().equals(SupportedFieldType.DATA_DRIVEN_ENUMERATION) ||
-                fmd.getFieldType().equals(SupportedFieldType.EMPTY_ENUMERATION)) {
+                fmd.getFieldType().equals(SupportedFieldType.EMPTY_ENUMERATION) ||
+                fmd.getFieldType().equals(SupportedFieldType.CHECKBOX)) {
             hf = new ComboField();
             ((ComboField) hf).setOptions(fmd.getEnumerationValues());
         } else {
@@ -793,7 +795,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     if (fieldType.equals(SupportedFieldType.BROADLEAF_ENUMERATION.toString())
                             || fieldType.equals(SupportedFieldType.EXPLICIT_ENUMERATION.toString())
                             || fieldType.equals(SupportedFieldType.DATA_DRIVEN_ENUMERATION.toString())
-                            || fieldType.equals(SupportedFieldType.EMPTY_ENUMERATION.toString())) {
+                            || fieldType.equals(SupportedFieldType.EMPTY_ENUMERATION.toString())
+                            || fieldType.equals(SupportedFieldType.CHECKBOX.toString())) {
                         // We're dealing with fields that should render as drop-downs, so set their possible values
                         f = new ComboField();
                         ((ComboField) f).setOptions(fmd.getEnumerationValues());
@@ -1086,8 +1089,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                     rbf.setDataWrapper(dw);
                                 }
                             }
-                        } 
-                        if (basicFM.getFieldType() == SupportedFieldType.MEDIA) {
+                        }
+
+                        if (basicFM.getFieldType() == SupportedFieldType.CHECKBOX) {
+                            if (entityProp.getValue() != null) {
+                                field.setMultiValues(Arrays.asList(StringUtils.split(entityProp.getValue(), MULTI_VALUE_DELIMITER)));
+                            }
+                        } else if (basicFM.getFieldType() == SupportedFieldType.MEDIA) {
                             field.setValue(entityProp.getValue());
                             field.setDisplayValue(entityProp.getDisplayValue());
                             MediaField mf = (MediaField) field;

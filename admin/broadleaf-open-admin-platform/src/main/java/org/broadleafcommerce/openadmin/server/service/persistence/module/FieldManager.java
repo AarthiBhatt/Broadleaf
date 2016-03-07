@@ -19,12 +19,16 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.common.util.HibernateUtils;
+import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
@@ -33,6 +37,7 @@ import org.hibernate.ejb.HibernateEntityManager;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -94,7 +99,7 @@ public class FieldManager {
                 field.setAccessible(true);
                 value = field.get(value);
                 if (value != null && mapKey != null) {
-                    value = ((Map) value).get(mapKey);
+                    value = getalueForObject(bean, fieldName, value, fieldNamePart, mapKey);
                 }
                 if (value != null) {
                     componentClass = value.getClass();
@@ -108,6 +113,48 @@ public class FieldManager {
 
         return value;
 
+    }
+
+    protected Object getalueForObject(Object bean, String fieldName, Object value, String fieldNamePart, String mapKey) throws IllegalAccessException {
+        if (value instanceof List) {
+            try {
+                value = PropertyUtils.getProperty(bean, getMultiValueFieldName(fieldName, fieldNamePart));
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
+        if (value instanceof Map) {
+            value = ((Map) value).get(mapKey);
+        }
+        if (value instanceof List && ((List) value).size() > 0) {
+            String encodedList = "";
+            for (Object valueItem : ((List) value)) {
+                if (encodedList.equals("")) {
+                    encodedList += valueItem;
+                } else {
+                    encodedList += "\\," + valueItem;
+                }
+            }
+            value = encodedList;
+        }
+        if (value != null) {
+            value = value.toString();
+        }
+        return value;
+    }
+
+    /**
+     * Transform the field name to match the multivalued getter method for the entity by capitalizing the
+     * first character of the current field name.
+     *
+     * @param fieldName
+     * @return
+     */
+    protected String getMultiValueFieldName(String fieldName, String fieldNamePart) {
+        String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
+        return fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
     }
     
     public Object setFieldValue(Object bean, String fieldName, Object newValue) throws IllegalAccessException, InstantiationException {
@@ -133,11 +180,16 @@ public class FieldManager {
             field.setAccessible(true);
             if (j == count - 1) {
                 if (mapKey != null) {
-                    Map map = (Map) field.get(value);
-                    if (newValue == null) {
-                        map.remove(mapKey);
-                    } else {
-                        map.put(mapKey, newValue);
+                    if (field.get(value) instanceof Map) {
+                        Map map = (Map) field.get(value);
+                        if (newValue == null) {
+                            map.remove(mapKey);
+                        } else {
+                            map.put(mapKey, newValue);
+                        }
+                    } else if (field.get(value) instanceof List) {
+                        List list = (List) field.get(value);
+//                        list
                     }
                 } else {
                     field.set(value, newValue);

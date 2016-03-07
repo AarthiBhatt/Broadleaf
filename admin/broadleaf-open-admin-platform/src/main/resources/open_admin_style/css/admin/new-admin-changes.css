@@ -347,6 +347,47 @@ input[type="radio"].radio+label.radio-label.clr,
     display: block;
 }
 
+input[type="checkbox"].checkbox+input+label.checkbox-label,
+input[type="checkbox"].checkbox+input+label.checkbox-label.clr,
+.checkbox > input[type="checkbox"]+input+label {
+    padding-left: 25px;
+    padding-right: 15px;
+    margin-bottom: 8px;
+}
+
+.checkbox-container {
+    padding: 0 10px;
+    display: block;
+}
+
+input[type="checkbox"].checkbox {
+    top: 0;
+    visibility: hidden;
+}
+
+input[type="checkbox"].checkbox + input + label.checkbox-label, input[type="checkbox"].checkbox + input + label.checkbox-label.clr, .checkbox > input[type="checkbox"] + input + label {
+    padding-left: 30px;
+    height: 20px;
+    display: inline-block;
+    line-height: 20px;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    font-size: 14px;
+    vertical-align: middle;
+    cursor: pointer;
+    margin-bottom: 15px
+}
+
+input[type="checkbox"].checkbox:checked + input + label.checkbox-label, input[type="checkbox"].checkbox + input + label.checkbox-label.chk, .checkbox > input[type="checkbox"]:checked + input + label {
+    background-position: 0 -20px
+}
+
+.app-content .fieldset-card .fieldset-card-content .checkbox-label {
+    margin-bottom: 5px;
+    font-size: 12px;
+    font-weight: 400;
+}
+
 .table {
     border-collapse: separate;
 }

@@ -23,7 +23,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -67,6 +69,7 @@ public class Field {
     protected String help;
     protected String translationFieldName;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
+    protected List<String> multiValues = new ArrayList<String>();
 
     /* ************ */
     /* WITH METHODS */
@@ -509,5 +512,13 @@ public class Field {
 
     public void setTranslationFieldName(String translationFieldName) {
         this.translationFieldName = translationFieldName;
+    }
+
+    public List<String> getMultiValues() {
+        return multiValues;
+    }
+
+    public void setMultiValues(List<String> multiValues) {
+        this.multiValues = multiValues;
     }
 }

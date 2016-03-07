@@ -657,6 +657,10 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
      */
     public void setCurrency(BroadleafCurrency currency);
 
+    void putSingleValueAttribute(SkuAttribute skuAttribute);
+
+    void addMultiValueAttribute(SkuAttribute skuAttribute);
+
     /**
      * <b>Note: When using dynamic pricing, this method is unreliable and should not be called outside of the 
      * Broadleaf admin</b>  Instead, you should rely on the {@link BroadleafRequestContext#getBroadleafCurrency()} 

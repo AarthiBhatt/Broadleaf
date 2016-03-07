@@ -91,7 +91,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @Index(name="SKUATTR_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "SkuAttributeImpl_Attribute_Name", order=1, group = "SkuAttributeImpl_Description", prominent=true)
     protected String name;
 
     /** The value. */

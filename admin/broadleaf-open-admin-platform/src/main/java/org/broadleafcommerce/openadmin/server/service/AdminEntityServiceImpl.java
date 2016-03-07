@@ -176,7 +176,19 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
             Property p = new Property();
             p.setName(entry.getKey());
-            p.setValue(entry.getValue().getValue());
+            if (entry.getValue().getMultiValues() != null && !entry.getValue().getMultiValues().isEmpty()) {
+                String encodedList = "\\,";
+                for (String multiValue : entry.getValue().getMultiValues()) {
+                    if (encodedList.equals("\\,")) {
+                        encodedList += multiValue;
+                    } else {
+                        encodedList += "\\," + multiValue;
+                    }
+                }
+                p.setValue(encodedList);
+            } else {
+                p.setValue(entry.getValue().getValue());
+            }
             p.setDisplayValue(entry.getValue().getDisplayValue());
             p.setIsDirty(entry.getValue().getIsDirty());
             properties.add(p);
