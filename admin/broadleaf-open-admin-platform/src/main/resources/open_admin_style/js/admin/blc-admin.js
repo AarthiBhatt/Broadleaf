@@ -1078,9 +1078,21 @@ var BLCAdmin = (function($) {
          * Ensure that disabled fields are included in the serialized form
          * @param {form}
          */
-        serializeForm : function serializeForm($form) {
+        serialize : function serialize($form) {
             var $disabledFields = $form.find(':disabled').attr('disabled', false);
             var serializedForm = $form.serialize();
+            $disabledFields.attr('disabled', true);
+
+            return serializedForm;
+        },
+
+        /**
+         * Ensure that disabled fields are included in the serialized form
+         * @param {form}
+         */
+        serializeArray : function serializeArray($form) {
+            var $disabledFields = $form.find(':disabled').attr('disabled', false);
+            var serializedForm = $form.serializeArray();
             $disabledFields.attr('disabled', true);
 
             return serializedForm;
@@ -1381,7 +1393,7 @@ $('body').on('click', 'button.change-password-confirm', function(event) {
     BLC.ajax({
         url: $form.attr('action'),
         type: "POST",
-        data: BLCAdmin.serializeForm($form),
+        data: BLCAdmin.serialize($form),
         error: function(data) {
             $this.closest('.actions').show();
             $this.closest('.action-popup').find('img.ajax-loader').hide();
