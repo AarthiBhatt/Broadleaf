@@ -40,7 +40,7 @@ var BLCAdmin = (function($) {
     
     var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container, .redactor_box, ' +
                          '.asset-selector-container img, >div>select, div.custom-checkbox, div.small-enum-container, .ace-editor, ' +
-                         'textarea, div.radio-container, >.selectize-control>.selectize-input, .redactor-box, .description-field, ' +
+                         'textarea, div.radio-container, div.checkbox-container, >.selectize-control>.selectize-input, .redactor-box, .description-field, ' +
                          '.rule-builder-simple-time, .rule-builder-simple, .rule-builder-with-quantity, >div>div>input:not([type=hidden]), .selectize-wrapper';
     
     function showModal($data, onModalHide, onModalHideArgs) {
@@ -474,6 +474,7 @@ var BLCAdmin = (function($) {
             BLCAdmin.initializeColorPickerFields($container);
             BLCAdmin.initializeSelectizeFields($container);
             BLCAdmin.initializeRadioFields($container);
+            BLCAdmin.initializeCheckboxFields($container);
             BLCAdmin.initializeDateFields($container);
 
             // Run any additionally configured initialization handlers
@@ -567,6 +568,15 @@ var BLCAdmin = (function($) {
                 if (!$(this).hasClass('disabled')) {
                     e.preventDefault();
                     $(this).prev('input').prop("checked", true).change();
+                }
+            });
+        },
+        initializeCheckboxFields : function($container) {
+            $container.find('.checkbox-label').on("click", function(e) {
+                if (!$(this).hasClass('disabled')) {
+                    e.preventDefault();
+                    var prev = $(this).prev('input').prev('input');
+                    prev.prop("checked", !prev.prop("checked"));
                 }
             });
         },
@@ -839,6 +849,9 @@ var BLCAdmin = (function($) {
         
         extractFieldValue : function extractFieldValue($field) {
             var value = $field.find('input[type="radio"]:checked').val();
+            if (value == null) {
+                value = $field.find('input[type="checkbox"]:checked').val();
+            }
             if (value == null) {
                 value = $field.find('select').val();
             }
@@ -1441,4 +1454,8 @@ $('.main-content').scroll(function () {
     if (h > (content + title + tabs) && h < (contentWrapper + title + tabs)) {
         $(this).find('.content-yield').height(h - title - tabs);
     }
+});
+
+$('.selectize-multi-checkbox').selectize({
+    maxItems: null
 });

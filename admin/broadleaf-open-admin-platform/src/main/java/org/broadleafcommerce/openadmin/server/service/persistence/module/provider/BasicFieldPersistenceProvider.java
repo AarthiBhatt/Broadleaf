@@ -124,7 +124,8 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         BasicFieldMetadata metadata = (BasicFieldMetadata) md;
         return (metadata.getFieldType() == SupportedFieldType.BROADLEAF_ENUMERATION ||
                 metadata.getFieldType() == SupportedFieldType.EXPLICIT_ENUMERATION ||
-                metadata.getFieldType() == SupportedFieldType.DATA_DRIVEN_ENUMERATION) &&
+                metadata.getFieldType() == SupportedFieldType.DATA_DRIVEN_ENUMERATION ||
+                metadata.getFieldType() == SupportedFieldType.CHECKBOX) &&
                 (property == null || !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
     }
 
