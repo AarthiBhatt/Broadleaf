@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.common.util.HibernateUtils;
+import org.broadleafcommerce.common.value.ValueAssignable;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
@@ -135,7 +136,12 @@ public class FieldManager {
                 if (mapKey != null) {
                     Map map = (Map) field.get(value);
                     if (newValue == null) {
-                        map.remove(mapKey);
+                        Object currentValue = map.get(mapKey);
+                        if (currentValue != null && currentValue instanceof ValueAssignable) {
+                            ((ValueAssignable) currentValue).setValue(null);
+                        } else {
+                            map.remove(mapKey);
+                        }
                     } else {
                         map.put(mapKey, newValue);
                     }
