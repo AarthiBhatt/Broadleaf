@@ -44,6 +44,7 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -74,6 +75,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     
     @Resource(name = "blGenericEntityDao")
     protected GenericEntityDao genericEntityDao;
+
+    @Value("${multi.value.attribute.delimiter}")
+    protected String delimiter;
 
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
@@ -176,7 +180,19 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
             Property p = new Property();
             p.setName(entry.getKey());
-            p.setValue(entry.getValue().getValue());
+            if (entry.getValue().getMultiValues() != null && !entry.getValue().getMultiValues().isEmpty()) {
+                String encodedList = "";
+                for (String multiValue : entry.getValue().getMultiValues()) {
+                    if (encodedList.isEmpty()) {
+                        encodedList += multiValue;
+                    } else {
+                        encodedList += delimiter + multiValue;
+                    }
+                }
+                p.setValue(encodedList);
+            } else {
+                p.setValue(entry.getValue().getValue());
+            }
             p.setDisplayValue(entry.getValue().getDisplayValue());
             p.setIsDirty(entry.getValue().getIsDirty());
             properties.add(p);
