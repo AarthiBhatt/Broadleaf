@@ -20,13 +20,13 @@
 package org.broadleafcommerce.openadmin.server.security.service.navigation;
 
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -36,16 +36,13 @@ import javax.persistence.PersistenceContext;
 @Component("blPolymorphicEntityCheckSectionAuthorization")
 public class PolymorphicEntitySectionAuthorizationImpl implements SectionAuthorization {
 
-    @Resource(name="blDynamicEntityDao")
-    protected DynamicEntityDao dynamicEntityDao;
-
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @PostConstruct
-    public void init() {
-        dynamicEntityDao.setStandardEntityManager(em);
-    }
+    @PersistenceContext(unitName = "blEventPU")
+    protected EntityManager emEvent;
+
+    protected DynamicDaoHelper helper = new DynamicDaoHelperImpl();
 
     @Override
     public boolean isUserAuthorizedToViewSection(AdminUser adminUser, AdminSection section) {
@@ -53,14 +50,19 @@ public class PolymorphicEntitySectionAuthorizationImpl implements SectionAuthori
             return true;
         }
 
+        boolean response;
         try {
-            //Only display this section if there are 1 or more entities relative to the ceiling 
+            //Only display this section if there are 1 or more entities relative to the ceiling
             //for this section that are qualified to be created by the admin
-            return dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(
-                    Class.forName(section.getCeilingEntity()), false).length > 0;
+            Class<?> clazz = Class.forName(section.getCeilingEntity());
+            response = helper.getAllPolymorphicEntitiesFromCeiling(clazz, helper.getSessionFactory((HibernateEntityManager) em), true, true).length > 0;
+            if (!response) {
+                response = helper.getAllPolymorphicEntitiesFromCeiling(clazz, helper.getSessionFactory((HibernateEntityManager) emEvent), true, true).length > 0;
+            }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+        return response;
     }
 
 }
