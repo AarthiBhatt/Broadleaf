@@ -52,8 +52,8 @@ import javax.persistence.EntityManager;
 public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     
     public static final Object LOCK_OBJECT = new Object();
-    public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE = new LRUMap<Class<?>, Class<?>[]>(1000);
-    public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS = new LRUMap<Class<?>, Class<?>[]>(1000);
+    public static final Map<String, Class<?>[]> POLYMORPHIC_ENTITY_CACHE = new LRUMap<String, Class<?>[]>(1000);
+    public static final Map<String, Class<?>[]> POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS = new LRUMap<String, Class<?>[]>(1000);
     public static final String JAVASSIST_PROXY_KEY_PHRASE = "_$$_";
 
     public static Class<?> getNonProxyImplementationClassIfNecessary(Class<?> candidate) {
@@ -83,13 +83,14 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, SessionFactory sessionFactory,
             boolean includeUnqualifiedPolymorphicEntities, boolean useCache) {
         ceilingClass = getNonProxyImplementationClassIfNecessary(ceilingClass);
+        String cacheKey = buildCacheKey(ceilingClass, sessionFactory);
         Class<?>[] cache = null;
         synchronized(LOCK_OBJECT) {
             if (useCache) {
                 if (includeUnqualifiedPolymorphicEntities) {
-                    cache = POLYMORPHIC_ENTITY_CACHE.get(ceilingClass);
+                    cache = POLYMORPHIC_ENTITY_CACHE.get(cacheKey);
                 } else {
-                    cache = POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.get(ceilingClass);
+                    cache = POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.get(cacheKey);
                 }
             }
             if (cache == null) {
@@ -122,9 +123,9 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
                 filteredEntities = filteredSortedEntities.toArray(filteredEntities);
                 cache = filteredEntities;
                 if (includeUnqualifiedPolymorphicEntities) {
-                    POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, filteredEntities);
+                    POLYMORPHIC_ENTITY_CACHE.put(cacheKey, filteredEntities);
                 } else {
-                    POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.put(ceilingClass, filteredEntities);
+                    POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.put(cacheKey, filteredEntities);
                 }
             }
         }
@@ -308,5 +309,12 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         Field idField = ReflectionUtils.findField(clazz, metadata.getIdentifierPropertyName());
         idField.setAccessible(true);
         return idField;
+    }
+
+    protected String buildCacheKey(Class<?> ceilingClass, SessionFactory sessionFactory) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(ceilingClass.getName());
+        sb.append(sessionFactory.hashCode());
+        return sb.toString();
     }
 }

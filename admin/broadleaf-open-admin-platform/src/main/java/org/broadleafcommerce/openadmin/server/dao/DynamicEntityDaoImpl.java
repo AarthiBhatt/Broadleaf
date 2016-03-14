@@ -616,6 +616,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         }
         sb.append(mergedPropertyType);
         sb.append(populateManyToOneFields);
+        sb.append(standardEntityManager.getEntityManagerFactory().hashCode());
 
         String digest;
         try {
