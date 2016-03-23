@@ -27,6 +27,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
+import org.springframework.core.ResolvableType;
 
 import java.util.concurrent.Executor;
 
@@ -62,27 +63,28 @@ public class BroadleafApplicationEventMulticaster extends
      * concern.
      */
 	@Override
-	public void multicastEvent(final ApplicationEvent event) {
-        Executor executor = getTaskExecutor();
-        for (final ApplicationListener<?> listener : getApplicationListeners(event)) {
-			boolean isAsynchronous = false;
-			if (executor != null) {
+	public void multicastEvent(final ApplicationEvent event, ResolvableType eventType) {
+        ResolvableType type = (eventType != null ? eventType : ResolvableType.forInstance(event));
+        for (final ApplicationListener<?> listener : getApplicationListeners(event, type)) {
+            Executor executor = getTaskExecutor();
+            boolean isAsynchronous = false;
+            if (executor != null) {
                 if ((BroadleafApplicationListener.class.isAssignableFrom(listener.getClass())
                             && ((BroadleafApplicationListener<? extends ApplicationEvent>)listener).isAsynchronous())) {
                     isAsynchronous = true;
-			    }
-			}
-			
+                }
+            }
+            
             if (isAsynchronous) {
-				executor.execute(new Runnable() {
-					public void run() {
+                executor.execute(new Runnable() {
+                    public void run() {
                         invokeListener(listener, event);
-					}
-				});
-			} else {
-				invokeListener(listener, event);
-			}
-		}
+                    }
+                });
+            } else {
+                invokeListener(listener, event);
+            }
+        }
 	}
 
 	@Override
