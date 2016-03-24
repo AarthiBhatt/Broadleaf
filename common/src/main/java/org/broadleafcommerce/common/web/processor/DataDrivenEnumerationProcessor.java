@@ -19,20 +19,9 @@
  */
 package org.broadleafcommerce.common.web.processor;
 
-import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
-import org.broadleafcommerce.common.enumeration.service.DataDrivenEnumerationService;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -49,50 +38,50 @@ import javax.annotation.Resource;
  */
 public class DataDrivenEnumerationProcessor extends AbstractModelVariableModifierProcessor {
 
-    @Resource(name = "blDataDrivenEnumerationService")
-    protected DataDrivenEnumerationService enumService;
-    
-    /**
-     * @param elementName
-     */
-    public DataDrivenEnumerationProcessor() {
-        super("enumeration");
-    }
-
-    @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-        String key = element.getAttributeValue("key");
-        if (StringUtils.isEmpty(key)) {
-            throw new IllegalArgumentException("No 'key' parameter was passed to find enumeration values");
-        }
-        
-        DataDrivenEnumeration ddEnum = enumService.findEnumByKey(key);
-        if (ddEnum == null) {
-            throw new IllegalArgumentException("Could not find a data driven enumeration keyed by " + key);
-        }
-        List<DataDrivenEnumerationValue> enumValues = new ArrayList<DataDrivenEnumerationValue>(ddEnum.getEnumValues());
-        
-        final String sort = element.getAttributeValue("sort");
-        if (StringUtils.isNotEmpty(sort)) {
-            Collections.sort(enumValues, new Comparator<DataDrivenEnumerationValue>() {
-
-                @Override
-                public int compare(DataDrivenEnumerationValue arg0, DataDrivenEnumerationValue arg1) {
-                    if (sort.equals("ASCENDING")) {
-                        return arg0.getDisplay().compareTo(arg1.getDisplay());
-                    } else {
-                        return arg1.getDisplay().compareTo(arg0.getDisplay());
-                    }
-                }
-            });
-        }
-        
-        addToModel(arguments, "enumValues", enumValues);
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 1;
-    }
+//    @Resource(name = "blDataDrivenEnumerationService")
+//    protected DataDrivenEnumerationService enumService;
+//    
+//    /**
+//     * @param elementName
+//     */
+//    public DataDrivenEnumerationProcessor() {
+//        super("enumeration");
+//    }
+//
+//    @Override
+//    protected void modifyModelAttributes(Arguments arguments, Element element) {
+//        String key = element.getAttributeValue("key");
+//        if (StringUtils.isEmpty(key)) {
+//            throw new IllegalArgumentException("No 'key' parameter was passed to find enumeration values");
+//        }
+//        
+//        DataDrivenEnumeration ddEnum = enumService.findEnumByKey(key);
+//        if (ddEnum == null) {
+//            throw new IllegalArgumentException("Could not find a data driven enumeration keyed by " + key);
+//        }
+//        List<DataDrivenEnumerationValue> enumValues = new ArrayList<DataDrivenEnumerationValue>(ddEnum.getEnumValues());
+//        
+//        final String sort = element.getAttributeValue("sort");
+//        if (StringUtils.isNotEmpty(sort)) {
+//            Collections.sort(enumValues, new Comparator<DataDrivenEnumerationValue>() {
+//
+//                @Override
+//                public int compare(DataDrivenEnumerationValue arg0, DataDrivenEnumerationValue arg1) {
+//                    if (sort.equals("ASCENDING")) {
+//                        return arg0.getDisplay().compareTo(arg1.getDisplay());
+//                    } else {
+//                        return arg1.getDisplay().compareTo(arg0.getDisplay());
+//                    }
+//                }
+//            });
+//        }
+//        
+//        addToModel(arguments, "enumValues", enumValues);
+//    }
+//
+//    @Override
+//    public int getPrecedence() {
+//        return 1;
+//    }
 
 }

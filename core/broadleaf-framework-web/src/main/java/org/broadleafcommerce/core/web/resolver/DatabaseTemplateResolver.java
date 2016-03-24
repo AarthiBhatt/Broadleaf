@@ -19,7 +19,14 @@
  */
 package org.broadleafcommerce.core.web.resolver;
 
-import org.thymeleaf.templateresolver.TemplateResolver;
+import org.thymeleaf.IEngineConfiguration;
+import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
+import org.thymeleaf.templateresource.ITemplateResource;
+
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 
 /**
  * This {@link TemplateResolver} serves as a placeholder class that can be used to inject 
@@ -30,6 +37,16 @@ import org.thymeleaf.templateresolver.TemplateResolver;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class DatabaseTemplateResolver extends TemplateResolver {
+public class DatabaseTemplateResolver extends AbstractConfigurableTemplateResolver {
+    
+    @Resource(name = "blDatabaseResourceResolverExtensionManager")
+    protected DatabaseResourceResolverExtensionManager extensionManager;
+    
+    @Override
+    protected ITemplateResource computeTemplateResource(
+            final IEngineConfiguration configuration, final String ownerTemplate, final String template, final String resourceName, final String characterEncoding, final Map<String, Object> templateResolutionAttributes) {
+        
+        return new DatabaseTemplateResource(extensionManager, characterEncoding, resourceName, templateResolutionAttributes);
+    }
     
 }

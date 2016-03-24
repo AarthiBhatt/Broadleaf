@@ -19,9 +19,14 @@
  */
 package org.broadleafcommerce.common.web;
 
-import org.thymeleaf.TemplateProcessingParameters;
-import org.thymeleaf.templateresolver.ITemplateResolver;
-import org.thymeleaf.templateresolver.TemplateResolution;
+import org.thymeleaf.IEngineConfiguration;
+import org.thymeleaf.cache.ICacheEntryValidity;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.AbstractTemplateResolver;
+import org.thymeleaf.templateresource.ITemplateResource;
+
+import java.util.Map;
+
 
 /**
  * Placeholder component to support a custom TemplateResolver.
@@ -30,25 +35,42 @@ import org.thymeleaf.templateresolver.TemplateResolution;
  *
  * @author bpolster
  */
-public class NullBroadleafTemplateResolver implements ITemplateResolver {
+public class NullBroadleafTemplateResolver extends AbstractTemplateResolver {
 
-    @Override
-    public String getName() {
-        return "NullBroadleafTemplateResolver";
+    public NullBroadleafTemplateResolver() {
+        super();
+        setOrder(9999);
     }
-
+    
     @Override
-    public Integer getOrder() {
-        return 9999;
-    }
-
-    @Override
-    public TemplateResolution resolveTemplate(TemplateProcessingParameters templateProcessingParameters) {
+    protected ITemplateResource computeTemplateResource(IEngineConfiguration configuration, String ownerTemplate, String template, Map<String, Object> templateResolutionAttributes) {
         return null;
     }
 
     @Override
-    public void initialize() {
-
+    protected TemplateMode computeTemplateMode(IEngineConfiguration configuration, String ownerTemplate, String template, Map<String, Object> templateResolutionAttributes) {
+        return null;
     }
+
+    @Override
+    protected ICacheEntryValidity computeValidity(IEngineConfiguration configuration, String ownerTemplate, String template, Map<String, Object> templateResolutionAttributes) {
+        return null;
+    }
+    
+//    @Override
+//    public Integer getOrder() {
+//        return 9999;
+//    }
+//
+//    @Override
+//    public TemplateResolution resolveTemplate(TemplateProcessingParameters templateProcessingParameters) {
+//        return null;
+//    }
+//
+//    @Override
+//    public void initialize() {
+//
+//    }
+    
+    
 }

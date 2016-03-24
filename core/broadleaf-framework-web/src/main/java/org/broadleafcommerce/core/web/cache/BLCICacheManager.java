@@ -19,17 +19,16 @@
  */
 package org.broadleafcommerce.core.web.cache;
 
-import org.thymeleaf.Template;
 import org.thymeleaf.cache.AbstractCacheManager;
+import org.thymeleaf.cache.ExpressionCacheKey;
 import org.thymeleaf.cache.ICache;
 import org.thymeleaf.cache.StandardCache;
 import org.thymeleaf.cache.StandardCacheManager;
-import org.thymeleaf.dom.Node;
-
-import java.util.List;
-import java.util.Properties;
+import org.thymeleaf.cache.TemplateCacheKey;
+import org.thymeleaf.engine.TemplateModel;
 
 import javax.annotation.Resource;
+
 
 /**
  * Implementation of {@link org.thymeleaf.cache.AbstractCacheManager} to use {@link BLCICache} for templates.
@@ -42,75 +41,108 @@ public class BLCICacheManager extends AbstractCacheManager {
 
     @Resource(name = "blICacheExtensionManager")
     protected BLCICacheExtensionManager extensionManager;
-
+    
     protected StandardCacheManager standardCacheManager = new StandardCacheManager();
-
-    /**
-     * This method was changed just to return a BLCICache, instead of a StandardCache
-     *
-     * @return
-     */
+    
     @Override
-    protected ICache<String, Template> initializeTemplateCache() {
+    protected ICache<TemplateCacheKey, TemplateModel> initializeTemplateCache() {
+        // TODO Auto-generated method stub
         final int maxSize = standardCacheManager.getTemplateCacheMaxSize();
         if (maxSize == 0) {
             return null;
         }
-        return new BLCICache<String, Template>(
-                standardCacheManager.getTemplateCacheName(), standardCacheManager.getTemplateCacheUseSoftReferences(),
-                standardCacheManager.getTemplateCacheInitialSize(), maxSize,
-                standardCacheManager.getTemplateCacheValidityChecker(), standardCacheManager.getTemplateCacheLogger(),
+        return new BLCICache<TemplateCacheKey, TemplateModel>(standardCacheManager.getTemplateCacheName(),
+                standardCacheManager.getTemplateCacheUseSoftReferences(),
+                standardCacheManager.getTemplateCacheInitialSize(),
+                maxSize,
+                standardCacheManager.getTemplateCacheValidityChecker(),
+                standardCacheManager.getTemplateCacheLogger(),
                 extensionManager);
     }
 
-    /**
-     * This method was changed just to use StandardCacheManager methods and should function the same
-     *
-     * @return
-     */
     @Override
-    protected final ICache<String, List<Node>> initializeFragmentCache() {
-        final int maxSize = standardCacheManager.getFragmentCacheMaxSize();
-        if (maxSize == 0) {
-            return null;
-        }
-        return new StandardCache<String, List<Node>>(
-                standardCacheManager.getFragmentCacheName(), standardCacheManager.getFragmentCacheUseSoftReferences(),
-                standardCacheManager.getFragmentCacheInitialSize(), maxSize,
-                standardCacheManager.getFragmentCacheValidityChecker(), standardCacheManager.getFragmentCacheLogger());
-    }
-
-    /**
-     * This method was changed just to use StandardCacheManager methods and should function the same
-     *
-     * @return
-     */
-    @Override
-    protected final ICache<String, Properties> initializeMessageCache() {
-        final int maxSize = standardCacheManager.getMessageCacheMaxSize();
-        if (maxSize == 0) {
-            return null;
-        }
-        return new StandardCache<String, Properties>(
-                standardCacheManager.getMessageCacheName(), standardCacheManager.getMessageCacheUseSoftReferences(),
-                standardCacheManager.getMessageCacheInitialSize(), maxSize,
-                standardCacheManager.getMessageCacheValidityChecker(), standardCacheManager.getMessageCacheLogger());
-    }
-
-    /**
-     * This method was changed just to use StandardCacheManager methods and should function the same
-     *
-     * @return
-     */
-    @Override
-    protected final ICache<String, Object> initializeExpressionCache() {
+    protected ICache<ExpressionCacheKey, Object> initializeExpressionCache() {
         final int maxSize = standardCacheManager.getExpressionCacheMaxSize();
-        if (maxSize == 0) {
-            return null;
-        }
-        return new StandardCache<String, Object>(
-                standardCacheManager.getExpressionCacheName(), standardCacheManager.getExpressionCacheUseSoftReferences(),
-                standardCacheManager.getExpressionCacheInitialSize(), maxSize,
-                standardCacheManager.getExpressionCacheValidityChecker(), standardCacheManager.getExpressionCacheLogger());
-    }
+          if (maxSize == 0) {
+              return null;
+          }
+          return new StandardCache<ExpressionCacheKey, Object>(
+                  standardCacheManager.getExpressionCacheName(), standardCacheManager.getExpressionCacheUseSoftReferences(),
+                  standardCacheManager.getExpressionCacheInitialSize(), maxSize,
+                  standardCacheManager.getExpressionCacheValidityChecker(), standardCacheManager.getExpressionCacheLogger());
+      }
+
+//    @Resource(name = "blICacheExtensionManager")
+//    protected BLCICacheExtensionManager extensionManager;
+//
+//    protected StandardCacheManager standardCacheManager = new StandardCacheManager();
+//
+//    /**
+//     * This method was changed just to return a BLCICache, instead of a StandardCache
+//     *
+//     * @return
+//     */
+//    @Override
+//    protected ICache<String, Template> initializeTemplateCache() {
+//        final int maxSize = standardCacheManager.getTemplateCacheMaxSize();
+//        if (maxSize == 0) {
+//            return null;
+//        }
+//        return new BLCICache<String, Template>(
+//                standardCacheManager.getTemplateCacheName(), standardCacheManager.getTemplateCacheUseSoftReferences(),
+//                standardCacheManager.getTemplateCacheInitialSize(), maxSize,
+//                standardCacheManager.getTemplateCacheValidityChecker(), standardCacheManager.getTemplateCacheLogger(),
+//                extensionManager);
+//    }
+//
+//    /**
+//     * This method was changed just to use StandardCacheManager methods and should function the same
+//     *
+//     * @return
+//     */
+//    @Override
+//    protected final ICache<String, List<Node>> initializeFragmentCache() {
+//        final int maxSize = standardCacheManager.getFragmentCacheMaxSize();
+//        if (maxSize == 0) {
+//            return null;
+//        }
+//        return new StandardCache<String, List<Node>>(
+//                standardCacheManager.getFragmentCacheName(), standardCacheManager.getFragmentCacheUseSoftReferences(),
+//                standardCacheManager.getFragmentCacheInitialSize(), maxSize,
+//                standardCacheManager.getFragmentCacheValidityChecker(), standardCacheManager.getFragmentCacheLogger());
+//    }
+//
+//    /**
+//     * This method was changed just to use StandardCacheManager methods and should function the same
+//     *
+//     * @return
+//     */
+//    @Override
+//    protected final ICache<String, Properties> initializeMessageCache() {
+//        final int maxSize = standardCacheManager.getMessageCacheMaxSize();
+//        if (maxSize == 0) {
+//            return null;
+//        }
+//        return new StandardCache<String, Properties>(
+//                standardCacheManager.getMessageCacheName(), standardCacheManager.getMessageCacheUseSoftReferences(),
+//                standardCacheManager.getMessageCacheInitialSize(), maxSize,
+//                standardCacheManager.getMessageCacheValidityChecker(), standardCacheManager.getMessageCacheLogger());
+//    }
+//
+//    /**
+//     * This method was changed just to use StandardCacheManager methods and should function the same
+//     *
+//     * @return
+//     */
+//    @Override
+//    protected final ICache<String, Object> initializeExpressionCache() {
+//        final int maxSize = standardCacheManager.getExpressionCacheMaxSize();
+//        if (maxSize == 0) {
+//            return null;
+//        }
+//        return new StandardCache<String, Object>(
+//                standardCacheManager.getExpressionCacheName(), standardCacheManager.getExpressionCacheUseSoftReferences(),
+//                standardCacheManager.getExpressionCacheInitialSize(), maxSize,
+//                standardCacheManager.getExpressionCacheValidityChecker(), standardCacheManager.getExpressionCacheLogger());
+//    }
 }

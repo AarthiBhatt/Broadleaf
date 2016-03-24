@@ -19,20 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.web.processor;
 
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
-import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-
-import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the appropriate AdminModules to the model. It does this by
@@ -44,51 +31,51 @@ import javax.annotation.Resource;
  * @author elbertbautista
  */
 @Component("blAdminModuleProcessor")
-public class AdminModuleProcessor extends AbstractModelVariableModifierProcessor {
-
-    private static final String ANONYMOUS_USER_NAME = "anonymousUser";
-
-    @Resource(name = "blAdminNavigationService")
-    protected AdminNavigationService adminNavigationService;
-    
-    @Resource(name = "blAdminSecurityService")
-    protected AdminSecurityService securityService;
-
-    /**
-     * Sets the name of this processor to be used in Thymeleaf template
-     */
-    public AdminModuleProcessor() {
-        super("admin_module");
-    }
-
-    @Override
-    public int getPrecedence() {
-        return 10001;
-    }
-
-    @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-        String resultVar = element.getAttributeValue("resultVar");
-
-        AdminUser user = getPersistentAdminUser();
-        if (user != null) {
-            AdminMenu menu = adminNavigationService.buildMenu(user);
-            addToModel(arguments, resultVar, menu);
-        }
-
-    }
-
-    protected AdminUser getPersistentAdminUser() {
-        SecurityContext ctx = SecurityContextHolder.getContext();
-        if (ctx != null) {
-            Authentication auth = ctx.getAuthentication();
-            if (auth != null && !auth.getName().equals(ANONYMOUS_USER_NAME)) {
-                UserDetails temp = (UserDetails) auth.getPrincipal();
-
-                return securityService.readAdminUserByUserName(temp.getUsername());
-            }
-        }
-
-        return null;
-    }
+public class AdminModuleProcessor /*extends AbstractModelVariableModifierProcessor*/ {
+//
+//    private static final String ANONYMOUS_USER_NAME = "anonymousUser";
+//
+//    @Resource(name = "blAdminNavigationService")
+//    protected AdminNavigationService adminNavigationService;
+//    
+//    @Resource(name = "blAdminSecurityService")
+//    protected AdminSecurityService securityService;
+//
+//    /**
+//     * Sets the name of this processor to be used in Thymeleaf template
+//     */
+//    public AdminModuleProcessor() {
+//        super("admin_module");
+//    }
+//
+//    @Override
+//    public int getPrecedence() {
+//        return 10001;
+//    }
+//
+//    @Override
+//    protected void modifyModelAttributes(Arguments arguments, Element element) {
+//        String resultVar = element.getAttributeValue("resultVar");
+//
+//        AdminUser user = getPersistentAdminUser();
+//        if (user != null) {
+//            AdminMenu menu = adminNavigationService.buildMenu(user);
+//            addToModel(arguments, resultVar, menu);
+//        }
+//
+//    }
+//
+//    protected AdminUser getPersistentAdminUser() {
+//        SecurityContext ctx = SecurityContextHolder.getContext();
+//        if (ctx != null) {
+//            Authentication auth = ctx.getAuthentication();
+//            if (auth != null && !auth.getName().equals(ANONYMOUS_USER_NAME)) {
+//                UserDetails temp = (UserDetails) auth.getPrincipal();
+//
+//                return securityService.readAdminUserByUserName(temp.getUsername());
+//            }
+//        }
+//
+//        return null;
+//    }
 }

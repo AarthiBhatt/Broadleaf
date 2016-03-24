@@ -23,14 +23,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
-import org.thymeleaf.Arguments;
+import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.messageresolver.AbstractMessageResolver;
-import org.thymeleaf.messageresolver.MessageResolution;
 import org.thymeleaf.util.Validate;
 
 import java.util.Locale;
 
 import javax.annotation.Resource;
+
 
 /**
  * This implementation will check to see if the key matches the known i18n value key. If that is the case, we will attempt 
@@ -53,15 +53,16 @@ public class BroadleafThymeleafMessageResolver extends AbstractMessageResolver {
      * @param messageParams
      * @return the resolved message
      */
-    public MessageResolution resolveMessage(final Arguments args, final String key, final Object[] messageParams) {
-        Validate.notNull(args, "args cannot be null");
-        Validate.notNull(args.getContext().getLocale(), "Locale in context cannot be null");
+    @Override
+    public String resolveMessage(ITemplateContext context, final Class<?> origin, final String key, final Object[] messageParams) {
+        Validate.notNull(context, "args cannot be null");
+        Validate.notNull(context.getLocale(), "Locale in context cannot be null");
         Validate.notNull(key, "Message key cannot be null");
         
         if (I18N_VALUE_KEY.equals(key)) {
             Object entity = messageParams[0];
             String property = (String) messageParams[1];
-            Locale locale = args.getContext().getLocale();
+            Locale locale = context.getLocale();
             
             if (LOG.isTraceEnabled()) {
                 LOG.trace(String.format("Attempting to resolve translated value for object %s, property %s, locale %s",
@@ -71,10 +72,16 @@ public class BroadleafThymeleafMessageResolver extends AbstractMessageResolver {
             String resolvedMessage = translationService.getTranslatedValue(entity, property, locale);
             
             if (StringUtils.isNotBlank(resolvedMessage)) {
-                return new MessageResolution(resolvedMessage);
+                return resolvedMessage;
             }
         }
         
+        return null;
+    }
+
+    @Override
+    public String createAbsentMessageRepresentation(ITemplateContext arg0, Class<?> arg1, String arg2, Object[] arg3) {
+        // TODO Auto-generated method stub
         return null;
     }
 

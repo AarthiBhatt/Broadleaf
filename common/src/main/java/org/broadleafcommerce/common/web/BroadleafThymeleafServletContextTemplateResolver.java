@@ -20,20 +20,25 @@
 package org.broadleafcommerce.common.web;
 
 import org.broadleafcommerce.common.site.domain.Theme;
-import org.thymeleaf.TemplateProcessingParameters;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import org.thymeleaf.IEngineConfiguration;
+import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.util.Validate;
+
+import java.util.Map;
 
 /**
  * Overrides the Thymeleaf ContextTemplateResolver and appends the org.broadleafcommerce.common.web.Theme path to the url
  * if it exists.
  */
-public class BroadleafThymeleafServletContextTemplateResolver extends ServletContextTemplateResolver {    
+public class BroadleafThymeleafServletContextTemplateResolver extends SpringResourceTemplateResolver {    
     
     protected String templateFolder = "";
 
     @Override
-    protected String computeResourceName(final TemplateProcessingParameters templateProcessingParameters) {
+    protected String computeResourceName(
+            final IEngineConfiguration configuration, final String ownerTemplate, final String template,
+            final String prefix, final String suffix, final Map<String, String> templateAliases,
+            final Map<String, Object> templateResolutionAttributes) {
         String themePath = null;
     
         Theme theme = BroadleafRequestContext.getBroadleafRequestContext().getTheme();
@@ -41,9 +46,7 @@ public class BroadleafThymeleafServletContextTemplateResolver extends ServletCon
             themePath = theme.getPath();
         }             
 
-        checkInitialized();
-
-        final String templateName = templateProcessingParameters.getTemplateName();
+        final String templateName = template;
 
         Validate.notNull(templateName, "Template name cannot be null");
 
@@ -53,7 +56,6 @@ public class BroadleafThymeleafServletContextTemplateResolver extends ServletCon
         }
 
         final StringBuilder resourceName = new StringBuilder();
-        String prefix = this.getPrefix();
         if (prefix != null && ! prefix.trim().equals("")) {
            
             if (themePath != null) {        
@@ -61,7 +63,6 @@ public class BroadleafThymeleafServletContextTemplateResolver extends ServletCon
             }
         }
         resourceName.append(unaliasedName);
-        String suffix = this.getSuffix();
         if (suffix != null && ! suffix.trim().equals("")) {
             resourceName.append(suffix);
         }

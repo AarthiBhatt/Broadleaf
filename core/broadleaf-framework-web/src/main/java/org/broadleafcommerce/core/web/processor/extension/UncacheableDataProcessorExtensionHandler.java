@@ -20,18 +20,12 @@
 package org.broadleafcommerce.core.web.processor.extension;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.thymeleaf.Arguments;
-
-import java.util.Set;
 
 /**
  * @author Jeff Fischer
  */
 public interface UncacheableDataProcessorExtensionHandler extends ExtensionHandler {
 
-    ExtensionResultStatusType modifyProductListForInventoryCheck(Arguments arguments, Set<Product> products, Set<Sku> skus);
+//    ExtensionResultStatusType modifyProductListForInventoryCheck(Arguments arguments, Set<Product> products, Set<Sku> skus);
 
 }

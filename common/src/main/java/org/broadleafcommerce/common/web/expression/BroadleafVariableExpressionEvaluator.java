@@ -19,37 +19,30 @@
  */
 package org.broadleafcommerce.common.web.expression;
 
-import org.thymeleaf.context.IProcessingContext;
-import org.thymeleaf.spring4.expression.SpelVariableExpressionEvaluator;
+import org.thymeleaf.spring4.expression.SPELVariableExpressionEvaluator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * Provides a skeleton to register multiple {@link BroadleafVariableExpression} implementors.
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class BroadleafVariableExpressionEvaluator extends SpelVariableExpressionEvaluator {
+public class BroadleafVariableExpressionEvaluator extends SPELVariableExpressionEvaluator {
     
-    @Resource(name = "blVariableExpressions")
-    protected List<BroadleafVariableExpression> expressions = new ArrayList<BroadleafVariableExpression>();
-    
-    @Override
-    protected Map<String,Object> computeAdditionalExpressionObjects(final IProcessingContext processingContext) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        
-        for (BroadleafVariableExpression expression : expressions) {
-            if (!(expression instanceof NullBroadleafVariableExpression)) {
-                map.put(expression.getName(), expression);
-            }
-        }
-        
-        return map;
-    }
+//    @Resource(name = "blVariableExpressions")
+//    protected List<BroadleafVariableExpression> expressions = new ArrayList<BroadleafVariableExpression>();
+//    
+//    @Override
+//    protected Map<String,Object> computeAdditionalExpressionObjects(final IProcessingContext processingContext) {
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        
+//        for (BroadleafVariableExpression expression : expressions) {
+//            if (!(expression instanceof NullBroadleafVariableExpression)) {
+//                map.put(expression.getName(), expression);
+//            }
+//        }
+//        
+//        return map;
+//    }
 
 }

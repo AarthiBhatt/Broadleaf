@@ -19,20 +19,19 @@
  */
 package org.broadleafcommerce.cms.web.processor;
 
-import org.broadleafcommerce.common.extension.ExtensionManager;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public class ContentProcessorExtensionManager extends ExtensionManager<ContentProcessorExtensionHandler> {
+public class ContentProcessorExtensionManager /*extends ExtensionManager<ContentProcessorExtensionHandler> */{
 
-    public ContentProcessorExtensionManager() {
-        super(ContentProcessorExtensionHandler.class);
-    }
-
-    @Override
-    public boolean continueOnHandled() {
-        return true;
-    }
+//    public ContentProcessorExtensionManager() {
+//        super(ContentProcessorExtensionHandler.class);
+//    }
+//
+//    @Override
+//    public boolean continueOnHandled() {
+//        return true;
+//    }
 
 }

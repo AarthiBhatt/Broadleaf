@@ -19,8 +19,6 @@
  */
 package org.broadleafcommerce.core.web.service;
 
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
 
 /**
  * Used to build a cacheKey for caching templates.
@@ -38,5 +36,5 @@ public interface TemplateCacheKeyResolverService {
      * @param element
      * @return
      */
-    public String resolveCacheKey(Arguments arguments, Element element);
+//    public String resolveCacheKey(Arguments arguments, Element element);
 }

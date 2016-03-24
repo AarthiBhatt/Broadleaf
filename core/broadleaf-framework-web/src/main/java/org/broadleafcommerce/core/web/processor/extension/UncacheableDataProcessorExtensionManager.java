@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.core.web.processor.extension;
 
-import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,10 +27,10 @@ import org.springframework.stereotype.Service;
  * @author Jeff Fischer
  */
 @Service("blUncacheableDataProcessorExtensionManager")
-public class UncacheableDataProcessorExtensionManager extends ExtensionManager<UncacheableDataProcessorExtensionHandler> {
+public class UncacheableDataProcessorExtensionManager /*extends ExtensionManager<UncacheableDataProcessorExtensionHandler>*/ {
 
-    public UncacheableDataProcessorExtensionManager() {
-        super(UncacheableDataProcessorExtensionHandler.class);
-    }
+//    public UncacheableDataProcessorExtensionManager() {
+//        super(UncacheableDataProcessorExtensionHandler.class);
+//    }
 
 }

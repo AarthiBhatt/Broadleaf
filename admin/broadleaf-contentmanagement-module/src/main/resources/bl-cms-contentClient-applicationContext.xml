@@ -150,12 +150,14 @@
         <property name="structuredContentAdminPath" value="structured-content/" />
     </bean>
     
-    <bean id="blContentProcessor" class="org.broadleafcommerce.cms.web.processor.ContentProcessor" />
+    <!-- <bean id="blContentProcessor" class="org.broadleafcommerce.cms.web.processor.ContentIProcessor">
+        <constructor-arg ref="blDialect" />
+    </bean> -->
     <bean id="blContentProcessorExtensionManager" class="org.broadleafcommerce.cms.web.processor.ContentProcessorExtensionManager" />
-    <bean id="blUrlRewriteProcessor" class="org.broadleafcommerce.cms.web.processor.UrlRewriteProcessor" />
-    <bean id="blHrefUrlRewriteProcessor" class="org.broadleafcommerce.cms.web.processor.HrefUrlRewriteProcessor" />
+    <!--<bean id="blUrlRewriteProcessor" class="org.broadleafcommerce.cms.web.processor.UrlRewriteProcessor" />
+    <bean id="blHrefUrlRewriteProcessor" class="org.broadleafcommerce.cms.web.processor.HrefUrlRewriteProcessor" />-->
 
-    <bean id="blDialectCmsProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
+    <!--<bean id="blDialectCmsProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
         <property name="sourceSet">
             <set>
                 <ref bean="blContentProcessor"/>
@@ -167,7 +169,7 @@
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
         <property name="collectionRef" value="blDialectCmsProcessors" />
         <property name="targetRef" value="blDialectProcessors" />
-    </bean>
+    </bean>-->
 
     <bean id="blCMSSiteMapGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">

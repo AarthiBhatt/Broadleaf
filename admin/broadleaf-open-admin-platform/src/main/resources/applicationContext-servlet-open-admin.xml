@@ -74,13 +74,13 @@
     </bean>
     
     <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
-    <bean id="blAdminWebCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
+    <!-- <bean id="blAdminWebCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" /> -->
     
     <bean id="blAdminExceptionResolver" class="org.broadleafcommerce.openadmin.web.handler.AdminMappingExceptionResolver">
         <property name="showDebugMessage" value="${exception.showDebugMessage}" />
     </bean>
 
-    <bean id="blAdminWebTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+    <bean id="blAdminWebTemplateResolver" class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
         <property name="prefix" value="/WEB-INF/templates/admin/" />
         <property name="suffix" value=".html" />
         <property name="templateMode" value="HTML5" />
@@ -105,7 +105,7 @@
     <bean id="blAdminWebTemplateResolvers" class="org.springframework.beans.factory.config.SetFactoryBean">
         <property name="sourceSet">
             <set>
-                <ref bean="blAdminWebCustomTemplateResolver" />
+                <!-- <ref bean="blAdminWebCustomTemplateResolver" /> -->
                 <ref bean="blAdminWebTemplateResolver" />
                 <ref bean="blAdminWebClasspathTemplateResolver" />
                 <ref bean="blWebCommonClasspathTemplateResolver" />
