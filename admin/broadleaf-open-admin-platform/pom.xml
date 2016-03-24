@@ -100,11 +100,11 @@
             </plugin>
         </plugins>
         <resources>
-            <resource>
-                <directory>src/main/resources/open_admin_style</directory>
-                <filtering>false</filtering>
-                <targetPath>open_admin_style</targetPath>
-            </resource>
+            <!--<resource>-->
+                <!--<directory>src/main/resources/open_admin_style</directory>-->
+                <!--<filtering>false</filtering>-->
+                <!--<targetPath>open_admin_style</targetPath>-->
+            <!--</resource>-->
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
