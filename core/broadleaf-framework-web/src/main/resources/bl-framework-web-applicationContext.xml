@@ -124,7 +124,6 @@
     </bean>
 
     <bean id="blWebDatabaseTemplateResolver" class="org.broadleafcommerce.core.web.resolver.DatabaseTemplateResolver">
-        <property name="resourceResolver" ref="blDatabaseResourceResolver" />
         <property name="templateMode" value="HTML5" />
         <property name="characterEncoding" value="UTF-8" />
         <property name="cacheable" value="${cache.page.templates}"/>
@@ -167,8 +166,6 @@
         <property name="characterEncoding" value="UTF-8" />
     </bean>  
     
-    <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring4.dialect.SpringStandardDialect" />
-    
     <bean id="blMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
 
     <bean id="blWebTemplateResolvers" class="org.springframework.beans.factory.config.SetFactoryBean">
@@ -197,13 +194,12 @@
         </property>
         <property name="templateResolvers" ref="blWebTemplateResolvers" />
         <property name="cacheManager" ref="blICacheManager" />
-        <property name="dialects">
+        <property name="additionalDialects">
             <set>
-                <ref bean="thymeleafSpringStandardDialect" />
-                <ref bean="blDialect" />
+                <ref bean="blDialect"/>
             </set>
         </property>
-    </bean> 
+    </bean>
     
     <bean id="blEmailTemplateResolvers" class="org.springframework.beans.factory.config.SetFactoryBean">
         <property name="sourceSet">
@@ -218,7 +214,6 @@
         <property name="templateResolvers" ref="blEmailTemplateResolvers" />
         <property name="dialects">
             <set>
-                <ref bean="thymeleafSpringStandardDialect" />
                 <ref bean="blDialect" />
             </set>
         </property>

@@ -21,7 +21,6 @@ package org.broadleafcommerce.common.web.processor;
 
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 
 
 /**
@@ -36,7 +35,7 @@ import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierPro
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class DataDrivenEnumerationProcessor extends AbstractModelVariableModifierProcessor {
+public class DataDrivenEnumerationProcessor /*extends AbstractModelVariableModifierProcessor*/ {
 
 //    @Resource(name = "blDataDrivenEnumerationService")
 //    protected DataDrivenEnumerationService enumService;

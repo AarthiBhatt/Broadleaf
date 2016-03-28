@@ -19,36 +19,35 @@
  */
 package org.broadleafcommerce.common.web.dialect;
 
-import org.thymeleaf.dialect.IExecutionAttributeDialect;
+import org.thymeleaf.dialect.IExpressionObjectDialect;
 import org.thymeleaf.dialect.IProcessorDialect;
+import org.thymeleaf.expression.IExpressionObjectFactory;
 import org.thymeleaf.processor.IProcessor;
-import org.thymeleaf.standard.expression.IStandardVariableExpressionEvaluator;
-import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
 
-public class BLCIDialect implements IProcessorDialect, IExecutionAttributeDialect {
+public class BLCIDialect implements IProcessorDialect, IExpressionObjectDialect {
 
-    @Resource(name = "blDialectProcessors")
     private Set<IProcessor> processors = new HashSet<IProcessor>();
     
-    @Resource(name = "blVariableExpressionEvaluator")
-    private IStandardVariableExpressionEvaluator expressionEvaluator;
+    @Resource(name = "blVariableExpressionObjectFactory")
+    private IExpressionObjectFactory expressionObjectFactory;
     
+    @Override
     public String getPrefix() {
         return "blc";
     }
     
+    @Override
     public int getDialectProcessorPrecedence() {
         return 0;
     }
     
+    @Override
     public Set<IProcessor> getProcessors(final String dialectPrefix) {
         return processors;
     }
@@ -62,9 +61,12 @@ public class BLCIDialect implements IProcessorDialect, IExecutionAttributeDialec
         return "blc";
     }
     
-    public Map<String, Object> getExecutionAttributes() {
-        final Map<String,Object> executionAttributes = new LinkedHashMap<String, Object>();
-        executionAttributes.put(StandardExpressions.STANDARD_VARIABLE_EXPRESSION_EVALUATOR_ATTRIBUTE_NAME, expressionEvaluator);
-        return executionAttributes;
+    public void setExpressionObjectFactory(IExpressionObjectFactory expressionObjectFactory) {
+        this.expressionObjectFactory = expressionObjectFactory;
+    }
+
+    @Override
+    public IExpressionObjectFactory getExpressionObjectFactory() {
+        return expressionObjectFactory;
     }
 }
