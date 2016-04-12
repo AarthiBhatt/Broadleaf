@@ -159,9 +159,6 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 }
                 if (!noPrimary) {
                     dirty = establishDirtyState(newMedia, media);
-                    if (dirty) {
-                        updateMedia(populateValueRequest, newMedia, persist, media);
-                    }
                 }
                 if (dirty) {
                     updateMedia(populateValueRequest, newMedia, persist, media);
