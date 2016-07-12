@@ -25,11 +25,16 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.ejb.QueryHints;
+import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -113,20 +118,28 @@ public class CategoryDaoImpl implements CategoryDao {
     
     @Override
     public List<Category> readAllParentCategories() {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Category> criteria = builder.createQuery(Category.class);
-        Root<CategoryImpl> category = criteria.from(CategoryImpl.class);
+        if (!getParentCategoryLegacyModeEnabled()) {
+            Session session = em.unwrap(Session.class);
+            Criteria criteria = session.createCriteria(CategoryImpl.class);
+            return criteria
+                    .createAlias("allParentCategoryXrefs", "parentCats", JoinType.LEFT_OUTER_JOIN)
+                    .add(Restrictions.isNull("parentCats.category"))
+                    .list();
+        } else {
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<Category> criteria = builder.createQuery(Category.class);
+            Root<CategoryImpl> category = criteria.from(CategoryImpl.class);
+            criteria.select(category);
+            criteria.where(builder.isNull(category.get("defaultParentCategory")));
+            TypedQuery<Category> query = em.createQuery(criteria);
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
+            query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
-        criteria.select(category);
-        criteria.where(builder.isNull(category.get("defaultParentCategory")));
-        TypedQuery<Category> query = em.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-
-        try {
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
+            try {
+                return query.getResultList();
+            } catch (NoResultException e) {
+                return null;
+            }
         }
     }
 
@@ -278,6 +291,10 @@ public class CategoryDaoImpl implements CategoryDao {
         } else {
             return null;
         }
+    }
+
+    protected boolean getParentCategoryLegacyModeEnabled() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("use.legacy.default.category.mode");
     }
 
 }
