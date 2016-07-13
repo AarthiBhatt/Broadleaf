@@ -925,6 +925,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      */
     protected Long convertDisplayOrderToLong(CatalogStructure cache, String displayOrderKey) {
         BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-        return displayOrder.multiply(BigDecimal.valueOf(1000000)).longValue();
+        return displayOrder == null ? 0L : displayOrder.multiply(BigDecimal.valueOf(1000000)).longValue();
     }
 }
