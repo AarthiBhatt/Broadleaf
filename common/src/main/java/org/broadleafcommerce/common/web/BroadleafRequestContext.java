@@ -130,6 +130,17 @@ public class BroadleafRequestContext {
     protected ValidateProductionChangesState validateProductionChangesState = ValidateProductionChangesState.UNDEFINED;
     protected EnforceEnterpriseCollectionBehaviorState enforceEnterpriseCollectionBehaviorState = EnforceEnterpriseCollectionBehaviorState.UNDEFINED;
 
+    protected Boolean checkCookieForLogging = true;
+    protected Boolean cookieLogged = false;
+
+    public Boolean isRequestLogging() {
+        if (!cookieLogged && checkCookieForLogging) {
+            cookieLogged = true;
+            return checkCookieForLogging;
+        }
+        return false;
+    }
+
     /**
      * Gets the current request on the context
      * @return

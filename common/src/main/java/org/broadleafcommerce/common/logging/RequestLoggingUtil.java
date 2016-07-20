@@ -1,6 +1,7 @@
 package org.broadleafcommerce.common.logging;
 
 import org.apache.commons.logging.Log;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 
 public class RequestLoggingUtil {
@@ -30,7 +31,6 @@ public class RequestLoggingUtil {
     }
 
     public static boolean isRequestLoggingEnabled() {
-        // TODO:  Check BLC Request Context
-        return true;
+        return BroadleafRequestContext.getBroadleafRequestContext().isRequestLogging();
     }
 }
