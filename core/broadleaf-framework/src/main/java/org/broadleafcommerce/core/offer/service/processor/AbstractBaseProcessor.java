@@ -200,11 +200,13 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
         if (criteriaQuantity > 0) {
 
-            RequestLoggingUtil.logDebugRequestMessage("Checking if item matches criteria Quantity of " + criteriaQuantity,
-                    RequestLoggingUtil.BL_OFFER_LOG);
+            RequestLoggingUtil.logDebugRequestMessage("Matching " + criteriaQuantity + " of criteria match rule " +
+                            criteria.getMatchRule(), RequestLoggingUtil.BL_OFFER_LOG);
             // If matches are found, add the candidate items to a list and store it with the itemCriteria
             // for this promotion.
             for (PromotableOrderItem item : promotableOrderItems) {
+                RequestLoggingUtil.logDebugRequestMessage("Checking order item " + item.getOrderItem().getName(),
+                        RequestLoggingUtil.BL_OFFER_LOG);
                 if (couldOrderItemMeetOfferRequirement(criteria, item)) {
                     if (isQualifier) {
                         RequestLoggingUtil.logTraceRequestMessage("Adding qualifier ", RequestLoggingUtil.BL_OFFER_LOG);
@@ -218,12 +220,12 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             }
             matchFound = (matchedQuantity >= criteriaQuantity);
         }
-        
+
+        RequestLoggingUtil.logTraceRequestMessage("Number of matches found: " + matchFound, RequestLoggingUtil.BL_OFFER_LOG);
+
         if (isQualifier) {
-            RequestLoggingUtil.logTraceRequestMessage("Matched enough qualifier ", RequestLoggingUtil.BL_OFFER_LOG);
             candidates.setMatchedQualifier(matchFound);
         } else {
-            RequestLoggingUtil.logTraceRequestMessage("Matched enough target ", RequestLoggingUtil.BL_OFFER_LOG);
             candidates.setMatchedTarget(matchFound);
         }
     }
@@ -235,8 +237,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             HashMap<String, Object> vars = new HashMap<String, Object>();
             orderItem.updateRuleVariables(vars);
 
-            RequestLoggingUtil.logDebugRequestMessage("Criteria Match rule " + criteria.getMatchRule(),
-                    RequestLoggingUtil.BL_OFFER_LOG);
+            
 
 
             if (extensionManager != null) {
