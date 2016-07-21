@@ -136,7 +136,10 @@ public class BroadleafRequestContext {
     public Boolean isRequestLogging() {
             
         if (cookieLogged == null) {
-            Cookie[] cookies = getRequest().getCookies();
+            Cookie[] cookies = null;
+            if (getRequest() != null) {
+                cookies = getRequest().getCookies();
+            }
             if (cookies != null) {
                for (Cookie cookie : cookies) {
                    if (cookie.getName().equals("requestLoggingCookie")) {
