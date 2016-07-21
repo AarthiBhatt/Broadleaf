@@ -19,18 +19,17 @@ package org.broadleafcommerce.core.offer.service.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.OfferServiceUtilities;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroupAdjustment;
@@ -106,6 +105,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                 }
             }
         }
+
         //Item Qualification - new for 1.5!
         if (orderLevelQualification) {
             CandidatePromotionItems candidates = couldOfferApplyToOrderItems(offer, promotableOrder.getDiscountableOrderItems(offer.getApplyDiscountToSalePrice()));
@@ -189,6 +189,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
     protected PromotableCandidateOrderOffer createCandidateOrderOffer(PromotableOrder promotableOrder, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
         PromotableCandidateOrderOffer promotableCandidateOrderOffer = promotableItemFactory.createPromotableCandidateOrderOffer(promotableOrder, offer);
+
+        RequestLoggingUtil.logDebugRequestMessage("Adding order offer " + promotableCandidateOrderOffer.getOffer().getId(),
+                RequestLoggingUtil.BL_OFFER_LOG);
         qualifiedOrderOffers.add(promotableCandidateOrderOffer);
 
         return promotableCandidateOrderOffer;
@@ -358,6 +361,10 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     }
 
     protected void synchronizeItemPriceDetails(OrderItem orderItem, PromotableOrderItem promotableOrderItem) {
+
+        RequestLoggingUtil.logDebugRequestMessage("Synchronizing price details " + orderItem.getId(),
+                RequestLoggingUtil.BL_OFFER_LOG);
+
         Map<String, PromotableOrderItemPriceDetail> promotableDetailsMap = buildPromotableDetailsMap(promotableOrderItem);
         Map<Long, OrderItemPriceDetail> unmatchedDetailsMap = new HashMap<Long, OrderItemPriceDetail>();
 
@@ -375,6 +382,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
         for (PromotableOrderItemPriceDetail priceDetail : promotableDetailsMap.values()) {
             if (unmatchedDetailsIterator.hasNext()) {
+                RequestLoggingUtil.logDebugRequestMessage("Processing unmatched details " + orderItem.getId(),
+                        RequestLoggingUtil.BL_OFFER_LOG);
                 // Reuse an existing priceDetail
                 OrderItemPriceDetail existingDetail = unmatchedDetailsIterator.next();
 
@@ -439,6 +448,10 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
     protected void processMatchingDetails(OrderItemPriceDetail itemDetail,
             PromotableOrderItemPriceDetail promotableItemDetail) {
+
+        RequestLoggingUtil.logDebugRequestMessage("Processing matching detail " + itemDetail.getOrderItem().getId(),
+                RequestLoggingUtil.BL_OFFER_LOG);
+
         Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap =
                 offerServiceUtilities.buildItemDetailAdjustmentMap(itemDetail);
 
@@ -448,6 +461,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         
         for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableItemDetail.getCandidateItemAdjustments()) {
             OrderItemPriceDetailAdjustment itemAdjustment = itemAdjustmentMap.get(adjustment.getOfferId());
+            RequestLoggingUtil.logDebugRequestMessage("Item adjustment value " + itemAdjustment.getValue(),
+                    RequestLoggingUtil.BL_OFFER_LOG);
             if (!itemAdjustment.getValue().equals(adjustment.getAdjustmentValue())) {
                 itemAdjustment.setValue(adjustment.getAdjustmentValue());
                 itemAdjustment.setAppliedToSalePrice(adjustment.isAppliedToSalePrice());

@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.time.SystemTime;
@@ -73,14 +74,22 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<PromotableOrderItem> promotableOrderItems) {
         CandidatePromotionItems candidates = new CandidatePromotionItems();
         if (offer.getQualifyingItemCriteriaXref() == null || offer.getQualifyingItemCriteriaXref().size() == 0) {
+            RequestLoggingUtil.logDebugRequestMessage("Offer matches qualifier " + offer.getId(),
+                    RequestLoggingUtil.BL_OFFER_LOG);
             candidates.setMatchedQualifier(true);
         } else {
             for (OfferQualifyingCriteriaXref criteriaXref : offer.getQualifyingItemCriteriaXref()) {
                 if (criteriaXref.getOfferItemCriteria() != null) {
                     checkForItemRequirements(offer, candidates, criteriaXref.getOfferItemCriteria(), promotableOrderItems, true);
                     if (!candidates.isMatchedQualifier()) {
+                        RequestLoggingUtil.logDebugRequestMessage("Offer does not match qualifier " + offer.getId(),
+                                RequestLoggingUtil.BL_OFFER_LOG);
+
                         break;
                     }
+                    RequestLoggingUtil.logDebugRequestMessage("Offer matches qualifier " + offer.getId(),
+                            RequestLoggingUtil.BL_OFFER_LOG);
+
                 }
             }           
         }
@@ -89,13 +98,20 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             for (OfferTargetCriteriaXref xref : offer.getTargetItemCriteriaXref()) {
                 checkForItemRequirements(offer, candidates, xref.getOfferItemCriteria(), promotableOrderItems, false);
                 if (!candidates.isMatchedTarget()) {
+                    RequestLoggingUtil.logDebugRequestMessage("Offer does not match target " + offer.getId(),
+                            RequestLoggingUtil.BL_OFFER_LOG);
                     break;
                 }
+                RequestLoggingUtil.logDebugRequestMessage("Offer matches target " + offer.getId(),
+                        RequestLoggingUtil.BL_OFFER_LOG);
+
             }
         }
         
         if (candidates.isMatchedQualifier()) {
             if (! meetsItemQualifierSubtotal(offer, candidates)) {
+                RequestLoggingUtil.logDebugRequestMessage("Doesn't meet qualifier subtotal ",
+                        RequestLoggingUtil.BL_OFFER_LOG);
                 candidates.setMatchedQualifier(false);
             }
         }       
@@ -183,13 +199,18 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         int matchedQuantity = 0;
 
         if (criteriaQuantity > 0) {
+
+            RequestLoggingUtil.logDebugRequestMessage("Checking if item matches criteria Quantity of " + criteriaQuantity,
+                    RequestLoggingUtil.BL_OFFER_LOG);
             // If matches are found, add the candidate items to a list and store it with the itemCriteria
             // for this promotion.
             for (PromotableOrderItem item : promotableOrderItems) {
                 if (couldOrderItemMeetOfferRequirement(criteria, item)) {
                     if (isQualifier) {
+                        RequestLoggingUtil.logTraceRequestMessage("Adding qualifier ", RequestLoggingUtil.BL_OFFER_LOG);
                         candidates.addQualifier(criteria, item);
                     } else {
+                        RequestLoggingUtil.logTraceRequestMessage("Adding target ", RequestLoggingUtil.BL_OFFER_LOG);
                         candidates.addTarget(criteria, item);
                     }
                     matchedQuantity += item.getQuantity();
@@ -199,8 +220,10 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         }
         
         if (isQualifier) {
+            RequestLoggingUtil.logTraceRequestMessage("Matched enough qualifier ", RequestLoggingUtil.BL_OFFER_LOG);
             candidates.setMatchedQualifier(matchFound);
         } else {
+            RequestLoggingUtil.logTraceRequestMessage("Matched enough target ", RequestLoggingUtil.BL_OFFER_LOG);
             candidates.setMatchedTarget(matchFound);
         }
     }
@@ -212,15 +235,23 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             HashMap<String, Object> vars = new HashMap<String, Object>();
             orderItem.updateRuleVariables(vars);
 
+            RequestLoggingUtil.logDebugRequestMessage("Criteria Match rule " + criteria.getMatchRule(),
+                    RequestLoggingUtil.BL_OFFER_LOG);
+
+
             if (extensionManager != null) {
                 extensionManager.applyAdditionalRuleVariablesForItemOfferEvaluation(orderItem, vars);
             }
 
             Boolean expressionOutcome = executeExpression(criteria.getMatchRule(), vars);
             if (expressionOutcome != null && expressionOutcome) {
+                RequestLoggingUtil.logDebugRequestMessage("Extension handler applyAdditionalRuleVariablesForItemOfferEvaluation reported applies to item true ",
+                        RequestLoggingUtil.BL_OFFER_LOG);
                 appliesToItem = true;
             }
         } else {
+            RequestLoggingUtil.logDebugRequestMessage("Extension handler applyAdditionalRuleVariablesForItemOfferEvaluation reported applies to item false ",
+                    RequestLoggingUtil.BL_OFFER_LOG);
             appliesToItem = true;
         }
 

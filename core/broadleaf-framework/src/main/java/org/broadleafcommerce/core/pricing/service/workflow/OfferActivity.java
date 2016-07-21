@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.pricing.service.workflow;
 
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
@@ -40,7 +41,11 @@ public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
+        
+        RequestLoggingUtil.logDebugRequestMessage("Executing Offer Activity", RequestLoggingUtil.BL_OFFER_LOG);
+        
         List<OfferCode> offerCodes = offerService.buildOfferCodeListForCustomer(order.getCustomer());
+        RequestLoggingUtil.logDebugRequestMessage("Adding offer codes " + offerCodes, RequestLoggingUtil.BL_OFFER_LOG);
         if (offerCodes != null && !offerCodes.isEmpty()) {
             order = orderService.addOfferCodes(order, offerCodes, false);
         }
