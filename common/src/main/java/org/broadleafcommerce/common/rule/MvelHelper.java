@@ -214,6 +214,13 @@ public class MvelHelper {
                 if (!TEST_MODE) {
                     LOG.info("Unable to parse and/or execute the mvel expression (" + rule + "). Reporting to the logs and returning false for the match expression", e);
                 }
+
+                // Just in case, let's remove this rule.
+                if (rule != null && expressionCache.containsKey(rule)) {
+                    expressionCache.remove(rule);
+                    LOG.info("Removed rule from expression cache.");
+                }
+
                 return false;
             }
         }
