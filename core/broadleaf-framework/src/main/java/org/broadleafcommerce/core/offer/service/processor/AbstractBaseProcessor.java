@@ -342,6 +342,12 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      */
     public Boolean executeExpression(String expression, Map<String, Object> vars) {
         synchronized (EXPRESSION_CACHE) {
+
+            if (RequestLoggingUtil.isRequestLoggingEnabled()) {
+                RequestLoggingUtil.logDebugRequestMessage("ExpressionCache Size: " + EXPRESSION_CACHE.size(),
+                        RequestLoggingUtil.BL_OFFER_LOG);
+            }
+
             expression = usePriceBeforeAdjustments(expression);
             Map<String, Class<?>> contextImports = new HashMap<>();
             contextImports.put("OfferType", OfferType.class);
