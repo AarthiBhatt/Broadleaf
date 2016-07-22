@@ -17,12 +17,12 @@
  */
 package org.broadleafcommerce.common.rule;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
@@ -142,8 +142,10 @@ public class MvelHelper {
             return true;
         } else {
             // MVEL expression compiling can be expensive so let's cache the expression
-            Serializable exp = expressionCache.get(rule);
+            Serializable exp = expressionCache.get(rule);       
+            boolean fromCache = true;
             if (exp == null) {
+                fromCache = false;
                 ParserContext context = new ParserContext();
                 context.addImport("MVEL", MVEL.class);
                 context.addImport("MvelHelper", MvelHelper.class);
@@ -174,8 +176,39 @@ public class MvelHelper {
                     // This can occur if there is no actual rule
                     return true;
                 }
-                return (Boolean) test;
+                
+                boolean result = (Boolean) test;
+                
+                if (! result && RequestLoggingUtil.isRequestLoggingEnabled()) {
+                    if (fromCache) {
+                        ParserContext context = new ParserContext();
+                        context.addImport("MVEL", MVEL.class);
+                        context.addImport("MvelHelper", MvelHelper.class);
+                        context.addImport("CollectionUtils", SelectizeCollectionUtils.class);
+                        if (MapUtils.isNotEmpty(additionalContextImports)) {
+                            for (Entry<String, Class<?>> entry : additionalContextImports.entrySet()) {
+                                context.addImport(entry.getKey(), entry.getValue());
+                            }
+                        }
+                        
+                        rule = modifyExpression(rule, ruleParameters, context);
+                        
+                        exp = MVEL.compileExpression(rule, context);
+                        expressionCache.put(rule, exp);
+                        test = MVEL.executeExpression(exp, mvelParameters);
+                        
+                        result = (Boolean) test;
+                        if (result) {
+                            RequestLoggingUtil.logDebugRequestMessage("********* result changed when not using MVEL cache",
+                                    RequestLoggingUtil.BL_OFFER_LOG);
+                        }
+                    }
+                }
+                return result;
             } catch (Exception e) {
+                RequestLoggingUtil.logDebugRequestMessage("Unable to parse and/or execute the mvel expression (" + 
+                        rule + "). Reporting to the logs and returning false for the match expression", RequestLoggingUtil.BL_OFFER_LOG);
+                
                 //Unable to execute the MVEL expression for some reason
                 //Return false, but notify about the bad expression through logs
                 if (!TEST_MODE) {
