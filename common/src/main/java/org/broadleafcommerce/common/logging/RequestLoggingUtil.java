@@ -72,6 +72,11 @@ public class RequestLoggingUtil {
     }
 
     public static boolean isRequestLoggingEnabled() {
-        return BroadleafRequestContext.getBroadleafRequestContext().isRequestLogging();
+        boolean response = false;
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null) {
+            response = context.isRequestLogging();
+        }
+        return response;
     }
 }
