@@ -352,7 +352,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             Map<String, Class<?>> contextImports = new HashMap<>();
             contextImports.put("OfferType", OfferType.class);
             contextImports.put("FulfillmentType", FulfillmentType.class);
-            return MvelHelper.evaluateRule(expression, vars, EXPRESSION_CACHE, contextImports);
+            return MvelHelper.evaluateRuleWithoutCache(expression, vars, contextImports);
         }
     }
 
