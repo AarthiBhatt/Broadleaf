@@ -28,30 +28,29 @@ import java.util.Random;
  */
 public class RequestLoggingUtil {
 
-    public static final Log BL_OFFER_LOG = LogFactory.getLog("blOfferLog");
     private static Random rand = new Random();
 
-    public static void logInfoRequestMessage(String message, Log log) {
+    public static void logInfoRequestMessage(Log logCategory, String message, Class clazz) {
         if (isRequestLoggingEnabled()) {
-            log.info(getRequestId() + message);
+            logCategory.info(getRequestId() + message);
         }
     }
 
-    public static void logDebugRequestMessage(String message, Log log) {
+    public static void logDebugRequestMessage(Log logCategory, String message, Class clazz) {
         if (isRequestLoggingEnabled()) {
-            log.debug(getRequestId() + message);
+            logCategory.debug(getRequestId() + message);
         }
     }
 
-    public static void logTraceRequestMessage(String message, Log log) {
+    public static void logTraceRequestMessage(Log logCategory, String message, Class clazz) {
         if (isRequestLoggingEnabled()) {
-            log.trace(getRequestId() + message);
+            logCategory.trace(getRequestId() + message);
         }
     }
 
-    public static void logWarnRequestMessage(String message, Log log) {
+    public static void logWarnRequestMessage(Log logCategory, String message, Class clazz) {
         if (isRequestLoggingEnabled()) {
-            log.warn(getRequestId() + message);
+            logCategory.warn(getRequestId() + message);
         }
     }
 
