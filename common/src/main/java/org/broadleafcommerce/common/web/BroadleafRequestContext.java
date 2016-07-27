@@ -52,6 +52,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -134,6 +135,30 @@ public class BroadleafRequestContext {
     protected ValidateProductionChangesState validateProductionChangesState = ValidateProductionChangesState.UNDEFINED;
     protected EnforceEnterpriseCollectionBehaviorState enforceEnterpriseCollectionBehaviorState = EnforceEnterpriseCollectionBehaviorState.UNDEFINED;
 
+    protected Boolean cookieLogged = null;
+
+    public Boolean isRequestLogging() {
+
+        if (cookieLogged == null) {
+            Cookie[] cookies = null;
+            if (getRequest() != null) {
+                cookies = getRequest().getCookies();
+            }
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("requestLoggingCookie")) {
+                        cookieLogged = true;
+                    }
+                }
+            }
+            if (cookieLogged == null) {
+                cookieLogged = false;
+            }
+        }
+
+        return cookieLogged;
+    }
+    
     /**
      * Gets the current request on the context
      * @return
