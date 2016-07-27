@@ -34,7 +34,7 @@ public class LogCategory {
     public static final LogCategory BL_REQUEST_PROCESSING = new LogCategory("blRequestProcessing");
 
     public LogCategory(String logName) {
-        log = LogFactory.getLog("blOfferLog");
+        log = LogFactory.getLog(logName);
     }
 
     public Log getLog() {
