@@ -8,5 +8,22 @@ import org.apache.commons.logging.LogFactory;
  */
 public class LogCategory {
 
-    public static final Log BL_OFFER_LOG = LogFactory.getLog("blOfferLog");
+    private Log log;
+
+    public static final LogCategory BL_OFFER = new LogCategory("blOfferLog");
+    public static final LogCategory BL_RESOURCE_RESOLVER = new LogCategory("blResourceResolverLog");
+    public static final LogCategory BL_REQUEST_PROCESSING = new LogCategory("blRequestProcessing");
+
+    public LogCategory(String logName) {
+        log = LogFactory.getLog("blOfferLog");
+    }
+
+    public Log getLog() {
+        return log;
+    }
+
+    public void setLog(Log log) {
+        this.log = log;
+    }
+
 }

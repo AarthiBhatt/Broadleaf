@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.common.logging;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import java.util.Random;
@@ -30,33 +28,39 @@ public class RequestLoggingUtil {
 
     private static Random rand = new Random();
 
-    public static void logInfoRequestMessage(Log logCategory, String message, Class clazz) {
+    public void logInfo(LogCategory logCategory, Class clazz, String message) {
         if (isRequestLoggingEnabled()) {
-            logCategory.info(getRequestId() + message);
+            logCategory.getLog().info(getRequestPrefix(clazz) + message);
         }
     }
 
-    public static void logDebugRequestMessage(Log logCategory, String message, Class clazz) {
+    public void logDebug(LogCategory logCategory, Class clazz, String message) {
         if (isRequestLoggingEnabled()) {
-            logCategory.debug(getRequestId() + message);
+            logCategory.getLog().debug(getRequestPrefix(clazz) + message);
         }
     }
 
-    public static void logTraceRequestMessage(Log logCategory, String message, Class clazz) {
+    public void logTrace(LogCategory logCategory, Class clazz, String message) {
         if (isRequestLoggingEnabled()) {
-            logCategory.trace(getRequestId() + message);
+            logCategory.getLog().trace(getRequestPrefix(clazz) + message);
         }
     }
 
-    public static void logWarnRequestMessage(Log logCategory, String message, Class clazz) {
+    public void logWarn(LogCategory logCategory, Class clazz, String message) {
         if (isRequestLoggingEnabled()) {
-            logCategory.warn(getRequestId() + message);
+            logCategory.getLog().warn(getRequestPrefix(clazz) + message);
         }
+    }
+
+    public String getRequestPrefix(Class clazz) {
+        return clazz.getName() + " - " + getRequestId();
     }
 
     /**
-     * Generally good request Id.    This accounts for a few developers testing with 
-     * request logging at the same time without requiring full on UUID strings in the logs.
+     * Generally good request Id.    This accounts for a few users doing request level logging 
+     * with a reasonable assurance that we can separate the logs for each user without having
+     * large UUIDs in each message. 
+     * 
      * @return
      */
     public static String getRequestId() {

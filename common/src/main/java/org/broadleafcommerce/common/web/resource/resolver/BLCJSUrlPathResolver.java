@@ -22,6 +22,8 @@ package org.broadleafcommerce.common.web.resource.resolver;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.logging.LogCategory;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.core.Ordered;
@@ -60,16 +62,20 @@ public class BLCJSUrlPathResolver extends AbstractResourceResolver implements Or
 
     private int order = BroadleafResourceResolverOrder.BLC_JS_PATH_RESOLVER;
 
+    @javax.annotation.Resource(name = "blRequestLoggingUtil")
+    protected RequestLoggingUtil requestLoggingUtil;
+
     @Override
     protected String resolveUrlPathInternal(String resourceUrlPath, List<? extends Resource> locations,
             ResourceResolverChain chain) {
         if (resourceUrlPath.contains(BLC_JS_NAME)) {
             Site site = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
             if (site != null && site.getId() != null) {
-                return addVersion(resourceUrlPath, "-"+site.getId());
-            } else {
-                return resourceUrlPath;
-            }                       
+                resourceUrlPath = addVersion(resourceUrlPath, "-" + site.getId());
+            }
+            requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, BLCJSUrlPathResolver.class,
+                    "Resolved path to resourceUrlPath ");
+            return resourceUrlPath;
         }
         return chain.resolveUrlPath(resourceUrlPath, locations);
     }
