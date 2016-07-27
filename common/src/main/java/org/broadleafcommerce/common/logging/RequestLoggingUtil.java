@@ -67,7 +67,7 @@ public class RequestLoggingUtil {
      * 
      * @return
      */
-    public static String getRequestId() {
+    public String getRequestId() {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null && brc.getAdditionalProperties() != null) {
             String id = (String) brc.getAdditionalProperties().get("BLC-DEBUG-requestId");
@@ -81,7 +81,7 @@ public class RequestLoggingUtil {
         return "";
     }
 
-    public static boolean isRequestLoggingEnabled() {
+    public boolean isRequestLoggingEnabled() {
         boolean response = false;
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null) {
