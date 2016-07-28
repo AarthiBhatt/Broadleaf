@@ -4,7 +4,7 @@
     <parent>
         <artifactId>admin</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>4.0.13-SNAPSHOT</version>
+        <version>client-BW-4.0.12-GA-patch1-log</version>
     </parent>
     <artifactId>broadleaf-open-admin-platform</artifactId>
     <packaging>jar</packaging>

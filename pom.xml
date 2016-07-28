@@ -5,7 +5,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>4.0.13-SNAPSHOT</version>
+    <version>client-BW-4.0.12-GA-patch1-log</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
