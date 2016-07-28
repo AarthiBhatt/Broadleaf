@@ -132,9 +132,9 @@ public class SiteServiceImpl implements SiteService {
                 }
                 
                 Site site = siteDao.retrieveSiteByDomainOrDomainPrefix(domain, domainPrefix);
-                if (LOG.isWarnEnabled()) {
+                if (LOG.isDebugEnabled()) {
                     if (site == null) {
-                        LOG.warn(String.format("Site not found by Domain: '%s' / SubDomain: '%s'", domain, domainPrefix));
+                        LOG.debug(String.format("Site not found by Domain: '%s' / SubDomain: '%s'", domain, domainPrefix));
                     }
                 }
                 if (persistentResult) {
