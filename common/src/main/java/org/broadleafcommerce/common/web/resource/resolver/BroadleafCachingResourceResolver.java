@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.web.resource.resolver;
 
+import org.broadleafcommerce.common.logging.LogCategory;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.site.domain.Theme;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +73,9 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
     @Value("${resource.caching.enabled:true}")
     protected boolean resourceCachingEnabled;
 
+    @javax.annotation.Resource(name = "blRequestLoggingUtil")
+    protected RequestLoggingUtil requestLoggingUtil;
+
     @Autowired
     public BroadleafCachingResourceResolver(@Qualifier("blSpringCacheManager") CacheManager cacheManager) {
         this(cacheManager.getCache(DEFAULT_CACHE_NAME));
@@ -89,34 +94,53 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
         return this.cache;
     }
 
+    public boolean shouldUseResourceCache() {
+        return resourceCachingEnabled;
+    }
+
     @Override
     protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
-        if (resourceCachingEnabled) {
+        if (shouldUseResourceCache()) {
             String key = computeKey(request, requestPath) + getThemePathFromBRC();
+            requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                    "Resource caching is enabled checking for resource with key " + key);
             Resource resource = this.cache.get(key, Resource.class);
 
             if (resource != null && resource.exists()) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("Found match");
                 }
+                requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                        "Resource exists for key " + key);
                 return resource;
             }
+
+            requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                    "Resource not found or did not exist for key " + key);
 
             resource = chain.resolveResource(request, requestPath, locations);
             if (resource != null) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("Putting resolved resource in cache");
                 }
+                requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                        "Resource resolved, adding to cache with key " + key);
                 this.cache.put(key, resource);
             }
 
-            if (logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled() || requestLoggingUtil.isRequestLoggingEnabled()) {
                 if (resource == null) {
                     logger.debug("Cache resolver, returned a null resource " + requestPath);
+                    requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                            "Cache resolver, returned a null resource " + requestPath);
+
                 } else if (!resource.exists()) {
                     logger.debug("Cache resolver, returned a resource that doesn't exist "
                             + requestPath + " - " + resource);
+                    requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                            "Cache resolver, returned a resource that doesn't exist " +
+                                    requestPath + resource);
                 }
             }
             return resource;
@@ -147,7 +171,7 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
     @Override
     protected String resolveUrlPathInternal(String resourceUrlPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
-        if (resourceCachingEnabled) {
+        if (shouldUseResourceCache()) {
             String response = null;
 
             String notFoundKey = RESOLVED_URL_PATH_CACHE_KEY_PREFIX_NULL + resourceUrlPath + getThemePathFromBRC();
@@ -158,18 +182,29 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
             }
 
             String foundKey = RESOLVED_URL_PATH_CACHE_KEY_PREFIX + resourceUrlPath + getThemePathFromBRC();
+
             String resolvedUrlPath = this.cache.get(foundKey, String.class);
             if (resolvedUrlPath != null) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("Found match");
                 }
-                response = resolvedUrlPath;
+                if (requestLoggingUtil.isRequestLoggingEnabled()) {
+                    requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                            String.format("Resolve URL Path key for '%s' yields '%s'", foundKey, resolvedUrlPath));
+                    response = resolvedUrlPath;
+                }
             } else {
                 resolvedUrlPath = chain.resolveUrlPath(resourceUrlPath, locations);
                 if (resolvedUrlPath != null) {
                     if (logger.isTraceEnabled()) {
                         logger.trace("Putting resolved resource URL path in cache");
                     }
+                    if (requestLoggingUtil.isRequestLoggingEnabled()) {
+                        requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                                String.format("Putting resolved resource URL path in cache '%s' with resolved path '%s'"
+                                        , foundKey, resolvedUrlPath));
+                    }
+
                     this.cache.put(foundKey, resolvedUrlPath);
                     response = resolvedUrlPath;
                 }
@@ -179,6 +214,11 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
                 if (logger.isTraceEnabled()) {
                     logger.trace(String.format("Putting resolved null reference url " +
                             "path in cache for '%s'", resourceUrlPath));
+                }
+                if (requestLoggingUtil.isRequestLoggingEnabled()) {
+                    requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                            String.format("Putting resolved null reference url " +
+                                    "path in cache for '%s'", resourceUrlPath));
                 }
                 getCache().put(notFoundKey, NULL_REFERENCE);
             }
@@ -192,6 +232,12 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
         if (logger.isTraceEnabled()) {
             logger.trace(String.format("Found null reference url path match for '%s'", resourceUrlPath));
         }
+
+        if (requestLoggingUtil.isRequestLoggingEnabled()) {
+            requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                String.format("Found null reference url path match for '%s'", resourceUrlPath));
+        }
+
     }
 
     /**

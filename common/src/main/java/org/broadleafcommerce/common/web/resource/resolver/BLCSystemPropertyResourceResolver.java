@@ -22,6 +22,8 @@ package org.broadleafcommerce.common.web.resource.resolver;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.logging.LogCategory;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
@@ -64,6 +66,9 @@ public class BLCSystemPropertyResourceResolver extends AbstractResourceResolver 
     @javax.annotation.Resource(name = "blBaseUrlResolver")
     BaseUrlResolver urlResolver;
 
+    @javax.annotation.Resource(name = "blRequestLoggingUtil")
+    protected RequestLoggingUtil requestLoggingUtil;
+
     @Override
     protected String resolveUrlPathInternal(String resourceUrlPath, List<? extends Resource> locations,
             ResourceResolverChain chain) {
@@ -79,6 +84,10 @@ public class BLCSystemPropertyResourceResolver extends AbstractResourceResolver 
         if (requestPath.equalsIgnoreCase(BLC_SYSTEM_PROPERTY_FILE)) {
             try {
                 resource = convertResource(resource, requestPath);
+                if (requestLoggingUtil.isRequestLoggingEnabled()) {
+                    requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                            "Converted BLC system property file.");
+                }
             } catch (IOException ioe) {
                 LOG.error("Exception modifying " + BLC_SYSTEM_PROPERTY_FILE, ioe);
             }

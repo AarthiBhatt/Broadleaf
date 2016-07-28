@@ -21,6 +21,8 @@ package org.broadleafcommerce.common.web.resource.resolver;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.logging.LogCategory;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
@@ -51,6 +53,9 @@ public class BundleResourceResolver extends AbstractResourceResolver implements 
 
     @javax.annotation.Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
+
+    @javax.annotation.Resource(name = "blRequestLoggingUtil")
+    protected RequestLoggingUtil requestLoggingUtil;
 
     @Override
     protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
@@ -84,6 +89,23 @@ public class BundleResourceResolver extends AbstractResourceResolver implements 
                         " ,filename = " + bundle.getFilename());
                 try {
                     LOG.trace("Resolving bundle - File Path" + bundle.getFile().getAbsolutePath());
+                } catch (IOException e) {
+                    LOG.error("IOException debugging bundle code", e);
+                }
+            }
+        }
+
+        if (requestLoggingUtil.isRequestLoggingEnabled()) {
+            if (bundle == null) {
+                requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                        "Resolving bundle, bundle is null");
+            } else {
+                requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                        "Resolving bundle, bundle is not null, bundle.exists() == " + bundle.exists() +
+                                " ,filename = " + bundle.getFilename());
+                try {
+                    requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                            "Resolving bundle - File Path" + bundle.getFile().getAbsolutePath());
                 } catch (IOException e) {
                     LOG.error("IOException debugging bundle code", e);
                 }

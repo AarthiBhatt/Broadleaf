@@ -21,6 +21,8 @@ package org.broadleafcommerce.common.web.resource.resolver;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.logging.LogCategory;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
@@ -64,9 +66,15 @@ public class BroadleafVersionResourceResolver extends VersionResourceResolver im
     @javax.annotation.Resource(name = "blVersionResourceResolverStrategyMap")
     protected Map<String, VersionStrategy> versionStrategyMap;
 
+    @javax.annotation.Resource(name = "blRequestLoggingUtil")
+    protected RequestLoggingUtil requestLoggingUtil;
+
     @Override
     protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
+
+        logResourceInfo(requestPath, "Resolve resource");
+
         if (resourceVersioningEnabled && !bundlingService.checkForRegisteredBundleFile(requestPath)) {
             return super.resolveResourceInternal(request, requestPath, locations, chain);
         } else {
@@ -74,15 +82,28 @@ public class BroadleafVersionResourceResolver extends VersionResourceResolver im
         }
     }
 
+    protected void logResourceInfo(String requestPath, String prefix) {
+        if (requestLoggingUtil.isRequestLoggingEnabled()) {
+            requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                    String.format(prefix + " versioning enabled '%s' - '%s'", resourceVersioningEnabled, requestPath));
+            requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                    String.format(prefix + " BundlingService check for registered bundle  '%s'",
+                            bundlingService.checkForRegisteredBundleFile(requestPath)));
+        }
+    }
+
     @Override
     protected String resolveUrlPathInternal(String resourceUrlPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
+        logResourceInfo(resourceUrlPath, "Resolve url path");
         if (resourceVersioningEnabled && !bundlingService.checkForRegisteredBundleFile(resourceUrlPath)) {
             String result = super.resolveUrlPathInternal(resourceUrlPath, locations, chain);
 
             // Spring's default version handler will return null if it doesn't have a strategy
             // for that resource - that seems incorrect.   Overriding here.
             if (result == null) {
+                requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                        "Returned null because there is no strategy for resource forwarding call to chain.resolveUrlPath");
                 return chain.resolveUrlPath(resourceUrlPath, locations);
             } else {
                 return result;

@@ -21,6 +21,8 @@ package org.broadleafcommerce.common.web.resource.transformer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.logging.LogCategory;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.web.resource.resolver.BroadleafResourceTransformerOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -55,6 +57,9 @@ public class BroadleafCachingResourceTransformer extends CachingResourceTransfor
     
     @javax.annotation.Resource(name = "blSpringCacheManager")
     private CacheManager cacheManager;
+
+    @javax.annotation.Resource(name = "blRequestLoggingUtil")
+    protected RequestLoggingUtil requestLoggingUtil;
     
     private static final String DEFAULT_CACHE_NAME = "blResourceTransformerCacheElements";
 
@@ -75,8 +80,10 @@ public class BroadleafCachingResourceTransformer extends CachingResourceTransfor
     public Resource transform(HttpServletRequest request, Resource resource, ResourceTransformerChain transformerChain)
             throws IOException {
         if (resourceTransformerCachingEnabled) {
+            requestLoggingUtil.logTrace(LogCategory.BL_RESOURCE_RESOLVER, getClass(), String.format("Returning cached transformed resource - '%s'", resource.getFilename()));
             return super.transform(request, resource, transformerChain);
         } else {
+            requestLoggingUtil.logTrace(LogCategory.BL_RESOURCE_RESOLVER, getClass(), String.format("Returning uncached transformed resource - '%s'", resource.getFilename()));
             return transformerChain.transform(request, resource);
         }
     }

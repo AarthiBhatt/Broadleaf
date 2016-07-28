@@ -21,9 +21,17 @@ package org.broadleafcommerce.common.web.resource.resolver;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.logging.LogCategory;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.springframework.core.Ordered;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.resource.PathResourceResolver;
+import org.springframework.web.servlet.resource.ResourceResolverChain;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Wraps Spring's {@link PathResourceResolver} for ordering purposes.
@@ -37,6 +45,44 @@ public class BroadleafPathResourceResolver extends PathResourceResolver implemen
     protected static final Log LOG = LogFactory.getLog(BroadleafPathResourceResolver.class);
 
     private int order = BroadleafResourceResolverOrder.BLC_PATH_RESOURCE_RESOLVER;
+
+    @javax.annotation.Resource(name = "blRequestLoggingUtil")
+    protected RequestLoggingUtil requestLoggingUtil;
+
+    @Override
+    protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
+            List<? extends Resource> locations, ResourceResolverChain chain) {
+
+        Resource retRes = super.resolveResourceInternal(request, requestPath, locations, chain);
+
+        if (requestLoggingUtil.isRequestLoggingEnabled()) {
+            if (retRes == null) {
+                requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                        String.format("Request path '%s' resolved to null resource.", requestPath));
+            } else {
+                requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                        String.format("Request path '%s' resolved to filename, description ",
+                                requestPath, retRes.getFilename(), retRes.getDescription()));
+            }
+
+        }
+
+        return retRes;
+    }
+
+    @Override
+    protected String resolveUrlPathInternal(String resourcePath, List<? extends Resource> locations,
+            ResourceResolverChain chain) {
+
+        String returnPath = super.resolveUrlPathInternal(resourcePath, locations, chain);
+
+        if (requestLoggingUtil.isRequestLoggingEnabled()) {
+            requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(),
+                    String.format("Resource path '%s' resolved to path '%s'", resourcePath, returnPath));
+        }
+
+        return returnPath;
+    }
 
     @Override
     public int getOrder() {

@@ -21,6 +21,8 @@ package org.broadleafcommerce.common.resource.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.logging.LogCategory;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.mozilla.javascript.ErrorReporter;
@@ -66,6 +68,9 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     @Value("${minify.disableOptimizations}")
     protected boolean disableOptimizations;
 
+    @javax.annotation.Resource(name = "blRequestLoggingUtil")
+    protected RequestLoggingUtil requestLoggingUtil;
+    
     @Override
     public boolean getEnabled() {
         return BLCSystemProperty.resolveBooleanSystemProperty("minify.enabled");
@@ -79,6 +84,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     @Override
     public byte[] minify(String filename, byte[] bytes) {
         if (!getEnabled()) {
+            requestLoggingUtil.logTrace(LogCategory.BL_RESOURCE_RESOLVER, getClass(), String.format("Minification is disabled, returning original resource - '%s'", filename));
             LOG.trace("Minification is disabled, returning original resource");
             return bytes;
         }
@@ -95,11 +101,13 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     @Override
     public Resource minify(Resource originalResource) {
         if (!getEnabled()) {
+            requestLoggingUtil.logTrace(LogCategory.BL_RESOURCE_RESOLVER, getClass(), String.format("Minification is disabled, returning original resource - '%s'", originalResource.getFilename()));
             LOG.trace("Minification is disabled, returning original resource");
             return originalResource;
         }
         
         if (originalResource.getFilename() == null) {
+            requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(), "Attempted to modify resource without a filename, returning non-minified resource");
             LOG.warn("Attempted to modify resource without a filename, returning non-minified resource");
             return originalResource;
         }
@@ -109,12 +117,14 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     @Override
     public Resource minify(Resource originalResource, String filename) {
         if (!getEnabled()) {
+            requestLoggingUtil.logTrace(LogCategory.BL_RESOURCE_RESOLVER, getClass(), String.format("Minification is disabled, returning original resource - '%s'", filename));
             LOG.trace("Minification is disabled, returning original resource");
             return originalResource;
         }
         
         String type = getFileType(originalResource, filename);
         if (type == null) {
+            requestLoggingUtil.logInfo(LogCategory.BL_RESOURCE_RESOLVER, getClass(), String.format("Unsupported minification resource - '%s'", filename));
             LOG.info("Unsupported minification resource: " + filename);
             return originalResource;
         }
@@ -131,6 +141,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
             out.flush();
             minifiedBytes = baos.toByteArray();
         } catch (Exception e) {
+            requestLoggingUtil.logDebug(LogCategory.BL_RESOURCE_RESOLVER, getClass(), String.format("Could not minify resources, returned unminified bytes - '%s'", filename));
             LOG.warn("Could not minify resources, returned unminified bytes", e);
             return originalResource;
         }
