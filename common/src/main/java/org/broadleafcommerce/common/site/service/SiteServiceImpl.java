@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.common.site.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.site.dao.SiteDao;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
@@ -38,6 +41,8 @@ import javax.annotation.Resource;
 
 @Service("blSiteService")
 public class SiteServiceImpl implements SiteService {
+
+    protected static final Log LOG = LogFactory.getLog(SiteServiceImpl.class);
 
     @Resource(name="blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
@@ -127,6 +132,11 @@ public class SiteServiceImpl implements SiteService {
                 }
                 
                 Site site = siteDao.retrieveSiteByDomainOrDomainPrefix(domain, domainPrefix);
+                if (LOG.isWarnEnabled()) {
+                    if (site == null) {
+                        LOG.warn(String.format("Site not found by Domain: '%s' / SubDomain: '%s'", domain, domainPrefix));
+                    }
+                }
                 if (persistentResult) {
                     response[0] = site;
                 } else {
