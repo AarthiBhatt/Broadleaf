@@ -17,12 +17,13 @@
  */
 package org.broadleafcommerce.common.rule;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
@@ -136,14 +137,19 @@ public class MvelHelper {
      */
     public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters,
         Map<String, Serializable> expressionCache, Map<String, Class<?>> additionalContextImports) {
-        
+
         // Null or empty is a match
         if (rule == null || "".equals(rule)) {
             return true;
         } else {
-            // MVEL expression compiling can be expensive so let's cache the expression
-            Serializable exp = expressionCache.get(rule);
+            Serializable exp = null;
+            if (expressionCache != null) {
+                // MVEL expression compiling can be expensive so let's cache the expression
+                exp = expressionCache.get(rule);
+            }
+            boolean fromCache = true;
             if (exp == null) {
+                fromCache = false;
                 ParserContext context = new ParserContext();
                 context.addImport("MVEL", MVEL.class);
                 context.addImport("MvelHelper", MvelHelper.class);
@@ -153,11 +159,13 @@ public class MvelHelper {
                         context.addImport(entry.getKey(), entry.getValue());
                     }
                 }
-                
+
                 rule = modifyExpression(rule, ruleParameters, context);
-                
+
                 exp = MVEL.compileExpression(rule, context);
-                expressionCache.put(rule, exp);
+                if (expressionCache != null) {
+                    expressionCache.put(rule, exp);
+                }
             }
 
             Map<String, Object> mvelParameters = new HashMap<String, Object>();
@@ -174,13 +182,115 @@ public class MvelHelper {
                     // This can occur if there is no actual rule
                     return true;
                 }
-                return (Boolean) test;
+
+                boolean result = (Boolean) test;
+
+                if (! result && RequestLoggingUtil.isRequestLoggingEnabled()) {
+                    if (fromCache) {
+                        ParserContext context = new ParserContext();
+                        context.addImport("MVEL", MVEL.class);
+                        context.addImport("MvelHelper", MvelHelper.class);
+                        context.addImport("CollectionUtils", SelectizeCollectionUtils.class);
+                        if (MapUtils.isNotEmpty(additionalContextImports)) {
+                            for (Entry<String, Class<?>> entry : additionalContextImports.entrySet()) {
+                                context.addImport(entry.getKey(), entry.getValue());
+                            }
+                        }
+
+                        rule = modifyExpression(rule, ruleParameters, context);
+
+                        exp = MVEL.compileExpression(rule, context);
+                        if (expressionCache != null) {
+                            expressionCache.put(rule, exp);
+                        }
+                        test = MVEL.executeExpression(exp, mvelParameters);
+
+                        result = (Boolean) test;
+                        if (result) {
+                            RequestLoggingUtil.logDebugRequestMessage("********* result changed when not using MVEL cache",
+                                    RequestLoggingUtil.BL_OFFER_LOG);
+                        }
+                    }
+                }
+                return result;
             } catch (Exception e) {
+                RequestLoggingUtil.logDebugRequestMessage("Unable to parse and/or execute the mvel expression (" +
+                        rule + "). Reporting to the logs and returning false for the match expression", RequestLoggingUtil.BL_OFFER_LOG);
+                RequestLoggingUtil.logDebugRequestMessage("Reason for expression failure: " + ExceptionUtils.getStackTrace(e), RequestLoggingUtil.BL_OFFER_LOG);
+
+
                 //Unable to execute the MVEL expression for some reason
                 //Return false, but notify about the bad expression through logs
                 if (!TEST_MODE) {
                     LOG.info("Unable to parse and/or execute the mvel expression (" + rule + "). Reporting to the logs and returning false for the match expression", e);
                 }
+
+                // Just in case, let's remove this rule.
+                if (expressionCache != null && rule != null && expressionCache.containsKey(rule)) {
+                    expressionCache.remove(rule);
+                    LOG.info("Removed rule from expression cache.");
+                }
+
+                return false;
+            }
+        }
+    }
+
+    /**
+     * @param rule
+     * @param ruleParameters
+     * @param additionalContextImports additional imports to give to the {@link ParserContext} besides "MVEL" ({@link MVEL} and
+     * "MvelHelper" ({@link MvelHelper}) since they are automatically added 
+     * @return
+     */
+    public static boolean evaluateRuleWithoutCache(String rule, Map<String, Object> ruleParameters,
+                                                   Map<String, Class<?>> additionalContextImports) {
+
+        // Null or empty is a match
+        if (rule == null || "".equals(rule)) {
+            return true;
+        } else {
+            ParserContext context = new ParserContext();
+            context.addImport("MVEL", MVEL.class);
+            context.addImport("MvelHelper", MvelHelper.class);
+            context.addImport("CollectionUtils", SelectizeCollectionUtils.class);
+            if (MapUtils.isNotEmpty(additionalContextImports)) {
+                for (Entry<String, Class<?>> entry : additionalContextImports.entrySet()) {
+                    context.addImport(entry.getKey(), entry.getValue());
+                }
+            }
+
+            rule = modifyExpression(rule, ruleParameters, context);
+            Serializable exp = MVEL.compileExpression(rule, context);
+
+            Map<String, Object> mvelParameters = new HashMap<String, Object>();
+
+            if (ruleParameters != null) {
+                for (String parameter : ruleParameters.keySet()) {
+                    mvelParameters.put(parameter, ruleParameters.get(parameter));
+                }
+            }
+
+            try {
+                Object test = MVEL.executeExpression(exp, mvelParameters);
+                if (test == null) {
+                    // This can occur if there is no actual rule
+                    return true;
+                }
+
+                return (Boolean) test;
+            } catch (Exception e) {
+                RequestLoggingUtil.logDebugRequestMessage("Unable to parse and/or execute the non-cached mvel expression (" +
+                        rule + "). Reporting to the logs and returning false for the match expression", RequestLoggingUtil.BL_OFFER_LOG);
+                RequestLoggingUtil.logDebugRequestMessage("Reason for expression failure: " + ExceptionUtils.getStackTrace(e), RequestLoggingUtil.BL_OFFER_LOG);
+
+                //Unable to execute the MVEL expression for some reason
+                //Return false, but notify about the bad expression through logs
+                if (!TEST_MODE) {
+                    LOG.info("Unable to parse and/or execute the non-cached mvel expression (" + rule + "). " +
+                            "Reporting to the logs and returning false for the match expression", e);
+                }
+
                 return false;
             }
         }
