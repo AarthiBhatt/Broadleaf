@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.offer.service.processor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -77,6 +78,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                 CollectionUtils.isNotEmpty(offer.getTargetItemCriteriaXref());
         boolean itemLevelQualification = false;
         boolean offerCreated = false;
+
 
         for (PromotableOrderItem promotableOrderItem : order.getDiscountableOrderItems()) {
             if(couldOfferApplyToOrder(offer, order, promotableOrderItem)) {
@@ -380,9 +382,15 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         order.setOrderSubTotalToPriceWithoutAdjustments();
 
         for (Offer offer : filteredOffers) {            
-            if(offer.getType().equals(OfferType.ORDER)){
+            if (offer.getType().equals(OfferType.ORDER)) {
+                RequestLoggingUtil.logDebugRequestMessage("Checking to filter order offer " + offer.getId(),
+                        RequestLoggingUtil.BL_OFFER_LOG);
+
                 filterOrderLevelOffer(order, qualifiedOrderOffers, offer);
             } else if(offer.getType().equals(OfferType.ORDER_ITEM)){
+                RequestLoggingUtil.logDebugRequestMessage("Checking to filter item offer " + offer.getId(),
+                        RequestLoggingUtil.BL_OFFER_LOG);
+
                 filterItemLevelOffer(order, qualifiedItemOffers, offer);
             }
         }
@@ -520,6 +528,9 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             }
 
             if (qualifiersFound && targetsFound) {
+                RequestLoggingUtil.logDebugRequestMessage("Qualifiers and targets found, finalizing quantities ",
+                        RequestLoggingUtil.BL_OFFER_LOG);
+
                 finalizeQuantities(order.getAllPromotableOrderItemPriceDetails());
             } else {
                 clearAllNonFinalizedQuantities(order.getAllPromotableOrderItemPriceDetails());
@@ -605,6 +616,9 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         Money lowestSubtotal = null;
         if (permutations.size() > 1) {
             for (List<PromotableCandidateItemOffer> offerList : permutations) {
+                RequestLoggingUtil.logDebugRequestMessage("Running item offer permutation ",
+                        RequestLoggingUtil.BL_OFFER_LOG);
+
                 for (PromotableCandidateItemOffer offer : offerList) {
                     offer.resetUses();
                 }
@@ -663,6 +677,9 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     public void applyAndCompareOrderAndItemOffers(PromotableOrder order,
             List<PromotableCandidateOrderOffer> qualifiedOrderOffers,
             List<PromotableCandidateItemOffer> qualifiedItemOffers) {
+
+        RequestLoggingUtil.logDebugRequestMessage("Qualified Item Offers " + qualifiedItemOffers.size(),
+                RequestLoggingUtil.BL_OFFER_LOG);
         if (!qualifiedItemOffers.isEmpty()) {
             calculatePotentialSavings(qualifiedItemOffers, order);
             

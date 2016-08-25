@@ -43,6 +43,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -129,6 +130,30 @@ public class BroadleafRequestContext {
     protected Boolean internalIgnoreFilters = false;
     protected ValidateProductionChangesState validateProductionChangesState = ValidateProductionChangesState.UNDEFINED;
     protected EnforceEnterpriseCollectionBehaviorState enforceEnterpriseCollectionBehaviorState = EnforceEnterpriseCollectionBehaviorState.UNDEFINED;
+
+    protected Boolean cookieLogged = null;
+
+    public Boolean isRequestLogging() {
+            
+        if (cookieLogged == null) {
+            Cookie[] cookies = null;
+            if (getRequest() != null) {
+                cookies = getRequest().getCookies();
+            }
+            if (cookies != null) {
+               for (Cookie cookie : cookies) {
+                   if (cookie.getName().equals("requestLoggingCookie")) {
+                       cookieLogged = true;
+                   }
+               }
+            }
+            if (cookieLogged == null) {
+                cookieLogged = false;
+            }
+        } 
+        
+        return cookieLogged;
+    }
 
     /**
      * Gets the current request on the context

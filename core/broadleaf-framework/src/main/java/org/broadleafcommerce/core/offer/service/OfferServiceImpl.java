@@ -22,6 +22,7 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
@@ -176,11 +177,14 @@ public class OfferServiceImpl implements OfferService {
      */
     @Override
     public List<Offer> buildOfferListForOrder(Order order) {
+        RequestLoggingUtil.logDebugRequestMessage("Build offer list for order ", RequestLoggingUtil.BL_OFFER_LOG);
         List<Offer> offers = new ArrayList<Offer>();
         List<CustomerOffer> customerOffers = lookupOfferCustomerByCustomer(order.getCustomer());
         for (CustomerOffer customerOffer : customerOffers) {
             if (!offers.contains(customerOffer.getOffer())) {
                 offers.add(customerOffer.getOffer());
+                RequestLoggingUtil.logTraceRequestMessage("Add customer - offer  " + customerOffer,
+                        RequestLoggingUtil.BL_OFFER_LOG);
             }
         }
         List<OfferCode> orderOfferCodes = refreshOfferCodesIfApplicable(order);
@@ -188,6 +192,8 @@ public class OfferServiceImpl implements OfferService {
         for (OfferCode orderOfferCode : orderOfferCodes) {
             if (!offers.contains(orderOfferCode.getOffer())) {
                 offers.add(orderOfferCode.getOffer());
+                RequestLoggingUtil.logTraceRequestMessage("Add offer code - offer  " + orderOfferCode.getOfferCode(),
+                        RequestLoggingUtil.BL_OFFER_LOG);
             }
             extensionManager.getProxy().addAdditionalOffersForCode(offers, orderOfferCode);
         }
@@ -195,6 +201,8 @@ public class OfferServiceImpl implements OfferService {
         for (Offer globalOffer : globalOffers) {
             if (!offers.contains(globalOffer) && verifyMaxCustomerUsageThreshold(order.getCustomer(), globalOffer)) {
                 offers.add(globalOffer);
+                RequestLoggingUtil.logDebugRequestMessage("Add global offer  " + globalOffer.getId(),
+                        RequestLoggingUtil.BL_OFFER_LOG);
             }
         }
         
@@ -330,6 +338,7 @@ public class OfferServiceImpl implements OfferService {
         call - see http://jira.broadleafcommerce.org/browse/BLC-664
          */
         OfferContext offerContext = OfferContext.getOfferContext();
+
         if (offerContext == null || offerContext.executePromotionCalculation) {
             PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order, false);
             List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, order.getCustomer());
@@ -337,18 +346,26 @@ public class OfferServiceImpl implements OfferService {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("No offers applicable to this order.");
                 }
+                RequestLoggingUtil.logTraceRequestMessage("No offers applicable to this order.",
+                        RequestLoggingUtil.BL_OFFER_LOG);
             } else {
                 List<PromotableCandidateOrderOffer> qualifiedOrderOffers = new ArrayList<PromotableCandidateOrderOffer>();
                 List<PromotableCandidateItemOffer> qualifiedItemOffers = new ArrayList<PromotableCandidateItemOffer>();
 
+                RequestLoggingUtil.logDebugRequestMessage("About to filter item offers",
+                        RequestLoggingUtil.BL_OFFER_LOG);
                 itemOfferProcessor.filterOffers(promotableOrder, filteredOffers, qualifiedOrderOffers, qualifiedItemOffers);
 
                 if (! (qualifiedItemOffers.isEmpty() && qualifiedOrderOffers.isEmpty())) {                
                     // At this point, we should have a PromotableOrder that contains PromotableItems each of which
                     // has a list of candidatePromotions that might be applied.
 
+                    RequestLoggingUtil.logDebugRequestMessage("About to apply qualified item offers",
+                            RequestLoggingUtil.BL_OFFER_LOG);
+
                     // We also have a list of orderOffers that might apply and a list of itemOffers that might apply.
-                    itemOfferProcessor.applyAndCompareOrderAndItemOffers(promotableOrder, qualifiedOrderOffers, qualifiedItemOffers);
+                    itemOfferProcessor.applyAndCompareOrderAndItemOffers(promotableOrder,
+                            qualifiedOrderOffers, qualifiedItemOffers);
                 }
             }
             orderOfferProcessor.synchronizeAdjustmentsAndPrices(promotableOrder);
@@ -364,6 +381,9 @@ public class OfferServiceImpl implements OfferService {
             if (madeChange) {
                 order = orderService.save(order, false);
             }
+        } else {
+            RequestLoggingUtil.logDebugRequestMessage("Offer context.executePromotionCalculation is false ",
+                    RequestLoggingUtil.BL_OFFER_LOG);
         }
 
         return order;

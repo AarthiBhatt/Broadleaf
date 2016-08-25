@@ -18,16 +18,20 @@
 package org.broadleafcommerce.core.offer.service.processor;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
@@ -39,6 +43,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -76,14 +81,22 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<PromotableOrderItem> promotableOrderItems) {
         CandidatePromotionItems candidates = new CandidatePromotionItems();
         if (offer.getQualifyingItemCriteriaXref() == null || offer.getQualifyingItemCriteriaXref().size() == 0) {
+            RequestLoggingUtil.logDebugRequestMessage("Offer matches qualifier " + offer.getId(),
+                    RequestLoggingUtil.BL_OFFER_LOG);
             candidates.setMatchedQualifier(true);
         } else {
             for (OfferQualifyingCriteriaXref criteriaXref : offer.getQualifyingItemCriteriaXref()) {
                 if (criteriaXref.getOfferItemCriteria() != null) {
                     checkForItemRequirements(offer, candidates, criteriaXref.getOfferItemCriteria(), promotableOrderItems, true);
                     if (!candidates.isMatchedQualifier()) {
+                        RequestLoggingUtil.logDebugRequestMessage("Offer does not match qualifier " + offer.getId(),
+                                RequestLoggingUtil.BL_OFFER_LOG);
+
                         break;
                     }
+                    RequestLoggingUtil.logDebugRequestMessage("Offer matches qualifier " + offer.getId(),
+                            RequestLoggingUtil.BL_OFFER_LOG);
+
                 }
             }           
         }
@@ -92,13 +105,20 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             for (OfferTargetCriteriaXref xref : offer.getTargetItemCriteriaXref()) {
                 checkForItemRequirements(offer, candidates, xref.getOfferItemCriteria(), promotableOrderItems, false);
                 if (!candidates.isMatchedTarget()) {
+                    RequestLoggingUtil.logDebugRequestMessage("Offer does not match target " + offer.getId(),
+                            RequestLoggingUtil.BL_OFFER_LOG);
                     break;
                 }
+                RequestLoggingUtil.logDebugRequestMessage("Offer matches target " + offer.getId(),
+                        RequestLoggingUtil.BL_OFFER_LOG);
+
             }
         }
         
         if (candidates.isMatchedQualifier()) {
             if (! meetsItemQualifierSubtotal(offer, candidates)) {
+                RequestLoggingUtil.logDebugRequestMessage("Doesn't meet qualifier subtotal ",
+                        RequestLoggingUtil.BL_OFFER_LOG);
                 candidates.setMatchedQualifier(false);
             }
         }       
@@ -186,13 +206,20 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         int matchedQuantity = 0;
 
         if (criteriaQuantity > 0) {
+
+            RequestLoggingUtil.logDebugRequestMessage("CFI 1. Matching " + criteriaQuantity + " of criteria match rule " +
+                            criteria.getMatchRule(), RequestLoggingUtil.BL_OFFER_LOG);
             // If matches are found, add the candidate items to a list and store it with the itemCriteria
             // for this promotion.
             for (PromotableOrderItem item : promotableOrderItems) {
+                RequestLoggingUtil.logDebugRequestMessage("CFI 2. Loop - Checking order item " + item.getOrderItem().getName(),
+                        RequestLoggingUtil.BL_OFFER_LOG);
                 if (couldOrderItemMeetOfferRequirement(criteria, item)) {
                     if (isQualifier) {
+                        RequestLoggingUtil.logTraceRequestMessage("CFI 2a. Adding qualifier ", RequestLoggingUtil.BL_OFFER_LOG);
                         candidates.addQualifier(criteria, item);
                     } else {
+                        RequestLoggingUtil.logTraceRequestMessage("CFI 2b. Adding target ", RequestLoggingUtil.BL_OFFER_LOG);
                         candidates.addTarget(criteria, item);
                         addChildOrderItemsToCandidates(offer, candidates, criteria, promotableOrderItems, item);
                     }
@@ -201,7 +228,9 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             }
             matchFound = (matchedQuantity >= criteriaQuantity);
         }
-        
+
+        RequestLoggingUtil.logTraceRequestMessage("CFI 3. Number of matches found: " + matchFound, RequestLoggingUtil.BL_OFFER_LOG);
+
         if (isQualifier) {
             candidates.setMatchedQualifier(matchFound);
         } else {
@@ -235,25 +264,100 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     protected boolean couldOrderItemMeetOfferRequirement(OfferItemCriteria criteria, PromotableOrderItem orderItem) {
         boolean appliesToItem = false;
 
+        RequestLoggingUtil.logDebugRequestMessage("CouldOfferItemMeetOfferRequirements - expression " +
+                criteria.getMatchRule(), RequestLoggingUtil.BL_OFFER_LOG);
+
         if (criteria.getMatchRule() != null && criteria.getMatchRule().trim().length() != 0) {
             HashMap<String, Object> vars = new HashMap<String, Object>();
             orderItem.updateRuleVariables(vars);
+
+            logVars(vars);
 
             if (extensionManager != null) {
                 extensionManager.applyAdditionalRuleVariablesForItemOfferEvaluation(orderItem, vars);
             }
 
             Boolean expressionOutcome = executeExpression(criteria.getMatchRule(), vars);
+
+            RequestLoggingUtil.logDebugRequestMessage("CouldOfferItemMeetOfferRequirements - expressionOutcome " +
+                    expressionOutcome, RequestLoggingUtil.BL_OFFER_LOG);
+
             if (expressionOutcome != null && expressionOutcome) {
+                RequestLoggingUtil.logDebugRequestMessage("Extension handler applyAdditionalRuleVariablesForItemOfferEvaluation reported applies to item true ",
+                        RequestLoggingUtil.BL_OFFER_LOG);
                 appliesToItem = true;
             }
         } else {
+            RequestLoggingUtil.logDebugRequestMessage("Extension handler applyAdditionalRuleVariablesForItemOfferEvaluation reported applies to item false ",
+                    RequestLoggingUtil.BL_OFFER_LOG);
             appliesToItem = true;
         }
 
         return appliesToItem;
     }
     
+    protected void logVars(HashMap<String, Object> vars) {
+        if (RequestLoggingUtil.isRequestLoggingEnabled()) {
+            OrderItem oi = (OrderItem) vars.get("orderItem");
+            if (oi != null) {
+                RequestLoggingUtil.logDebugRequestMessage("OrderItem.name= " + oi.getName() + " id: " + oi.getId(),
+                        RequestLoggingUtil.BL_OFFER_LOG);
+                if (oi instanceof DiscreteOrderItem) {
+                    Sku sku = ((DiscreteOrderItem) oi).getSku();
+                    if (sku != null) {
+                        RequestLoggingUtil.logDebugRequestMessage("OrderItem SKU " + oi.getName() +
+                                "sku id: " + sku.getId(), RequestLoggingUtil.BL_OFFER_LOG);
+                        Map<String, SkuAttribute> skuAttributes = sku.getMultiValueSkuAttributes();
+                        if (skuAttributes != null) {
+                            RequestLoggingUtil.logDebugRequestMessage("SkuAttributes size " +
+                                    skuAttributes.size(), RequestLoggingUtil.BL_OFFER_LOG);
+
+                            if (skuAttributes instanceof MultiValueMap) {
+                                MultiValueMap mvp = (MultiValueMap) skuAttributes;
+                                RequestLoggingUtil.logDebugRequestMessage("skuAttributes.get('productGroups') " +
+                                        skuAttributes.get("product-groups"), RequestLoggingUtil.BL_OFFER_LOG);
+                                Collection c = mvp.getCollection("product-groups");
+                                if (c != null && !c.isEmpty()) {
+                                    for (Object o : c) {
+                                        RequestLoggingUtil.logDebugRequestMessage("Iterating through groups collection " +
+                                                o, RequestLoggingUtil.BL_OFFER_LOG);
+                                        if (o instanceof SkuAttribute) {
+                                            SkuAttribute sa = (SkuAttribute) o;
+                                            RequestLoggingUtil.logDebugRequestMessage("SkuAttribute: name " + sa.getName() +
+                                                    " value " + sa.getValue(), RequestLoggingUtil.BL_OFFER_LOG);
+                                        } else {
+                                            RequestLoggingUtil.logDebugRequestMessage("Collection does not contain skuattr"
+                                                    + o.getClass().getName(), RequestLoggingUtil.BL_OFFER_LOG);
+                                        }
+                                    }
+                                } else {
+                                    RequestLoggingUtil.logDebugRequestMessage("SkuAttributes mvp is null or empty " +
+                                            skuAttributes, RequestLoggingUtil.BL_OFFER_LOG);
+                                }
+                            } else {
+                                RequestLoggingUtil.logDebugRequestMessage("SkuAttributes was not a MultiValueMap" +
+                                        skuAttributes.getClass().getName(), RequestLoggingUtil.BL_OFFER_LOG);
+                            }
+
+                        } else {
+                            RequestLoggingUtil.logDebugRequestMessage("Sku multiValueSkuAttributes is null " + oi.getId(),
+                                    RequestLoggingUtil.BL_OFFER_LOG);
+                        }
+
+                    } else {
+                        RequestLoggingUtil.logDebugRequestMessage("OrderItem sku is null " + oi.getId(),
+                                RequestLoggingUtil.BL_OFFER_LOG);
+                    }
+                } else {
+                    RequestLoggingUtil.logDebugRequestMessage("OrderItem is not a discrete order item " + oi.getId(),
+                            RequestLoggingUtil.BL_OFFER_LOG);
+                }
+            } else {
+                RequestLoggingUtil.logDebugRequestMessage("OrderItem is null", RequestLoggingUtil.BL_OFFER_LOG);
+            }
+        }
+    }
+
     /**
      * Private method used by couldOfferApplyToOrder to execute the MVEL expression in the
      * appliesToOrderRules to determine if this offer can be applied.
@@ -263,13 +367,17 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * @return a Boolean object containing the result of executing the MVEL expression
      */
     public Boolean executeExpression(String expression, Map<String, Object> vars) {
+
+        if (RequestLoggingUtil.isRequestLoggingEnabled()) {
+            RequestLoggingUtil.logDebugRequestMessage("ExpressionCache Size: " + EXPRESSION_CACHE.size(),
+                    RequestLoggingUtil.BL_OFFER_LOG);
+        }
         Map<String, Class<?>> contextImports = new HashMap<>();
 
         expression = usePriceBeforeAdjustments(expression);
         contextImports.put("OfferType", OfferType.class);
         contextImports.put("FulfillmentType", FulfillmentType.class);
-        return MvelHelper.evaluateRule(expression, vars, EXPRESSION_CACHE, contextImports);
-
+        return MvelHelper.evaluateRuleWithoutCache(expression, vars, contextImports);
     }
 
     protected String usePriceBeforeAdjustments(String expression) {

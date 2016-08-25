@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.offer.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -144,6 +145,8 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
                 if (itemQtyAvailableToBeUsedAsQualifier > 0) {
                     int qtyToMarkAsQualifier = Math.min(qualifierQtyNeeded, itemQtyAvailableToBeUsedAsQualifier);
                     qualifierQtyNeeded -= qtyToMarkAsQualifier;
+                    RequestLoggingUtil.logDebugRequestMessage("Adding promotion qualifier " + qtyToMarkAsQualifier,
+                            RequestLoggingUtil.BL_OFFER_LOG);
                     detail.addPromotionQualifier(itemOffer, itemCriteria, qtyToMarkAsQualifier);
                 }
             }
@@ -159,6 +162,10 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     public int markTargetsForCriteria(PromotableCandidateItemOffer itemOffer, OrderItem relatedQualifier,
             boolean checkOnly, Offer promotion, OrderItem relatedQualifierRoot, OfferItemCriteria itemCriteria,
             List<PromotableOrderItemPriceDetail> priceDetails, int targetQtyNeeded) {
+
+        RequestLoggingUtil.logDebugRequestMessage("Marking targets " + targetQtyNeeded,
+                RequestLoggingUtil.BL_OFFER_LOG);
+
         for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
             if (relatedQualifier != null) {
                 // We need to make sure that this item is either a parent, child, or the same as the qualifier root
@@ -170,6 +177,9 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
             }
 
             int itemQtyAvailableToBeUsedAsTarget = priceDetail.getQuantityAvailableToBeUsedAsTarget(itemOffer);
+            RequestLoggingUtil.logDebugRequestMessage("Quantity to be used as target from price detail " +
+                    priceDetail.getPromotableOrderItem().getOrderItemId() + " " + itemQtyAvailableToBeUsedAsTarget,
+                    RequestLoggingUtil.BL_OFFER_LOG);
             if (itemQtyAvailableToBeUsedAsTarget > 0) {
                 if (promotion.isUnlimitedUsePerOrder() || (itemOffer.getUses() < promotion.getMaxUsesPerOrder())) {
                     int qtyToMarkAsTarget = Math.min(targetQtyNeeded, itemQtyAvailableToBeUsedAsTarget);
@@ -432,6 +442,9 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
 
     protected void updateItemAdjustment(OrderItemPriceDetailAdjustment itemAdjustment,
             PromotableOrderItemPriceDetailAdjustment promotableAdjustment) {
+        RequestLoggingUtil.logDebugRequestMessage("Updating item adjustment " + promotableAdjustment.getAdjustmentValue(),
+                RequestLoggingUtil.BL_OFFER_LOG);
+
         itemAdjustment.setValue(promotableAdjustment.getAdjustmentValue());
         itemAdjustment.setSalesPriceValue(promotableAdjustment.getSaleAdjustmentValue());
         itemAdjustment.setRetailPriceValue(promotableAdjustment.getRetailAdjustmentValue());
