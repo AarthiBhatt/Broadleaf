@@ -88,7 +88,9 @@
     </bean>
     
     <!-- Add Item Workflow Configuration -->
-    <bean p:order="1000" id="blValidateAddRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity"/>
+    <bean p:order="1000" id="blValidateAddRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity">
+        <property name="errorHandler" ref="blValidateAddRequestErrorHandler"/>
+    </bean>
     <bean p:order="2000" id="blCheckAddAvailabilityActivity" class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
     <bean p:order="3000" id="blAddOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
     <bean p:order="4000" id="blAddFulfillmentGroupItemActivity" class="org.broadleafcommerce.core.order.service.workflow.add.AddFulfillmentGroupItemActivity"/>

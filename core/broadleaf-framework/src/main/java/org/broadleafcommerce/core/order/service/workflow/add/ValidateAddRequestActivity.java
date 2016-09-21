@@ -173,7 +173,11 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                 if (productOption.getRequired() && (productOption.getProductOptionValidationStrategyType() == null ||
                         productOption.getProductOptionValidationStrategyType().getRank() <= ProductOptionValidationStrategyType.ADD_ITEM.getRank())) {
                     if (StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
-                        throw new RequiredAttributeNotProvidedException("Unable to add to product ("+ product.getId() +") cart. Required attribute was not provided: " + productOption.getAttributeName());
+
+                        ActivityMessageDTO msg = new ActivityMessageDTO(MessageType.PRODUCT_OPTION.getType(), 1, "Required attribute was not provided: " + productOption.getAttributeName());
+                        msg.setErrorCode("MISSING_" + productOption.getAttributeName());
+                        messages.getActivityMessages().add(msg);
+                        continue;
                     } else if (productOption.getUseInSkuGeneration()) {
                         attributeValuesForSku.put(productOption.getAttributeName(), attributeValues.get(productOption.getAttributeName()));
                     }
@@ -197,8 +201,13 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                 }
             }
             
-
-            if (product !=null && product.getSkus() != null) {
+            if(!messages.getActivityMessages().isEmpty()) {
+                String errorMessage = "Unable to add to product ("+ product.getId() +") cart: ";
+                for(ActivityMessageDTO test : messages.getActivityMessages()) {
+                    errorMessage = errorMessage + test.getMessage();
+                }
+                throw new RequiredAttributeNotProvidedException(errorMessage);
+            } else if (product !=null && product.getSkus() != null) {
                 for (Sku sku : product.getSkus()) {
                    if (checkSkuForMatch(sku, attributeValuesForSku)) {
                        return sku;
