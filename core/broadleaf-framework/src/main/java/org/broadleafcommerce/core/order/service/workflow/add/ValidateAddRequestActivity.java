@@ -41,6 +41,7 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -62,6 +63,9 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
+    
+    // Default priority value of error messages
+    int DEFAULT_PRIORITY = 1;
 
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
@@ -173,8 +177,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                 if (productOption.getRequired() && (productOption.getProductOptionValidationStrategyType() == null ||
                         productOption.getProductOptionValidationStrategyType().getRank() <= ProductOptionValidationStrategyType.ADD_ITEM.getRank())) {
                     if (StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
-
-                        ActivityMessageDTO msg = new ActivityMessageDTO(MessageType.PRODUCT_OPTION.getType(), 1, "Required attribute was not provided: " + productOption.getAttributeName());
+                        ActivityMessageDTO msg = new ActivityMessageDTO(MessageType.PRODUCT_OPTION.getType(), DEFAULT_PRIORITY, "Required attribute was not provided: " + productOption.getAttributeName());
                         msg.setErrorCode("MISSING_" + productOption.getAttributeName());
                         messages.getActivityMessages().add(msg);
                         continue;
@@ -202,12 +205,13 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
             }
             
             if(!messages.getActivityMessages().isEmpty()) {
-                String errorMessage = "Unable to add to product ("+ product.getId() +") cart: ";
+                String errorMessage = "Unable to add product ("+ product.getId() +")  to cart.";
+                List<String> errors = null;
                 for(ActivityMessageDTO test : messages.getActivityMessages()) {
-                    errorMessage = errorMessage + test.getMessage();
+                    errors.add(test.getMessage());
                 }
-                throw new RequiredAttributeNotProvidedException(errorMessage);
-            } else if (product !=null && product.getSkus() != null) {
+                throw new RequiredAttributeNotProvidedException(errors, errorMessage);
+            } else if (product != null && product.getSkus() != null) {
                 for (Sku sku : product.getSkus()) {
                    if (checkSkuForMatch(sku, attributeValuesForSku)) {
                        return sku;

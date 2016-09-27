@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.order.service.exception;
 
+import java.util.List;
+
 /**
  * This runtime exception will be thrown when an attempt to add to cart without specifying
  * all required product options has been made.
@@ -28,6 +30,7 @@ public class RequiredAttributeNotProvidedException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     protected String attributeName;
+    protected List<String> errorList;
 
     public RequiredAttributeNotProvidedException(String message, String attributeName) {
         super(message);
@@ -44,12 +47,25 @@ public class RequiredAttributeNotProvidedException extends RuntimeException {
         setAttributeName(attributeName);
     }
 
+    public RequiredAttributeNotProvidedException(List<String> errorList, String message) {
+        super(message);
+        this.setErrorList(errorList);
+    }
+
     public String getAttributeName() {
         return attributeName;
     }
 
     public void setAttributeName(String attributeName) {
         this.attributeName = attributeName;
+    }
+
+    public List<String> getErrorList() {
+        return errorList;
+    }
+
+    public void setErrorList(List<String> errorList) {
+        this.errorList = errorList;
     }
 
 
