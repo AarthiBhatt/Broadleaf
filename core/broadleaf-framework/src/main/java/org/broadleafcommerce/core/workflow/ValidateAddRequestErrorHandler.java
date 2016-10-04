@@ -19,10 +19,7 @@ package org.broadleafcommerce.core.workflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
-import org.broadleafcommerce.core.workflow.ErrorHandler;
-import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.core.workflow.WorkflowException;
+import org.broadleafcommerce.core.order.service.exception.RequiredAttributesNotProvidedException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,7 +34,7 @@ public class ValidateAddRequestErrorHandler implements ErrorHandler {
 
     @Override
     public void handleError(ProcessContext context, Throwable th) throws WorkflowException {
-        if(th instanceof RequiredAttributeNotProvidedException) {
+        if(th instanceof RequiredAttributesNotProvidedException) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace(th);
             }

@@ -33,7 +33,7 @@ import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ProductOptionValidationException;
-import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
+import org.broadleafcommerce.core.order.service.exception.RequiredAttributesNotProvidedException;
 import org.broadleafcommerce.core.order.service.type.MessageType;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
@@ -41,6 +41,7 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,7 +163,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         if (sku == null && product != null) {
             // Set to the default sku
             if (product.getAdditionalSkus() != null && product.getAdditionalSkus().size() > 0 && !product.getCanSellWithoutOptions()) {
-                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku", null);
+                throw new RequiredAttributesNotProvidedException(null, "Unable to find non-default sku matching given options and cannot sell default sku");
             }
             sku = product.getDefaultSku();
         }
@@ -177,11 +178,11 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
             
             if(!messages.getActivityMessages().isEmpty()) {
                 String errorMessage = "Unable to add product ("+ product.getId() +")  to cart.";
-                List<String> errors = null;
-                for(ActivityMessageDTO test : messages.getActivityMessages()) {
-                    errors.add(test.getMessage());
+                List<String> errors = new ArrayList<String>();
+                for(ActivityMessageDTO activityMessageDTO : messages.getActivityMessages()) {
+                    errors.add(activityMessageDTO.getMessage());
                 }
-                throw new RequiredAttributeNotProvidedException(errors, errorMessage);
+                throw new RequiredAttributesNotProvidedException(errorMessage, errors);
             } else if (product != null && product.getSkus() != null) {
                 for (Sku sku : product.getAdditionalSkus()) {
                    if (checkSkuForMatch(sku, attributeValuesForSku)) {

@@ -25,41 +25,49 @@ import java.util.List;
  * 
  * @author apazzolini
  */
-public class RequiredAttributeNotProvidedException extends RuntimeException {
+public class RequiredAttributesNotProvidedException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
     protected List<String> attributeNames;
 
-    public RequiredAttributeNotProvidedException(String message, String attributeName) {
+    public RequiredAttributesNotProvidedException(String message, String attributeName) {
         super(message);
-        setAttributeName(attributeName);
+        addAttributeName(attributeName);
     }
 
-    public RequiredAttributeNotProvidedException(String message, String attributeName, Throwable cause) {
+    public RequiredAttributesNotProvidedException(String message, String attributeName, Throwable cause) {
         super(message, cause);
-        setAttributeName(attributeName);
+        addAttributeName(attributeName);
     }
 
-    public RequiredAttributeNotProvidedException(String attributeName) {
+    public RequiredAttributesNotProvidedException(String attributeName) {
         super("The attribute " + attributeName + " was not provided");
-        setAttributeName(attributeName);
+        addAttributeName(attributeName);
     }
 
-    public RequiredAttributeNotProvidedException(List<String> attributeNames, String message) {
+    public RequiredAttributesNotProvidedException(String message, List<String> attributeNames) {
         super(message);
-        setAttributeName(attributeNames);
+        addAllAttributeNames(attributeNames);
     }
 
-    public String getAttributeName() {
+    public List<String> getAttributeNames() {
+        return attributeNames;
+    }
+
+    public void setAttributeNames(List<String> attributeNames) {
+        this.attributeNames = attributeNames;
+    }
+
+    public String getFirstAttributeName() {
         return attributeNames.get(0);
     }
 
-    public void setAttributeName(String attributeName) {
+    public void addAttributeName(String attributeName) {
         this.attributeNames.add(attributeName);
     }
 
-    public void setAttributeName(List<String> attributeNames) {
+    public void addAllAttributeNames(List<String> attributeNames) {
         this.attributeNames.addAll(attributeNames);
     }
 

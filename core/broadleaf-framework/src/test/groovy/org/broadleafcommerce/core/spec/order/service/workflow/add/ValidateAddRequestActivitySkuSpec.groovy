@@ -28,7 +28,7 @@ import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationTy
 import org.broadleafcommerce.core.order.service.OrderItemService
 import org.broadleafcommerce.core.order.service.OrderService
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService
-import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException
+import org.broadleafcommerce.core.order.service.exception.RequiredAttributesNotProvidedException
 import org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity
 import org.broadleafcommerce.core.workflow.ActivityMessages
 
@@ -39,10 +39,10 @@ import org.broadleafcommerce.core.workflow.ActivityMessages
  * <li> product != null && product.getProductOptions().size() > 0
  *  a) for each productOption
  *      i) productOption.getRequired() && productOptionValidationStrategyType == null || rank <= ADD_ITEM.rank
- *          aa) attributeValues.get(productOption.getAttributeName()) == null
+ *          aa) attributeValues.get(productOption.getFirstAttributeName()) == null
  *              -> throw new RequiredAttributeNotProvidedException
  *          bb) productOption.getUseInSkuGeneration()
- *              -> attributeValuesForSku.put(productOption.getAttributeName(),...)
+ *              -> attributeValuesForSku.put(productOption.getFirstAttributeName(),...)
  *          -> productOptionValidationService.validate(_) fails if
  *              i) productOption.getProductOptionValidationType() == ProductOptionValidationType.REGEX
  *               && (productOption.getValidationString() == null || Pattern.matches == false)
@@ -114,7 +114,7 @@ class ValidateAddRequestActivitySkuSpec extends BaseAddItemActivitySpec{
         Sku sku = activity.findMatchingSku(testProduct,testAttributes, (ActivityMessages)context)
         
         then: "A RequiredAttributeNotProvided Exception is thrown"
-        RequiredAttributeNotProvidedException e = thrown()
+        RequiredAttributesNotProvidedException e = thrown()
         
     }
     

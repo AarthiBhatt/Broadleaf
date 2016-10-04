@@ -32,7 +32,7 @@ import org.broadleafcommerce.core.order.domain.OrderItem
 import org.broadleafcommerce.core.order.domain.OrderItemAttributeImpl
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService
 import org.broadleafcommerce.core.order.service.exception.ProductOptionValidationException
-import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException
+import org.broadleafcommerce.core.order.service.exception.RequiredAttributesNotProvidedException
 import org.broadleafcommerce.core.workflow.ActivityMessages
 
 
@@ -109,7 +109,7 @@ class ValidateProductOptionsActivitySpec extends BaseCheckoutActivitySpec {
         context = activity.execute(context)
 
         then: "RequiredAttributeNotProvidedException is thrown"
-        thrown(RequiredAttributeNotProvidedException)
+        thrown(RequiredAttributesNotProvidedException)
     }
 
     def "Test that ProductOptionValidationService.validate is called when ProductOptionValidationType is provided but the ProductOptionValidationStrategy is either not provided or lower than SUBMIT_ORDER in rank"() {

@@ -29,7 +29,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.exception.ProductOptionValidationException;
-import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
+import org.broadleafcommerce.core.order.service.exception.RequiredAttributesNotProvidedException;
 import org.broadleafcommerce.core.order.service.type.MessageType;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
@@ -84,7 +84,7 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
                     if (productOption.getRequired() && (productOption.getProductOptionValidationStrategyType() == null ||
                             productOption.getProductOptionValidationStrategyType().getRank() <= getProductOptionValidationStrategyType().getRank())) {
                         if (attributeValues.get(productOption.getAttributeName()) == null || StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()).getValue())) {
-                            throw new RequiredAttributeNotProvidedException("Unable to validate cart, product  (" + product.getId() + ") required attribute was not provided: " + productOption.getAttributeName(), productOption.getAttributeName());
+                            throw new RequiredAttributesNotProvidedException("Unable to validate cart, product  (" + product.getId() + ") required attribute was not provided: " + productOption.getAttributeName(), productOption.getAttributeName());
                         }
                     }
                     if (productOption.getProductOptionValidationType() != null && (productOption.getProductOptionValidationStrategyType() == null || productOption.getProductOptionValidationStrategyType().getRank() <= getProductOptionValidationStrategyType().getRank())) {

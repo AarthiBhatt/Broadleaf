@@ -53,7 +53,7 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
-import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
+import org.broadleafcommerce.core.order.service.exception.RequiredAttributesNotProvidedException;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
@@ -784,7 +784,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         if (sku == null && product != null) {
             // Set to the default sku
             if (product.getAdditionalSkus() != null && product.getAdditionalSkus().size() > 0) {
-                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options");
+                throw new RequiredAttributesNotProvidedException("Unable to find non-default sku matching given options");
             }
             sku = product.getDefaultSku();
         }
@@ -806,7 +806,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
             for (ProductOption productOption : product.getProductOptions()) {
                 if (productOption.getRequired()) {
                     if (attributeValues.get(productOption.getAttributeName()) == null) {
-                        throw new RequiredAttributeNotProvidedException("Unable to add to cart. Required attribute was not provided: " + productOption.getAttributeName());
+                        throw new RequiredAttributesNotProvidedException("Unable to add to cart. Required attribute was not provided: " + productOption.getAttributeName());
                     } else {
                         attributeValuesForSku.put(productOption.getAttributeName(), attributeValues.get(productOption.getAttributeName()));
                     }
