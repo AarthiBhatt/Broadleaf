@@ -115,4 +115,12 @@ public interface OfferServiceExtensionHandler extends ExtensionHandler {
      */
     ExtensionResultStatusType createOrderItemPriceDetailAdjustment(ExtensionResultHolder<?> resultHolder,
             OrderItemPriceDetail itemDetail);
+
+    /**
+     * Allows module extensions to add additional offers for a given offer code.
+     * @param offers
+     * @param offerCode
+     * @return
+     */
+    ExtensionResultStatusType addAdditionalOffersForCode(List<Offer> offers, OfferCode offerCode);
 }
