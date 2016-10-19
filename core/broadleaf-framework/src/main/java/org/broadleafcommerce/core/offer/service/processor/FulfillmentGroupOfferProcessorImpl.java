@@ -199,11 +199,11 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
         Collections.sort(potentials, new BeanComparator("priority"));
         potentials = removeTrailingNotCombinableFulfillmentGroupOffers(potentials);
 
+        boolean ignoreTotalitarian = BLCSystemProperty.resolveBooleanSystemProperty("ignore.totalitarian.for.fulfillment.offers", false);
         boolean fgOfferApplied = false;
         for (FulfillmentGroupOfferPotential potential : potentials) {
             Offer offer = potential.getOffer();
 
-            boolean alreadyContainsTotalitarianOffer = order.isTotalitarianOfferApplied();
             List<PromotableCandidateFulfillmentGroupOffer> candidates = offerMap.get(potential);
             for (PromotableCandidateFulfillmentGroupOffer candidate : candidates) {
                 applyFulfillmentGroupOffer(candidate.getFulfillmentGroup(), candidate);
@@ -213,7 +213,8 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
                 fg.chooseSaleOrRetailAdjustments();
             }
 
-            if ((offer.isTotalitarianOffer() != null && offer.isTotalitarianOffer()) || alreadyContainsTotalitarianOffer) {
+            boolean alreadyContainsTotalitarianOffer = order.isTotalitarianOfferApplied();
+            if (!ignoreTotalitarian && (offer.isTotalitarianOffer() || alreadyContainsTotalitarianOffer)) {
                 fgOfferApplied = compareAndAdjustFulfillmentGroupOffers(order, fgOfferApplied);
                 if (fgOfferApplied) {
                     break;
