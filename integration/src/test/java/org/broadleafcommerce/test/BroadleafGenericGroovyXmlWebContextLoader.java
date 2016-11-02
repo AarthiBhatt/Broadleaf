@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.extensibility.context.StandardConfigLocation
 import org.broadleafcommerce.common.web.extensibility.MergeXmlWebApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.core.io.ResourceLoader;
@@ -185,7 +186,7 @@ public class BroadleafGenericGroovyXmlWebContextLoader extends AbstractContextLo
 
         validateMergedContextConfiguration(webMergedConfig);
 
-        MergeXmlWebApplicationContext context = new MergeXmlWebApplicationContext();
+        MergeXmlWebApplicationContext context = new GenericMergeXmlWebApplicationContext();
         context.setPatchLocation("");
 
         ApplicationContext parent = mergedConfig.getParentApplicationContext();
@@ -202,6 +203,7 @@ public class BroadleafGenericGroovyXmlWebContextLoader extends AbstractContextLo
         prepareContext(context, webMergedConfig);
         context.refresh();
         context.registerShutdownHook();
+
         return context;
     }
 

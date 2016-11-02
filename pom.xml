@@ -37,9 +37,9 @@
         <spring.security.version>3.2.9.RELEASE</spring.security.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
         <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
-        <geb.version>0.10.0</geb.version>
-        <spock.core.version>1.0-groovy-2.3</spock.core.version>
-        <spock.spring.version>1.0-groovy-2.3</spock.spring.version>
+        <geb.version>1.0</geb.version>
+        <spock.core.version>1.1-groovy-2.3-rc-2</spock.core.version>
+        <spock.spring.version>1.1-groovy-2.3-rc-2</spock.spring.version>
         <selenium.version>2.43.1</selenium.version>
         <groovy.version>2.3.10</groovy.version>
         <project.uri>${project.baseUri}</project.uri>
