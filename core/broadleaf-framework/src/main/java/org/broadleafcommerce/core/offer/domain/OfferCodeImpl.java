@@ -134,10 +134,6 @@ public class OfferCodeImpl implements OfferCode {
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
     
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy="addedOfferCodes", targetEntity = OrderImpl.class)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    protected List<Order> orders = new ArrayList<Order>();
-
     @Transient
     protected Offer sbClonedOffer;
 
@@ -240,16 +236,6 @@ public class OfferCodeImpl implements OfferCode {
         this.offerCodeEndDate = endDate;
     }
 
-    @Override
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    @Override
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
-    
     @Override
     public Character getArchived() {
        ArchiveStatus temp;
