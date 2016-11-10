@@ -23,7 +23,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.persistence.module.provider.extension
         .ProductParentCategoryFieldPersistenceProviderExtensionManager;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
@@ -61,25 +60,22 @@ public class ProductParentCategoryFieldPersistenceProvider extends FieldPersiste
         if (!canHandlePersistence(populateValueRequest, instance)) {
             return FieldProviderResponse.NOT_HANDLED;
         }
-        boolean handled = false;
         if (extensionManager != null) {
-            ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategory(populateValueRequest.getProperty(), (Product) instance);
-            handled = ExtensionResultStatusType.NOT_HANDLED != result;
+            extensionManager.getProxy().manageParentCategory(populateValueRequest.getProperty(), (Product) instance);
         }
-        if (!handled) {
-            Long requestedValue = null;
-            if (!StringUtils.isEmpty(populateValueRequest.getRequestedValue())) {
-                requestedValue = Long.parseLong(populateValueRequest.getRequestedValue());
-            }
-            boolean dirty = checkDirtyState((Product) instance, requestedValue);
-            if (dirty) {
-                populateValueRequest.getProperty().setIsDirty(true);
-                if (requestedValue != null) {
-                    ((Product) instance).setCategory((Category) populateValueRequest.getPersistenceManager()
-                            .getDynamicEntityDao().find(CategoryImpl.class, requestedValue));
-                } else {
-                    ((Product) instance).setCategory(null);
-                }
+
+        Long requestedValue = null;
+        if (!StringUtils.isEmpty(populateValueRequest.getRequestedValue())) {
+            requestedValue = Long.parseLong(populateValueRequest.getRequestedValue());
+        }
+        boolean dirty = checkDirtyState((Product) instance, requestedValue);
+        if (dirty) {
+            populateValueRequest.getProperty().setIsDirty(true);
+            if (requestedValue != null) {
+                ((Product) instance).setCategory((Category) populateValueRequest.getPersistenceManager()
+                        .getDynamicEntityDao().find(CategoryImpl.class, requestedValue));
+            } else {
+                ((Product) instance).setCategory(null);
             }
         }
         return FieldProviderResponse.HANDLED_BREAK;
