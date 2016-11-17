@@ -19,7 +19,7 @@
 package org.broadleafcommerce.cms.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.file.service.StaticAssetPathService;
+import org.broadleafcommerce.cms.file.service.StaticAssetPathService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.model.BroadleafAttributeModifier;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
@@ -28,7 +28,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
