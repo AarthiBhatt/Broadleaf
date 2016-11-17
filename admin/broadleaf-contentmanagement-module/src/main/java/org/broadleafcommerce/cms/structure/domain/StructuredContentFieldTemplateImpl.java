@@ -20,8 +20,6 @@ package org.broadleafcommerce.cms.structure.domain;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Transformer;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -80,7 +78,7 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderBy("groupOrder")
     @BatchSize(size = 20)
-    protected List<StructuredContentFieldGroupXref> fieldGroupXrefs = new ArrayList<StructuredContentFieldGroupXref>();
+    protected List<StructuredContentFieldGroupXref> fieldGroupXrefs = new ArrayList<>();
 
     @Override
     public Long getId() {
@@ -112,7 +110,7 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
             }
         });
         
-        return Collections.unmodifiableList(new ArrayList<FieldGroup>(transformed));
+        return Collections.unmodifiableList(new ArrayList<>(transformed));
     }
 
     @Override
@@ -130,21 +128,21 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
         this.fieldGroupXrefs = fieldGroupXrefs;
     }
 
-    @Override
-    public <G extends StructuredContentFieldTemplate> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-        StructuredContentFieldTemplate cloned = createResponse.getClone();
-        cloned.setName(name);
-        for (StructuredContentFieldGroupXref entry : fieldGroupXrefs) {
-            CreateResponse<StructuredContentFieldGroupXref> clonedGroupRsp = entry.createOrRetrieveCopyInstance(context);
-            cloned.getFieldGroupXrefs().add(clonedGroupRsp.getClone());
-        }
-
-        return createResponse;
-    }
-
+// TODO microservices - deal with multitenant cloneable
+//    @Override
+//    public <G extends StructuredContentFieldTemplate> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+//        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+//        if (createResponse.isAlreadyPopulated()) {
+//            return createResponse;
+//        }
+//        StructuredContentFieldTemplate cloned = createResponse.getClone();
+//        cloned.setName(name);
+//        for (StructuredContentFieldGroupXref entry : fieldGroupXrefs) {
+//            CreateResponse<StructuredContentFieldGroupXref> clonedGroupRsp = entry.createOrRetrieveCopyInstance(context);
+//            cloned.getFieldGroupXrefs().add(clonedGroupRsp.getClone());
+//        }
+//
+//        return createResponse;
+//    }
 }
 
