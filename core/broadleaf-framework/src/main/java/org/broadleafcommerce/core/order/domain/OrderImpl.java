@@ -59,8 +59,6 @@ import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -142,13 +140,13 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             order=FieldOrder.NAME)
     protected String name;
 
-    @ManyToOne(targetEntity = CustomerImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = OrderCustomerImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     @Index(name="ORDER_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     @AdminPresentation(friendlyName = "OrderImpl_Customer", group = GroupName.Customer,
             order=FieldOrder.CUSTOMER)
     @AdminPresentationToOneLookup()
-    protected Customer customer;
+    protected OrderCustomer orderCustomer;
 
     @Column(name = "ORDER_STATUS")
     @Index(name="ORDER_STATUS_INDEX", columnNames={"ORDER_STATUS"})
@@ -382,13 +380,13 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
 
     @Override
-    public Customer getCustomer() {
-        return customer;
+    public OrderCustomer getOrderCustomer() {
+        return orderCustomer;
     }
 
     @Override
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setOrderCustomer(OrderCustomer orderCustomer) {
+        this.orderCustomer = orderCustomer;
     }
 
     @Override
@@ -715,8 +713,8 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public String getMainEntityName() {
         String customerName = null;
         String orderNumber = getOrderNumber();
-        if (!StringUtils.isEmpty(getCustomer().getFirstName()) && !StringUtils.isEmpty(getCustomer().getLastName())) {
-            customerName = getCustomer().getFirstName() + " " + getCustomer().getLastName();
+        if (!StringUtils.isEmpty(getOrderCustomer().getFirstName()) && !StringUtils.isEmpty(getOrderCustomer().getLastName())) {
+            customerName = getOrderCustomer().getFirstName() + " " + getOrderCustomer().getLastName();
         }
         if (!StringUtils.isEmpty(orderNumber) && !StringUtils.isEmpty(customerName)) {
             return orderNumber + " - " + customerName;
@@ -755,11 +753,11 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             return id.equals(other.id);
         }
 
-        if (customer == null) {
-            if (other.customer != null) {
+        if (orderCustomer == null) {
+            if (other.orderCustomer != null) {
                 return false;
             }
-        } else if (!customer.equals(other.customer)) {
+        } else if (!orderCustomer.equals(other.orderCustomer)) {
             return false;
         }
         Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
@@ -778,7 +776,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((customer == null) ? 0 : customer.hashCode());
+        result = prime * result + ((orderCustomer == null) ? 0 : orderCustomer.hashCode());
         Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
         result = prime * result + ((myDateCreated == null) ? 0 : myDateCreated.hashCode());
         return result;
@@ -811,7 +809,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         cloned.setOrderNumber(orderNumber);
         cloned.setTotalTax(getTotalTax());
         cloned.setSubmitDate(submitDate);
-        cloned.setCustomer(customer);
+        cloned.setOrderCustomer(orderCustomer);
         cloned.setStatus(getStatus());
         cloned.setTotalFulfillmentCharges(getTotalFulfillmentCharges());
         cloned.setSubTotal(getSubTotal());
