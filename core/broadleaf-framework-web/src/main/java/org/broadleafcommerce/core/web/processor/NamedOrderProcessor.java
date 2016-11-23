@@ -18,7 +18,6 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.web.expression.OrderVariableExpression;
@@ -82,8 +81,6 @@ public class NamedOrderProcessor extends AbstractBroadleafVariableModifierProces
         Map<String, Object> newModelVars = new HashMap<>();
         if (order != null) {
             newModelVars.put(orderVar, order);
-        } else {
-            newModelVars.put(orderVar, new NullOrderImpl());
         }
         return newModelVars;
     }
