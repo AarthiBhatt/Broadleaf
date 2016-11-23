@@ -146,7 +146,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
             Boolean saveCart = (Boolean) erh.getContextMap().get("saveCart");
             if (clearCart != null && clearCart.booleanValue()) {
                 orderService.cancelOrder(cart);
-                cart = orderService.createNewCartForCustomer(cart.getCustomer());
+                cart = orderService.createNewCartForCustomer(cart.getOrderCustomer());
             } else {
                 try {
                     if (repriceCart != null && repriceCart.booleanValue()) {
@@ -157,7 +157,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
                 } catch (PricingException pe) {
                     LOG.error("Pricing Exception while validating cart.   Clearing cart.", pe);
                     orderService.cancelOrder(cart);
-                    cart = orderService.createNewCartForCustomer(cart.getCustomer());
+                    cart = orderService.createNewCartForCustomer(cart.getOrderCustomer());
                 }
             }
         }
