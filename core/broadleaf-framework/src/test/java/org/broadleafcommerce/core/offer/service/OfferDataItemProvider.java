@@ -58,6 +58,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
+import org.broadleafcommerce.core.order.domain.OrderCustomerImpl;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
@@ -71,8 +73,6 @@ import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CountryImpl;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.broadleafcommerce.profile.core.domain.State;
@@ -354,23 +354,21 @@ public class OfferDataItemProvider {
         
         order.getOrderItems().add(orderItem2);
         
-        Customer customer = new CustomerImpl();
-        customer.setEmailAddress("test@test.com");
-        customer.setFirstName("John");
-        customer.setLastName("Tester");
-        customer.setReceiveEmail(true);
-        customer.setRegistered(true);
-        
-        order.setCustomer(customer);
-        
+        OrderCustomer orderCustomer = new OrderCustomerImpl();
+        orderCustomer.setEmailAddress("test@test.com");
+        orderCustomer.setFirstName("John");
+        orderCustomer.setLastName("Tester");
+
+        order.setOrderCustomer(orderCustomer);
+
         order.setEmailAddress("test@test.com");
-        
+
         FulfillmentGroup fg1 = new FulfillmentGroupImpl();
         fg1.setId(1L);
         Address address1 = new AddressImpl();
         address1.setAddressLine1("123 Test Road");
         address1.setCity("Dallas");
-        
+
         Country country = new CountryImpl();
         country.setAbbreviation("US");
         country.setName("United States");
@@ -391,12 +389,12 @@ public class OfferDataItemProvider {
         Phone primary = new PhoneImpl();
         primary.setPhoneNumber("972-976-1234");
         address1.setPhonePrimary(primary);
-        
+
         State state = new StateImpl();
         state.setAbbreviation("TX");
         state.setCountry(country);
         state.setName("Texas");
-        
+
         address1.setState(state);
         address1.setIsoCountrySubdivision("US-TX");
         fg1.setAddress(address1);
@@ -406,22 +404,22 @@ public class OfferDataItemProvider {
         fg1.setShippingPrice(new Money(10D));
         fg1.setType(FulfillmentType.PHYSICAL_SHIP);
         fg1.setOrder(order);
-        
+
         FulfillmentGroupItem fgItem1 = new FulfillmentGroupItemImpl();
         fgItem1.setFulfillmentGroup(fg1);
         fgItem1.setOrderItem(orderItem1);
         fgItem1.setQuantity(2);
         //fgItem1.setRetailPrice(new Money(19.99D));
         fg1.getFulfillmentGroupItems().add(fgItem1);
-        
+
         order.getFulfillmentGroups().add(fg1);
-        
+
         FulfillmentGroup fg2 = new FulfillmentGroupImpl();
         fg2.setId(2L);
         Address address2 = new AddressImpl();
         address2.setAddressLine1("124 Test Road");
         address2.setCity("Dallas");
-        
+
         Country country2 = new CountryImpl();
         country2.setAbbreviation("US");
         country2.setName("United States");
@@ -429,7 +427,7 @@ public class OfferDataItemProvider {
         ISOCountry isoCountry2 = new ISOCountryImpl();
         isoCountry2.setAlpha2("US");
         isoCountry2.setName("UNITED STATES");
-        
+
         address2.setCountry(country2);
 
         //TODO: microservices - deal with I18n domain
@@ -442,12 +440,12 @@ public class OfferDataItemProvider {
         Phone primary2 = new PhoneImpl();
         primary2.setPhoneNumber("972-976-1234");
         address2.setPhonePrimary(primary2);
-        
+
         State state2 = new StateImpl();
         state2.setAbbreviation("TX");
         state2.setCountry(country2);
         state2.setName("Texas");
-        
+
         address2.setState(state2);
         address2.setIsoCountrySubdivision("US-TX");
         fg2.setAddress(address2);
@@ -457,22 +455,22 @@ public class OfferDataItemProvider {
         fg2.setShippingPrice(new Money(20D));
         fg2.setType(FulfillmentType.PHYSICAL_SHIP);
         fg2.setOrder(order);
-        
+
         FulfillmentGroupItem fgItem2 = new FulfillmentGroupItemImpl();
         fgItem2.setFulfillmentGroup(fg2);
         fgItem2.setOrderItem(orderItem2);
         fgItem2.setQuantity(3);
         //fgItem2.setRetailPrice(new Money(29.99D));
         fg2.getFulfillmentGroupItems().add(fgItem2);
-        
+
         order.getFulfillmentGroups().add(fg2);
-        
+
         order.setSubTotal(new Money((2 * 19.99D) + (3 * 29.99D)));
-        
+
         orders.put(order.getId(), order);
         return order;
     }
-    
+
     public OfferOfferRuleXref createXref(OfferRule offerRule, Offer offer, String key) {
         return new OfferOfferRuleXrefImpl(offer, offerRule, key);
     }
