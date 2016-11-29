@@ -77,7 +77,8 @@ public class NamedOrderProcessor extends AbstractBroadleafVariableModifierProces
         String orderVar = tagAttributes.get("orderVar");
         String orderName = tagAttributes.get("orderName");
 
-        Order order = orderService.findNamedOrderForCustomer(orderName, customer);
+        Order order = orderCustomerFacadeService.findNamedOrderForCustomer(orderName, customer);
+        Map<String, Object> newModelVars = new HashMap<>();
         if (order != null) {
             newModelVars.put(orderVar, order);
         }
