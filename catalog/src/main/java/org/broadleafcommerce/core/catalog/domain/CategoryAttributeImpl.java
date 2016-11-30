@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -100,7 +99,7 @@ public class CategoryAttributeImpl implements CategoryAttribute {
 
     @Override
     public String getValue() {
-        return DynamicTranslationProvider.getValue(this, "value", value);
+        return value;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "value", value);
     }
 
     @Override
@@ -110,7 +109,7 @@ public class CategoryAttributeImpl implements CategoryAttribute {
 
     @Override
     public String getName() {
-        return DynamicTranslationProvider.getValue(this, "name", name);
+        return name;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override
