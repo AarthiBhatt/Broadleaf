@@ -15,13 +15,10 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.bootstrap;
+package org.broadleafcommerce.common.extensibility.context.merge;
 
 import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
-import org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor;
-import org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor;
-import org.broadleafcommerce.common.extensibility.context.merge.MergeBeanStatusProvider;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;

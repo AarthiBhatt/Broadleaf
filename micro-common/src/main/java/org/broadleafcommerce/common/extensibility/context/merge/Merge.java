@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.bootstrap;
+package org.broadleafcommerce.common.extensibility.context.merge;
 
 import org.broadleafcommerce.common.extensibility.context.merge.MergeBeanStatusProvider;
 import org.broadleafcommerce.common.extensibility.context.merge.Placement;
