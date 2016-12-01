@@ -17,8 +17,12 @@
  */
 package org.broadleafcommerce.profile.core;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author Philip Baggett (pbaggett)
@@ -26,8 +30,13 @@ import org.springframework.context.annotation.ImportResource;
 @Configuration
 @ImportResource({
         "classpath:/bl-customer-applicationContext-persistence.xml",
-        "classpath:/bl-customer-applicationContext-entity.xml",
-        "classpath:/bl-customer-applicationContext.xml"
+        "classpath:/bl-customer-applicationContext-entity.xml"
 })
+@ComponentScan
 public class CustomerAutoConfiguration {
+
+    @Bean
+    public PasswordEncoder blPasswordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+    }
 }
