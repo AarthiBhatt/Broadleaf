@@ -27,6 +27,8 @@ public interface PhoneService {
 
     public Phone create();
 
+    public void delete(Phone phone);
+
     public Phone copyPhone(Phone orig);
 
     public Phone copyPhone(Phone dest, Phone orig);

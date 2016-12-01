@@ -47,6 +47,12 @@ public class PhoneServiceImpl implements PhoneService {
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
+    public void delete(Phone phone) {
+        phoneDao.delete(phone);
+    }
+
+    @Override
     public Phone copyPhone(Phone orig) {
         return copyPhone(null, orig);
     }

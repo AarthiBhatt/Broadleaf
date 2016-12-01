@@ -45,4 +45,11 @@ public class PhoneDaoImpl implements PhoneDao {
     public Phone create() {
         return (Phone) entityConfiguration.createEntityInstance(Phone.class.getName());
     }
+
+    public void delete(Phone phone) {
+        if (!em.contains(phone)) {
+            phone = readPhoneById(phone.getId());
+        }
+        em.remove(phone);
+    }
 }
