@@ -26,4 +26,6 @@ public interface PhoneDao {
     public Phone readPhoneById(Long phoneId);
 
     public Phone create();
+
+    public void delete(Phone phone);
 }
