@@ -29,7 +29,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -50,6 +52,8 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
     
     public String viewCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId) {
         CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
+        Address address = addressService.readAddressById(customerAddress.getAddressExternalId());
+
         if (customerAddress == null) {
             throw new IllegalArgumentException("Customer Address not found with the specified customerAddressId");
         }
@@ -57,9 +61,10 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         validateCustomerOwnedData(customerAddress);
 
         CustomerAddressForm form = new CustomerAddressForm();
-        form.setAddress(customerAddress.getAddress());
+        form.setAddress(address);
         form.setAddressName(customerAddress.getAddressName());
         form.setCustomerAddressId(customerAddress.getId());
+        form.setDefault(customerAddress.isDefault());
         model.addAttribute("customerAddressForm", form);
         return getCustomerAddressesView();
     }
@@ -75,16 +80,20 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         
         Address address = addressService.saveAddress(form.getAddress());
         CustomerAddress customerAddress = customerAddressService.create();
-        customerAddress.setAddress(address);
+        customerAddress.setAddressExternalId(address.getId());
         customerAddress.setAddressName(form.getAddressName());
         customerAddress.setCustomer(CustomerState.getCustomer());
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
-        if (form.getAddress().isDefault()) {
+        if (form.isDefault()) {
             customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customerAddress.getCustomer().getId());
         }
         if (!isAjaxRequest(request)) {
             List<CustomerAddress> addresses = customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
-            model.addAttribute("addresses", addresses);
+            Map<CustomerAddress, Address> addressMap = new HashMap<>();
+            for (CustomerAddress addy : addresses) {
+                addressMap.put(addy, addressService.readAddressById(addy.getAddressExternalId()));
+            }
+            model.addAttribute("addresses", addressMap);
         }
         redirectAttributes.addFlashAttribute("successMessage", getAddressAddedMessage());
         return getCustomerAddressesRedirect();
@@ -116,10 +125,11 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
 
         validateCustomerOwnedData(customerAddress);
 
-        customerAddress.setAddress(form.getAddress());
+        Address address = addressService.saveAddress(form.getAddress());
+        customerAddress.setAddressExternalId(address.getId());
         customerAddress.setAddressName(form.getAddressName());
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
-        if (form.getAddress().isDefault()) {
+        if (form.isDefault()) {
             customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customerAddress.getCustomer().getId());
         }
         redirectAttributes.addFlashAttribute("successMessage", getAddressUpdatedMessage());

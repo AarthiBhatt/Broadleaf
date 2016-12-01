@@ -47,6 +47,8 @@ import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
+import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.StateService;
@@ -94,6 +96,9 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
 
     @Resource(name = "blCountryService")
     protected CountryService countryService;
+
+    @Resource(name = "blAddressService")
+    protected AddressService addressService;
 
     @Resource(name = "blCustomerAddressService")
     protected CustomerAddressService customerAddressService;
@@ -197,7 +202,8 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
                 //check for a default address for the customer
                 CustomerAddress defaultAddress = customerAddressService.findDefaultCustomerAddress(CustomerState.getCustomer().getId());
                 if (defaultAddress != null) {
-                    shippingForm.setAddress(defaultAddress.getAddress());
+                    Address address = addressService.readAddressById(defaultAddress.getAddressExternalId());
+                    shippingForm.setAddress(address);
                     shippingForm.setAddressName(defaultAddress.getAddressName());
                 }
             }

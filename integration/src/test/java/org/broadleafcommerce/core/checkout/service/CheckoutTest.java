@@ -287,7 +287,10 @@ public class CheckoutTest extends BaseTest {
         ISOCountry isoCountry = new ISOCountryImpl();
         isoCountry.setAlpha2("US");
         isoCountry.setName("UNITED STATES");
-        address.setIsoCountryAlpha2(isoCountry);
+
+        //TODO: microservices - deal with I18n domain
+        //address.setIsoCountryAlpha2(isoCountry);
+
         return address;
     }
 }

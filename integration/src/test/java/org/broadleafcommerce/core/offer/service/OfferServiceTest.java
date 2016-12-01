@@ -102,7 +102,9 @@ public class OfferServiceTest extends CommonSetupBaseTest {
         address.setState(stateService.findStateByAbbreviation("KY"));
         address.setCountry(countryService.findCountryByAbbreviation("US"));
         address.setIsoCountrySubdivision("US-KY");
-        address.setIsoCountryAlpha2(isoService.findISOCountryByAlpha2Code("US"));
+
+        //TODO: microservices - deal with I18n domain
+        //address.setIsoCountryAlpha2(isoService.findISOCountryByAlpha2Code("US"));
 
         FulfillmentGroup group = new FulfillmentGroupImpl();
         group.setAddress(address);

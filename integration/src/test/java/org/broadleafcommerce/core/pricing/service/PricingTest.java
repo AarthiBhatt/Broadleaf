@@ -149,7 +149,9 @@ public class PricingTest extends BaseTest {
         address.setState(state);
         address.setCountry(country);
         address.setIsoCountrySubdivision("US-TX");
-        address.setIsoCountryAlpha2(isoCountry);
+
+        //TODO: microservices - deal with I18n domain
+        //address.setIsoCountryAlpha2(isoCountry);
         
         FulfillmentGroup group = new FulfillmentGroupImpl();
         group.setAddress(address);
@@ -289,7 +291,10 @@ public class PricingTest extends BaseTest {
         address.setState(state);
         address.setCountry(country);
         address.setIsoCountrySubdivision("US-TX");
-        address.setIsoCountryAlpha2(isoCountry);
+
+        //TODO: microservices - deal with I18n domain
+        //address.setIsoCountryAlpha2(isoCountry);
+
         group1.setAddress(address);
         group1.setOrder(order);
 

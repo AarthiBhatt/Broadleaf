@@ -392,7 +392,9 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
         }
         OrderPayment cloned = createResponse.getClone();
         //some payment types will not have a billing address, e.g. cash on delivery
+
         cloned.setBillingAddress(billingAddress == null ? null : billingAddress.createOrRetrieveCopyInstance(context).getClone());
+
         cloned.setReferenceNumber(referenceNumber);
         cloned.setAmount(amount == null ? null : new Money(amount));
         cloned.setOrder(order);

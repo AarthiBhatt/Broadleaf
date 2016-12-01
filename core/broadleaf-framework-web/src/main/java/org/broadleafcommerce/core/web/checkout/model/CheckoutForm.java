@@ -52,8 +52,11 @@ public class CheckoutForm implements Serializable {
         billingAddress.setPhoneSecondary(new PhoneImpl());
         shippingAddress.setPhoneFax(new PhoneImpl());
         billingAddress.setPhoneFax(new PhoneImpl());
-        shippingAddress.setIsoCountryAlpha2(new ISOCountryImpl());
-        billingAddress.setIsoCountryAlpha2(new ISOCountryImpl());
+
+        //TODO: microservices - deal with I18n domain
+        //shippingAddress.setIsoCountryAlpha2(new ISOCountryImpl());
+        //billingAddress.setIsoCountryAlpha2(new ISOCountryImpl());
+
         isSameAddress = true;
 
         /**

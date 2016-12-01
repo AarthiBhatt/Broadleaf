@@ -146,7 +146,9 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
         }
 
         address.setCountry(country);
-        address.setIsoCountryAlpha2(isoCountry);
+
+        //TODO: microservices - deal with I18n domain
+        //address.setIsoCountryAlpha2(isoCountry);
 
         if (dto.getAddressPhone() != null) {
             Phone billingPhone = phoneService.create();

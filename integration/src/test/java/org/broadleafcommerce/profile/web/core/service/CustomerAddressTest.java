@@ -98,7 +98,9 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
         customerAddress.getAddress().setCountry(country);
         customerAddress.getAddress().setIsoCountrySubdivision("US-KY");
         ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code("US");
-        customerAddress.getAddress().setIsoCountryAlpha2(isoCountry);
+
+        //TODO: microservices - deal with I18n domain
+        //customerAddress.getAddress().setIsoCountryAlpha2(isoCountry);
 
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
         assert customer.equals(customerAddress.getCustomer());

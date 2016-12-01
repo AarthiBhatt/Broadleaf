@@ -171,7 +171,9 @@ public abstract class CommonSetupBaseTest extends BaseTest {
 
         customerAddress.getAddress().setIsoCountrySubdivision("US-KY");
         ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code("US");
-        customerAddress.getAddress().setIsoCountryAlpha2(isoCountry);
+
+        //TODO: microservices - deal with I18n domain
+        //customerAddress.getAddress().setIsoCountryAlpha2(isoCountry);
 
         return customerAddressService.saveCustomerAddress(customerAddress);
     }

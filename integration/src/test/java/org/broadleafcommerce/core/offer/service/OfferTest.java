@@ -658,7 +658,9 @@ public class OfferTest extends CommonSetupBaseTest {
         address.setState(state);
         address.setCountry(country);
         address.setIsoCountrySubdivision("US-TX");
-        address.setIsoCountryAlpha2(isoCountry);
+
+        //TODO: microservices - deal with I18n domain
+        //address.setIsoCountryAlpha2(isoCountry);
         
         for (OrderItem orderItem : order.getOrderItems()) {
             FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();

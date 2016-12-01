@@ -319,16 +319,17 @@ public class SimpleTaxProvider implements TaxProvider {
                 return BigDecimal.valueOf(stateCodeRate);
             }
 
-            Double countryCodeRate;
-            if (address.getIsoCountryAlpha2() != null) {
-                countryCodeRate = lookupCountryRate(itemCountryTaxRateMap, address.getIsoCountryAlpha2());
-            } else {
-                countryCodeRate = lookupCountryRate(itemCountryTaxRateMap, address.getCountry());
-            }
-
-            if (countryCodeRate != null) {
-                return BigDecimal.valueOf(countryCodeRate);
-            }
+//TODO: microservices - deal with I18n domain and probably remove country
+//            Double countryCodeRate;
+//            if (address.getIsoCountryAlpha2() != null) {
+//                countryCodeRate = lookupCountryRate(itemCountryTaxRateMap, address.getIsoCountryAlpha2());
+//            } else {
+//                countryCodeRate = lookupCountryRate(itemCountryTaxRateMap, address.getCountry());
+//            }
+//
+//            if (countryCodeRate != null) {
+//                return BigDecimal.valueOf(countryCodeRate);
+//            }
         }
 
         if (defaultItemTaxRate != null) {
@@ -376,16 +377,17 @@ public class SimpleTaxProvider implements TaxProvider {
                     return BigDecimal.valueOf(stateCodeRate);
                 }
 
-                Double countryCodeRate;
-                if (address.getIsoCountryAlpha2() != null) {
-                    countryCodeRate = lookupCountryRate(fulfillmentGroupCountryTaxRateMap, address.getIsoCountryAlpha2());
-                } else {
-                    countryCodeRate = lookupCountryRate(fulfillmentGroupCountryTaxRateMap, address.getCountry());
-                }
-
-                if (countryCodeRate != null) {
-                    return BigDecimal.valueOf(countryCodeRate);
-                }
+//TODO: microservices - deal with I18n domain and probably remove country
+//                Double countryCodeRate;
+//                if (address.getIsoCountryAlpha2() != null) {
+//                    countryCodeRate = lookupCountryRate(fulfillmentGroupCountryTaxRateMap, address.getIsoCountryAlpha2());
+//                } else {
+//                    countryCodeRate = lookupCountryRate(fulfillmentGroupCountryTaxRateMap, address.getCountry());
+//                }
+//
+//                if (countryCodeRate != null) {
+//                    return BigDecimal.valueOf(countryCodeRate);
+//                }
             }
 
             if (defaultFulfillmentGroupTaxRate != null) {

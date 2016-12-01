@@ -19,7 +19,7 @@
 package org.broadleafcommerce.cms.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.file.service.StaticAssetPathService;
+import org.broadleafcommerce.cms.file.service.StaticAssetPathService;
 import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
 import org.broadleafcommerce.presentation.model.BroadleafAttributeModifier;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
