@@ -25,7 +25,6 @@ import org.broadleafcommerce.common.util.UnitOfMeasureUtil;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -127,18 +126,8 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                     Sku sku = null;
                     if (fulfillmentGroupItem.getOrderItem() instanceof DiscreteOrderItem) {
                         sku = ((DiscreteOrderItem)fulfillmentGroupItem.getOrderItem()).getSku();
-                    } else if (fulfillmentGroupItem.getOrderItem() instanceof BundleOrderItem) {
-                        sku = ((BundleOrderItem)fulfillmentGroupItem.getOrderItem()).getSku();
                     }
 
-                    if (sku != null && option.getUseFlatRates()) {                        
-                        BigDecimal rate = sku.getFulfillmentFlatRates().get(option);
-                        if (rate != null) {
-                            addToTotal = false;
-                            flatTotal = flatTotal.add(rate);
-                        }
-                    }
-                    
                     if (addToTotal) {
                         foundCandidateForBand = true;
                         BigDecimal price = (fulfillmentGroupItem.getTotalItemAmount() != null) ? fulfillmentGroupItem.getTotalItemAmount().getAmount() : null;
