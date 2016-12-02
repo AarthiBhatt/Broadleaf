@@ -24,7 +24,6 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
@@ -118,7 +117,7 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
 
     @Override
     public String getName() {
-        return DynamicTranslationProvider.getValue(this, "name", name);
+        return name;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override
@@ -128,7 +127,7 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
 
     @Override
     public String getLongDescription() {
-        return DynamicTranslationProvider.getValue(this, "longDescription", longDescription);
+        return longDescription;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "longDescription", longDescription);
     }
 
     @Override
