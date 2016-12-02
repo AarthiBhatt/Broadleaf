@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
 
 import java.io.Serializable;
 
@@ -27,9 +27,9 @@ public interface CustomerOffer extends Serializable {
 
     public void setId(Long id) ;
 
-    public Customer getCustomer() ;
+    public OrderCustomer getOrderCustomer() ;
 
-    public void setCustomer(Customer customer) ;
+    public void setCustomer(OrderCustomer orderCustomer) ;
 
     public Offer getOffer() ;
 

@@ -17,8 +17,8 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.broadleafcommerce.core.order.domain.OrderCustomer;
+import org.broadleafcommerce.core.order.domain.OrderCustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -53,10 +53,10 @@ public class CustomerOfferImpl implements CustomerOffer {
     @Column(name = "CUSTOMER_OFFER_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
+    @ManyToOne(targetEntity = OrderCustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
     @Index(name="CUSTOFFER_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
-    protected Customer customer;
+    protected OrderCustomer orderCustomer;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
@@ -84,20 +84,20 @@ public class CustomerOfferImpl implements CustomerOffer {
     }
 
     @Override
-    public Customer getCustomer() {
-        return customer;
+    public OrderCustomer getOrderCustomer() {
+        return orderCustomer;
     }
 
     @Override
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setCustomer(OrderCustomer orderCustomer) {
+        this.orderCustomer = orderCustomer;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((customer == null) ? 0 : customer.hashCode());
+        result = prime * result + ((orderCustomer == null) ? 0 : orderCustomer.hashCode());
         result = prime * result + ((offer == null) ? 0 : offer.hashCode());
         return result;
     }
@@ -116,10 +116,10 @@ public class CustomerOfferImpl implements CustomerOffer {
             return id.equals(other.id);
         }
 
-        if (customer == null) {
-            if (other.customer != null)
+        if (orderCustomer == null) {
+            if (other.orderCustomer != null)
                 return false;
-        } else if (!customer.equals(other.customer))
+        } else if (!orderCustomer.equals(other.orderCustomer))
             return false;
         if (offer == null) {
             if (other.offer != null)
