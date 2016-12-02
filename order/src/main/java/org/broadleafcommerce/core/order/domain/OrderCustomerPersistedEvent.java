@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerPersistedEntityListener;
 import org.springframework.context.ApplicationEvent;
 
 
@@ -34,7 +32,7 @@ public class OrderCustomerPersistedEvent extends ApplicationEvent {
     }
     
     /**
-     * Gets the newly-persisted {@link Customer} set by the {@link CustomerPersistedEntityListener}
+     * Gets the newly-persisted {@link OrderCustomer} set by the {@link OrderCustomerPersistedEntityListener}
      * 
      * @return
      */

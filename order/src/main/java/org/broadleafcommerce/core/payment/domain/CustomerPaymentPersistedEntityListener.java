@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.core.order.domain.OrderCustomerPersistedEvent;
-import org.broadleafcommerce.profile.core.domain.CustomerPersistedEvent;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
