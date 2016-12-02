@@ -18,9 +18,7 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentPricingProvider;
 
 import java.io.Serializable;
 

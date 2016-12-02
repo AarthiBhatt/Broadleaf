@@ -23,7 +23,6 @@ import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.profile.core.domain.AdditionalFields;
-import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.io.Serializable;
 import java.util.Map;

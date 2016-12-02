@@ -22,7 +22,6 @@ import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -32,9 +31,6 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
-import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity;
-import org.broadleafcommerce.core.pricing.service.workflow.TotalActivity;
-import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.io.Serializable;
 import java.util.Date;
