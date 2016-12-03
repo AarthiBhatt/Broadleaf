@@ -414,22 +414,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
-    public boolean isInCategory(String categoryName) {
-        Category currentCategory = category;
-        if (currentCategory != null) {
-            if (currentCategory.getName().equals(categoryName)) {
-                return true;
-            }
-            while ((currentCategory = currentCategory.getDefaultParentCategory()) != null) {
-                if (currentCategory.getName().equals(categoryName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
     public List<OrderItemQualifier> getOrderItemQualifiers() {
         return this.orderItemQualifiers;
     }

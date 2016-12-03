@@ -51,6 +51,15 @@ public interface CatalogService {
      */
     public List<Product> findProductsByName(String searchName, int limit, int offset);
 
+    /**
+     * Checks to see if there's a category in {@code category}'s tree that has the name {@code categoryName}
+     * 
+     * @param category
+     * @param categoryName
+     * @return
+     */
+    public boolean isInCategory(Category category, String categoryName);
+    
     public List<Product> findActiveProductsByCategory(Category category);
 
     /**
