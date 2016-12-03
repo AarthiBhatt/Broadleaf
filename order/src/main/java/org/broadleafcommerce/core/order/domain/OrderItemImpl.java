@@ -44,8 +44,6 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.util.HibernateUtils;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
@@ -58,10 +56,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.proxy.HibernateProxy;
+
+import com.broadleafcommerce.order.common.domain.OrderCategory;
+import com.broadleafcommerce.order.common.domain.OrderCategoryImpl;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -85,7 +83,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 
 @Entity
@@ -123,14 +120,13 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = OrderCategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="ORDERITEM_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
-    @NotFound(action = NotFoundAction.IGNORE)
     @AdminPresentation(friendlyName = "OrderItemImpl_Category", order=Presentation.FieldOrder.CATEGORY,
             group = Presentation.Group.Name.Catalog, groupOrder = Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
-    protected Category category;
+    protected OrderCategory category;
 
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
@@ -265,9 +261,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Column(name = "CART_MESSAGE")
     protected List<String> cartMessages;
 
-    @Transient
-    protected Category deproxiedCategory;
-
     @Override
     public Money getRetailPrice() {
         if (retailPrice == null) {
@@ -340,27 +333,13 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
-    public Category getCategory() {
-        if (deproxiedCategory == null) {
-            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
-
-            if (category != null && postLoaderDao != null) {
-                Long id = category.getId();
-                deproxiedCategory = postLoaderDao.find(CategoryImpl.class, id);
-            } else if (category != null && category instanceof HibernateProxy) {
-                deproxiedCategory = HibernateUtils.deproxy(category);
-            } else {
-                deproxiedCategory = category;
-            }
-        }
-        
-        return deproxiedCategory;
+    public OrderCategory getCategory() {
+       return category;
     }
 
     @Override
-    public void setCategory(Category category) {
+    public void setCategory(OrderCategory category) {
         this.category = category;
-        deproxiedCategory = null;
     }
 
     @Override

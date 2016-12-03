@@ -19,11 +19,13 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
+
+import com.broadleafcommerce.order.common.domain.OrderCategory;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -211,9 +213,9 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      */
     void setOrderItemPriceDetails(List<OrderItemPriceDetail> orderItemPriceDetails);
 
-    Category getCategory();
+    OrderCategory getCategory();
 
-    void setCategory(Category category);
+    void setCategory(OrderCategory category);
 
     List<CandidateItemOffer> getCandidateItemOffers();
 
@@ -255,8 +257,6 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
     PersonalMessage getPersonalMessage();
 
     void setPersonalMessage(PersonalMessage personalMessage);
-
-    boolean isInCategory(String categoryName);
 
     GiftWrapOrderItem getGiftWrapOrderItem();
 
