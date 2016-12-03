@@ -22,7 +22,6 @@ import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -33,6 +32,8 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
+import com.broadleafcommerce.order.common.domain.OrderSku;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -303,15 +304,6 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
     void setPayments(List<OrderPayment> payments);
 
     /**
-     * Determines if this {@link Order} has an item in the given category.
-     * 
-     * @param categoryName the {@link Category#getName} to check
-     * @return <b>true</b> if at least one {@link OrderItem} is in the given category, <b>false</b> otherwise.
-     * @see {@link OrderItem#isInCategory(String)}
-     */
-    boolean hasCategoryItem(String categoryName);
-
-    /**
      * Returns a unmodifiable List of OrderAdjustment.  To modify the List of OrderAdjustment, please
      * use the addOrderAdjustments or removeAllOrderAdjustments methods.
      * 
@@ -344,7 +336,7 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      * @param sku The sku to check for
      * @return whether or not the given SKU exists in the cart
      */
-    boolean containsSku(Sku sku);
+    boolean containsSku(OrderSku sku);
 
     List<OfferCode> getAddedOfferCodes();
 

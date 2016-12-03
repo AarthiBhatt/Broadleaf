@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.order.domain;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.audit.Auditable;
-import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
@@ -45,7 +44,6 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -70,6 +68,8 @@ import org.hibernate.annotations.Parameter;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import com.broadleafcommerce.order.common.domain.OrderCustomerImpl;
+import com.broadleafcommerce.order.common.domain.OrderSku;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,7 +81,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -99,7 +98,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@EntityListeners(value = { AuditableListener.class, OrderPersistedEntityListener.class })
+// TODO microservices - deal with auditable listener
+//@EntityListeners(value = { AuditableListener.class, OrderPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
@@ -506,16 +506,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
 
     @Override
-    public boolean hasCategoryItem(String categoryName) {
-        for (OrderItem orderItem : orderItems) {
-            if(orderItem.isInCategory(categoryName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
     public List<OrderAdjustment> getOrderAdjustments() {
         return this.orderAdjustments;
     }
@@ -548,7 +538,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
 
     @Override
-    public boolean containsSku(Sku sku) {
+    public boolean containsSku(OrderSku sku) {
         for (OrderItem orderItem : getOrderItems()) {
             if (orderItem instanceof DiscreteOrderItem) {
                 DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
