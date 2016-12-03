@@ -18,21 +18,25 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.Sku;
+
+import com.broadleafcommerce.order.common.domain.OrderProduct;
+import com.broadleafcommerce.order.common.domain.OrderSku;
+import com.broadleafcommerce.order.common.domain.dto.OrderSkuDTO;
 
 import java.util.List;
 import java.util.Map;
 
 public interface DiscreteOrderItem extends OrderItem, SkuAccessor, Cloneable {
 
-    Sku getSku();
+    OrderSku getSku();
 
-    void setSku(Sku sku);
+    void setSku(OrderSku sku);
+    
+    void setSku(OrderSkuDTO skuDTO);
 
-    Product getProduct();
+    OrderProduct getProduct();
 
-    void setProduct(Product product);
+    void setProduct(OrderProduct product);
 
     Money getTaxablePrice();
 

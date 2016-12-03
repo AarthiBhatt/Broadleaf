@@ -27,19 +27,17 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.util.HibernateUtils;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-import org.hibernate.proxy.HibernateProxy;
+
+import com.broadleafcommerce.order.common.domain.OrderProduct;
+import com.broadleafcommerce.order.common.domain.OrderProductImpl;
+import com.broadleafcommerce.order.common.domain.OrderSku;
+import com.broadleafcommerce.order.common.domain.OrderSkuImpl;
+import com.broadleafcommerce.order.common.domain.dto.OrderSkuDTO;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -52,7 +50,6 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -60,7 +57,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -81,22 +77,21 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             group = "DiscreteOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
     
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, optional=false)
+    @ManyToOne(targetEntity = OrderSkuImpl.class, optional=false)
     @JoinColumn(name = "SKU_ID", nullable = false)
     @Index(name="DISCRETE_SKU_INDEX", columnNames={"SKU_ID"})
     @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Sku", order=Presentation.FieldOrder.SKU,
             group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
-    protected Sku sku;
+    protected OrderSku sku;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
+    @ManyToOne(targetEntity = OrderProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="DISCRETE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
-    @NotFound(action = NotFoundAction.IGNORE)
     @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Product", order=Presentation.FieldOrder.PRODUCT,
             group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
-    protected Product product;
+    protected OrderProduct product;
 
     @ElementCollection
     @MapKeyColumn(name="NAME")
@@ -110,68 +105,42 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
 
-    @Transient
-    protected Sku deproxiedSku;
-
-    @Transient
-    protected Product deproxiedProduct;
-
     @Override
-    public Sku getSku() {
-        if (deproxiedSku == null) {
-            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
-
-            if (postLoaderDao != null) {
-                Long id = sku.getId();
-                deproxiedSku = postLoaderDao.find(SkuImpl.class, id);
-            } else if (sku instanceof HibernateProxy) {
-                deproxiedSku = HibernateUtils.deproxy(sku);
-            } else {
-                deproxiedSku = sku;
-            }
-        }
-
-        return deproxiedSku;
+    public OrderSku getSku() {
+        return sku;
     }
 
+
     @Override
-    public void setSku(Sku sku) {
+    public void setSku(OrderSku sku) {
         this.sku = sku;
-        if (sku.hasRetailPrice()) {
-            this.baseRetailPrice = sku.getRetailPrice().getAmount();
+    }
+    
+    @Override
+    public void setSku(OrderSkuDTO skuDTO) {
+        setSku(skuDTO.getSku());
+        if (skuDTO.hasRetailPrice()) {
+            this.baseRetailPrice = skuDTO.getRetailPrice().getAmount();
         }
-        if (sku.hasSalePrice()) {
-            this.baseSalePrice = sku.getSalePrice().getAmount();
+        if (skuDTO.hasSalePrice()) {
+            this.baseSalePrice = skuDTO.getSalePrice().getAmount();
         }
-        this.itemTaxable = sku.isTaxable();
-        setName(sku.getName());
+        this.itemTaxable = skuDTO.isTaxable();
+        setName(skuDTO.getName());
     }
 
     @Override
     public Boolean isTaxable() {
-        return (sku == null || sku.isTaxable() == null || sku.isTaxable());
+        return itemTaxable;
     }
 
     @Override
-    public Product getProduct() {
-        if (deproxiedProduct == null) {
-            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
-
-            if (product != null && postLoaderDao != null) {
-                Long id = product.getId();
-                deproxiedProduct = postLoaderDao.find(ProductImpl.class, id);
-            } else if (product instanceof HibernateProxy) {
-                deproxiedProduct = HibernateUtils.deproxy(product);
-            } else {
-                deproxiedProduct = product;
-            }
-        }
-
-        return deproxiedProduct;
+    public OrderProduct getProduct() {
+        return product;
     }
 
     @Override
-    public void setProduct(Product product) {
+    public void setProduct(OrderProduct product) {
         this.product = product;
     }
 
@@ -183,15 +152,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         this.order = order;
     }
 
-    @Override
-    public String getName() {
-        String name = super.getName();
-        if (name == null) {
-            return sku.getName();
-        }
-        return name;
-    }
-    
     @Override
     public Order getOrder() {
         return order;
