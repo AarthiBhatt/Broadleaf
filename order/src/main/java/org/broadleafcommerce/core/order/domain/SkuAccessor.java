@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import org.broadleafcommerce.core.catalog.domain.Sku;
+import com.broadleafcommerce.order.common.domain.OrderSku;
 
 /**
  * Interface indicating that an item contains a getSku method.
@@ -27,5 +27,5 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
  * Created by bpolster.
  */
 public interface SkuAccessor {
-    Sku getSku();
+    OrderSku getSku();
 }
