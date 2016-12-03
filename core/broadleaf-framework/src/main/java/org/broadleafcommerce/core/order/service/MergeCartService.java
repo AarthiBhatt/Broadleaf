@@ -18,11 +18,12 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 /**
  * @author Andre Azzolini (apazzolini)

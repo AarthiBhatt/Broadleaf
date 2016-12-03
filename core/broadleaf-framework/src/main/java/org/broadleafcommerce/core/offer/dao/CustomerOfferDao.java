@@ -18,7 +18,8 @@
 package org.broadleafcommerce.core.offer.dao;
 
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
+
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 import java.util.List;
 

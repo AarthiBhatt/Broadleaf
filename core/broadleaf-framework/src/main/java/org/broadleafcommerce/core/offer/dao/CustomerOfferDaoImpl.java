@@ -20,9 +20,10 @@ package org.broadleafcommerce.core.offer.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.core.offer.domain.CustomerOfferImpl;
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 import java.util.List;
 

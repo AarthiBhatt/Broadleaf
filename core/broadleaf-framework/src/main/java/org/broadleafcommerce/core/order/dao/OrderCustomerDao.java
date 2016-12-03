@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.order.dao;
 
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 public interface OrderCustomerDao {
     

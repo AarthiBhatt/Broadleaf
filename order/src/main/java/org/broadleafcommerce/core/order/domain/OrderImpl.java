@@ -68,6 +68,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
+import com.broadleafcommerce.order.common.domain.OrderCustomerImpl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;

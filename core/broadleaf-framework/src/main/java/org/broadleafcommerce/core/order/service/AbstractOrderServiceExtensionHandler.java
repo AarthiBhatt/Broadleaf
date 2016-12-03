@@ -22,8 +22,9 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
+
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 import java.util.List;
 

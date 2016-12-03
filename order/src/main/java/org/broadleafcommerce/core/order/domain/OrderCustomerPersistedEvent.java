@@ -19,6 +19,8 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.springframework.context.ApplicationEvent;
 
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
+
 
 public class OrderCustomerPersistedEvent extends ApplicationEvent {
     
