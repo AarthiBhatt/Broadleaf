@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;

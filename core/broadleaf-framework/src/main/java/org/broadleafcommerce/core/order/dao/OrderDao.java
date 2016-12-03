@@ -18,9 +18,10 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 import java.util.Date;
 import java.util.List;

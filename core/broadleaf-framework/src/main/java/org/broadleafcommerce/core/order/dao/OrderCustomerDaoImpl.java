@@ -18,8 +18,9 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.springframework.stereotype.Repository;
+
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;

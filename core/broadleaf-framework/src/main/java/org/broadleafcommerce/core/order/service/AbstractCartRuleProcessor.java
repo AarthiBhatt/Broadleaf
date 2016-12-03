@@ -21,8 +21,9 @@ import org.broadleafcommerce.common.rule.AbstractRuleProcessor;
 import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 import java.util.HashMap;
 import java.util.Iterator;

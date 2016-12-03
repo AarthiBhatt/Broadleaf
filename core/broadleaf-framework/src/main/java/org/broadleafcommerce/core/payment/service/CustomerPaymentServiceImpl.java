@@ -17,12 +17,13 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.order.service.OrderCustomerService;
 import org.broadleafcommerce.core.payment.dao.CustomerPaymentDao;
 import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 import java.util.List;
 

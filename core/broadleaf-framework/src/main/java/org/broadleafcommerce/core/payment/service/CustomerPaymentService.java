@@ -17,8 +17,9 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
 import org.broadleafcommerce.core.payment.domain.CustomerPayment;
+
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 import java.util.List;
 

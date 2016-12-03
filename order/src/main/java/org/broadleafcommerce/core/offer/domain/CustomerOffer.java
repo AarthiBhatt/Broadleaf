@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.core.order.domain.OrderCustomer;
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 import java.io.Serializable;
 
