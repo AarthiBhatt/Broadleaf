@@ -19,9 +19,7 @@ package org.broadleafcommerce.cms.web.expression;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
-import org.broadleafcommerce.presentation.condition.TemplatingExistCondition;
-import org.springframework.context.annotation.Conditional;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -38,7 +36,7 @@ import javax.annotation.Resource;
  * @author by reginaldccole
  */
 @Component("blAssetURLVariableExpression")
-@Conditional(TemplatingExistCondition.class)
+@ConditionalOnTemplating
 public class AssetURLVariableExpression implements BroadleafVariableExpression {
 
     @Resource(name="blStaticAssetPathService")
