@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -104,6 +103,9 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @OneToMany(mappedBy = "discreteOrderItem", targetEntity = DiscreteOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
+    
+    @Column(name = "SKU_ACTIVE")
+    protected boolean active;
 
     @Override
     public OrderSku getSku() {
@@ -125,6 +127,8 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         if (skuDTO.hasSalePrice()) {
             this.baseSalePrice = skuDTO.getSalePrice().getAmount();
         }
+        this.active = skuDTO.isActive();
+        this.discountsAllowed = skuDTO.isDiscountable();
         this.itemTaxable = skuDTO.isTaxable();
         setName(skuDTO.getName());
     }
@@ -349,10 +353,9 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Override
     public boolean isDiscountingAllowed() {
         if (discountsAllowed == null) {
-            return sku.isDiscountable();
-        } else {
-            return discountsAllowed.booleanValue();
+            return false;
         }
+        return discountsAllowed.booleanValue();
     }
 
     @Override
@@ -401,6 +404,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public boolean isSkuActive() {
-        return sku.isActive();
+        return active;
     }
 }
