@@ -325,15 +325,15 @@ public class OrderItemServiceImpl implements OrderItemService {
             orderItemRequest.setQuantity(doi.getQuantity());
             
             if (doi.getCategory() != null) {
-                orderItemRequest.setCategoryId(doi.getCategory().getId());
+                orderItemRequest.setCategoryId(doi.getCategory().getExternalId());
             }
             
             if (doi.getProduct() != null) {
-                orderItemRequest.setProductId(doi.getProduct().getId());
+                orderItemRequest.setProductId(doi.getProduct().getExternalId());
             }
             
             if (doi.getSku() != null) {
-                orderItemRequest.setSkuId(doi.getSku().getId());
+                orderItemRequest.setSkuId(doi.getSku().getExternalId());
             }
             
             if (doi.getOrderItemAttributes() != null) {
