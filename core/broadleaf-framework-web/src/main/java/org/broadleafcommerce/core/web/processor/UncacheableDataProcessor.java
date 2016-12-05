@@ -86,7 +86,7 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
     @Resource(name = "blUncacheableDataProcessorExtensionManager")
     protected UncacheableDataProcessorExtensionManager extensionManager;
 
-    private String defaultCallbackFunction = "updateUncacheableData(params)";
+    private String defaultCallbackFunction = "HCUncacheableData.updateUncacheableData(params)";
 
     @Override
     public String getName() {
