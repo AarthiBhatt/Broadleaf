@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.payment.service;
 import org.broadleafcommerce.common.payment.dto.AddressDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderAddress;
 import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -29,7 +30,7 @@ import org.broadleafcommerce.profile.core.domain.Address;
  */
 public interface PaymentResponseDTOToEntityService {
 
-    public void populateBillingInfo(PaymentResponseDTO responseDTO, OrderPayment payment, Address tempBillingAddress, boolean isUseBillingAddressFromGateway);
+    public void populateBillingInfo(PaymentResponseDTO responseDTO, OrderPayment payment, OrderAddress tempBillingAddress, boolean isUseBillingAddressFromGateway);
 
     public void populateShippingInfo(PaymentResponseDTO responseDTO, Order order);
 

@@ -24,16 +24,17 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.core.order.domain.OrderAddress;
 import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOption;
 import org.broadleafcommerce.core.pricing.domain.ShippingRate;
 import org.broadleafcommerce.core.pricing.service.ShippingRateService;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFulfillmentPricingProvider;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
-import org.broadleafcommerce.profile.core.domain.Address;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @deprecated Superceded by functionality given by {@link BandedPriceFulfillmentOption} and {@link BandedFulfillmentPricingProvider}
@@ -74,12 +75,12 @@ public class BandedShippingModule implements ShippingModule {
             fulfillmentGroup.setRetailShippingPrice(BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, fulfillmentGroup.getOrder().getCurrency()));
             return;
         }
-        Address address = fulfillmentGroup.getAddress();
+        OrderAddress address = fulfillmentGroup.getAddress();
         String state = null;
         if (StringUtils.isNotBlank(address.getStateProvinceRegion())) {
             state = address.getStateProvinceRegion();
-        } else if (address.getState() != null) {
-            state = address.getState().getAbbreviation();
+        } else if (address.getStateProvinceRegion() != null) {
+            state = address.getStateProvinceRegion();
         }
 
         BigDecimal retailTotal = new BigDecimal(0);

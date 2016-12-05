@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderAddress;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
@@ -41,6 +42,7 @@ import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
 import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 
 /**
@@ -73,8 +75,8 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
     protected CountrySubdivisionService countrySubdivisionService;
 
     @Override
-    public void populateBillingInfo(PaymentResponseDTO responseDTO, OrderPayment payment, Address tempBillingAddress, boolean isUseBillingAddressFromGateway) {
-        Address billingAddress = tempBillingAddress;
+    public void populateBillingInfo(PaymentResponseDTO responseDTO, OrderPayment payment, OrderAddress tempBillingAddress, boolean isUseBillingAddressFromGateway) {
+        OrderAddress billingAddress = tempBillingAddress;
         if (responseDTO.getBillTo() != null && isUseBillingAddressFromGateway) {
             billingAddress = addressService.create();
             AddressDTO<PaymentResponseDTO> billToDTO = responseDTO.getBillTo();
@@ -87,7 +89,7 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
     @Override
     public void populateShippingInfo(PaymentResponseDTO responseDTO, Order order) {
         FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(order);
-        Address shippingAddress = null;
+        OrderAddress shippingAddress = null;
         if (responseDTO.getShipTo() != null && shippableFulfillmentGroup != null) {
             shippingAddress = addressService.create();
             AddressDTO<PaymentResponseDTO> shipToDTO = responseDTO.getShipTo();

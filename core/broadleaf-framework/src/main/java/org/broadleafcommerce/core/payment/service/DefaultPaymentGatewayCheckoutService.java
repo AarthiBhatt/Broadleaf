@@ -32,11 +32,11 @@ import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderAddress;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
-import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -127,7 +127,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         // If this gateway does not support multiple payments then mark all of the existing payments
         // as invalid before adding the new one
         List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
-        Address tempBillingAddress = null;
+        OrderAddress tempBillingAddress = null;
         if (!config.handlesMultiplePayments()) {
             PaymentGatewayType gateway = config.getGatewayType();
             for (OrderPayment p : order.getPayments()) {
