@@ -17,24 +17,23 @@
  */
 package org.broadleafcommerce.core.promotionMessage.service;
 
-
-import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
 import org.broadleafcommerce.core.promotionMessage.dto.PromotionMessageDTO;
 
+import com.broadleafcommerce.order.common.domain.OrderProduct;
 import java.util.List;
 import java.util.Map;
 
 /**
  * A {@link PromotionMessageGenerator} understands how to gather applicable {@link PromotionMessage}s
- *  for the given {@link Product} or {@link OrderItem}.
+ *  for the given {@link OrderProduct} or {@link OrderItem}.
  * 
  * @author Chris Kittrell (ckittrell)
  */
 public interface PromotionMessageGenerator {
     
-    Map<String, List<PromotionMessageDTO>> generatePromotionMessages(Product product);
+    Map<String, List<PromotionMessageDTO>> generatePromotionMessages(OrderProduct product);
 
     List<String> generatePromotionMessages(OrderItem orderItem);
 
