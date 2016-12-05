@@ -317,16 +317,8 @@
             <list>
             </list>
         </property>
-    </bean>   
-     
-    
-    <bean id="blPaymentGatewayConfigurationServices" class="org.springframework.beans.factory.config.ListFactoryBean" >
-        <property name="sourceList">
-            <list>
-            </list>
-        </property>
     </bean>
-    
+
     <bean id="blSiteMapGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
