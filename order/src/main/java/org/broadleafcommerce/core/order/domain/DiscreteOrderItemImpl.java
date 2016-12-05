@@ -162,69 +162,73 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     }
 
     protected boolean updateSalePrice() {
-        if (isSalePriceOverride()) {
-            return false;
-        }
-
-        Money skuSalePrice = null;
-
-        DynamicSkuPrices priceData = getSku().getPriceData();
-        if (priceData != null) {
-            skuSalePrice = priceData.getPriceForQuantity(quantity);
-        }
-        if (skuSalePrice == null) {
-            skuSalePrice = getSku().getSalePrice();
-        }
-
-        boolean updated = false;
-        //use the sku prices - the retail and sale prices could be null
-        if (skuSalePrice != null && !skuSalePrice.getAmount().equals(salePrice)) {
-            baseSalePrice = skuSalePrice.getAmount();
-            salePrice = skuSalePrice.getAmount();
-            updated = true;
-        }
-        
-        // If there is no more sale price (because it got removed) then detect that case as well
-        if (skuSalePrice == null && salePrice != null) {
-            baseSalePrice = null;
-            salePrice = null;
-            updated = true;
-        }
-
-        // Adjust prices by adding in fees if they are attached.
-        if (getDiscreteOrderItemFeePrices() != null) {
-            for (DiscreteOrderItemFeePrice fee : getDiscreteOrderItemFeePrices()) {
-                Money returnPrice = convertToMoney(salePrice);
-                if (returnPrice != null) {
-                    salePrice = returnPrice.add(fee.getAmount()).getAmount();
-                }
-            }
-        }
-        return updated;
+// TODO microservices - deal with dynamic sku pricing in the order domain
+//        if (isSalePriceOverride()) {
+//            return false;
+//        }
+//
+//        Money skuSalePrice = null;
+//
+//        DynamicSkuPrices priceData = getSku().getPriceData();
+//        if (priceData != null) {
+//            skuSalePrice = priceData.getPriceForQuantity(quantity);
+//        }
+//        if (skuSalePrice == null) {
+//            skuSalePrice = getSku().getSalePrice();
+//        }
+//
+//        boolean updated = false;
+//        //use the sku prices - the retail and sale prices could be null
+//        if (skuSalePrice != null && !skuSalePrice.getAmount().equals(salePrice)) {
+//            baseSalePrice = skuSalePrice.getAmount();
+//            salePrice = skuSalePrice.getAmount();
+//            updated = true;
+//        }
+//        
+//        // If there is no more sale price (because it got removed) then detect that case as well
+//        if (skuSalePrice == null && salePrice != null) {
+//            baseSalePrice = null;
+//            salePrice = null;
+//            updated = true;
+//        }
+//
+//        // Adjust prices by adding in fees if they are attached.
+//        if (getDiscreteOrderItemFeePrices() != null) {
+//            for (DiscreteOrderItemFeePrice fee : getDiscreteOrderItemFeePrices()) {
+//                Money returnPrice = convertToMoney(salePrice);
+//                if (returnPrice != null) {
+//                    salePrice = returnPrice.add(fee.getAmount()).getAmount();
+//                }
+//            }
+//        }
+//        return updated;
+        return false;
     }
 
     protected boolean updateRetailPrice() {
-        if (isRetailPriceOverride()) {
-            return false;
-        }
-        Money skuRetailPrice = getSku().getRetailPrice();
-
-        boolean updated = false;
-        //use the sku prices - the retail and sale prices could be null
-        if (skuRetailPrice != null && !skuRetailPrice.getAmount().equals(retailPrice)) {
-            baseRetailPrice = skuRetailPrice.getAmount();
-            retailPrice = skuRetailPrice.getAmount();
-            updated = true;
-        }
-
-        // Adjust prices by adding in fees if they are attached.
-        if (getDiscreteOrderItemFeePrices() != null) {
-            for (DiscreteOrderItemFeePrice fee : getDiscreteOrderItemFeePrices()) {
-                Money returnPrice = convertToMoney(retailPrice);
-                retailPrice = returnPrice.add(fee.getAmount()).getAmount();
-            }
-        }
-        return updated;
+// TODO microservices - deal with dynamic sku pricing in the order domain
+//        if (isRetailPriceOverride()) {
+//            return false;
+//        }
+//        Money skuRetailPrice = getSku().getRetailPrice();
+//
+//        boolean updated = false;
+//        //use the sku prices - the retail and sale prices could be null
+//        if (skuRetailPrice != null && !skuRetailPrice.getAmount().equals(retailPrice)) {
+//            baseRetailPrice = skuRetailPrice.getAmount();
+//            retailPrice = skuRetailPrice.getAmount();
+//            updated = true;
+//        }
+//
+//        // Adjust prices by adding in fees if they are attached.
+//        if (getDiscreteOrderItemFeePrices() != null) {
+//            for (DiscreteOrderItemFeePrice fee : getDiscreteOrderItemFeePrices()) {
+//                Money returnPrice = convertToMoney(retailPrice);
+//                retailPrice = returnPrice.add(fee.getAmount()).getAmount();
+//            }
+//        }
+//        return updated;
+        return false;
     }
 
     @Override
