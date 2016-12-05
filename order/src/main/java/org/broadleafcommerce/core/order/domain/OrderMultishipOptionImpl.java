@@ -19,8 +19,6 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -67,9 +65,9 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
     @JoinColumn(name = "ORDER_ITEM_ID")
     protected OrderItem orderItem;
 
-    @ManyToOne(targetEntity = AddressImpl.class)
-    @JoinColumn(name = "ADDRESS_ID")
-    protected Address address;
+    @ManyToOne(targetEntity = OrderAddressImpl.class)
+    @JoinColumn(name = "ORDER_ADDRESS_ID")
+    protected OrderAddress address;
     
     @ManyToOne(targetEntity = FulfillmentOptionImpl.class)
     @JoinColumn(name = "FULFILLMENT_OPTION_ID")
@@ -106,12 +104,12 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
     }
 
     @Override
-    public Address getAddress() {
+    public OrderAddress getAddress() {
         return address;
     }
 
     @Override
-    public void setAddress(Address address) {
+    public void setAddress(OrderAddress address) {
         this.address = address;
     }
 

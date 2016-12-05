@@ -21,8 +21,8 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentLogEventType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
-import org.broadleafcommerce.profile.core.domain.Customer;
 
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -48,9 +48,9 @@ public interface PaymentLog extends Serializable {
 
     public void setPaymentInfoId(Long paymentInfoId);
 
-    public Customer getCustomer();
+    public OrderCustomer getCustomer();
 
-    public void setCustomer(Customer customer);
+    public void setCustomer(OrderCustomer customer);
 
     public String getPaymentInfoReferenceNumber();
 

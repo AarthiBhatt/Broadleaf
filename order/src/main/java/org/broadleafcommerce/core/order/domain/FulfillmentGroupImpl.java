@@ -40,10 +40,6 @@ import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.AddressImpl;
-import org.broadleafcommerce.profile.core.domain.Phone;
-import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -266,20 +262,11 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     @Column(name = "FULFILLMENT_GROUP_SEQUNCE")
     protected Integer sequence;
 
-    @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "ADDRESS_ID")
-    @Index(name="FG_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
-    protected Address address;
+    @ManyToOne(targetEntity = OrderAddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "ORDER_ADDRESS_ID")
+    @Index(name="FG_ADDRESS_INDEX", columnNames={"ORDER_ADDRESS_ID"})
+    protected OrderAddress address;
 
-    /**
-     * @deprecated uses the phonePrimary property on AddressImpl instead
-     */
-    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "PHONE_ID")
-    @Index(name="FG_PHONE_INDEX", columnNames={"PHONE_ID"})
-    @Deprecated
-    protected Phone phone;
-    
     @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = { CascadeType.ALL })
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     @Index(name="FG_MESSAGE_INDEX", columnNames={"PERSONAL_MESSAGE_ID"})
@@ -393,31 +380,13 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     }
 
     @Override
-    public Address getAddress() {
+    public OrderAddress getAddress() {
         return address;
     }
 
     @Override
-    public void setAddress(Address address) {
+    public void setAddress(OrderAddress address) {
         this.address = address;
-    }
-
-    /**
-     * @deprecated use the phonePrimary property on the related Address instead
-     */
-    @Deprecated
-    @Override
-    public Phone getPhone() {
-        return phone;
-    }
-
-    /**
-     * @deprecated use the phonePrimary property on the related Address instead
-     */
-    @Deprecated
-    @Override
-    public void setPhone(Phone phone) {
-        this.phone = phone;
     }
 
     @Override

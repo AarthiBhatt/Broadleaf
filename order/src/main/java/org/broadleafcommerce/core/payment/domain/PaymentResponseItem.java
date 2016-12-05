@@ -18,8 +18,8 @@
 package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.profile.core.domain.Customer;
 
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
@@ -98,9 +98,9 @@ public interface PaymentResponseItem extends Serializable {
 
     public void setUserName(String userName);
 
-    public Customer getCustomer();
+    public OrderCustomer getCustomer();
 
-    public void setCustomer(Customer customer);
+    public void setCustomer(OrderCustomer customer);
 
     public void setPaymentTransaction(PaymentTransaction paymentTransaction);
 

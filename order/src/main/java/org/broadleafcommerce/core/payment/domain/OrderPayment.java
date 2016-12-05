@@ -25,10 +25,10 @@ import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderAddress;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus;
-import org.broadleafcommerce.profile.core.domain.Address;
 
 import java.io.Serializable;
 import java.util.List;
@@ -66,13 +66,13 @@ public interface OrderPayment extends Serializable, Status, MultiTenantCloneable
      * Gets the billing address associated with this payment. This might be null for some payments where no billing address
      * is required (like gift cards or account credit)
      */
-    public Address getBillingAddress();
+    public OrderAddress getBillingAddress();
 
     /**
      * Sets the billing address associated with this payment. This might be null for some payments where no billing address
      * is required (like gift cards or account credit)
      */
-    public void setBillingAddress(Address billingAddress);
+    public void setBillingAddress(OrderAddress billingAddress);
 
     /**
      * The amount that this payment is allotted for. The summation of all of the {@link OrderPayment}s for a particular

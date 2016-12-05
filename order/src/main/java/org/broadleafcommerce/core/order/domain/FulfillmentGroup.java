@@ -23,8 +23,6 @@ import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.Phone;
 
 import java.io.Serializable;
 import java.util.List;
@@ -39,7 +37,7 @@ import java.util.List;
  * only 1 FulfillmentGroup for that Order.
  * 
  * @author Phillip Verheyden
- * @see {@link Order}, {@link FulfillmentOption}, {@link Address}, {@link FulfillmentGroupItem}
+ * @see {@link Order}, {@link FulfillmentOption}, {@link OrderAddress}, {@link FulfillmentGroupItem}
  */
 public interface FulfillmentGroup extends Serializable, MultiTenantCloneable<FulfillmentGroup> {
 
@@ -59,22 +57,9 @@ public interface FulfillmentGroup extends Serializable, MultiTenantCloneable<Ful
 
     public void setFulfillmentOption(FulfillmentOption fulfillmentOption);
 
-    public Address getAddress();
+    public OrderAddress getAddress();
 
-    public void setAddress(Address address);
-
-    /**
-     * @deprecated use {@link Address#getPhonePrimary()} instead.
-     */
-    @Deprecated
-    public Phone getPhone();
-
-    /**
-     * @deprecated use {@link Address#getPhonePrimary()} instead
-     * @param phone
-     */
-    @Deprecated
-    public void setPhone(Phone phone);
+    public void setAddress(OrderAddress address);
 
     public List<FulfillmentGroupItem> getFulfillmentGroupItems();
 

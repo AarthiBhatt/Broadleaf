@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.profile.core.domain.Address;
 
 /**
  * Represents a given set of options for an OrderItem in an Order in the 
@@ -83,14 +82,14 @@ public interface OrderMultishipOption extends MultiTenantCloneable<OrderMultishi
      * 
      * @return the associated Address
      */
-    public Address getAddress();
+    public OrderAddress getAddress();
 
     /**
      * Sets the associated Address with this OrderMultishipOption
      * 
      * @param address the associated Address
      */
-    public void setAddress(Address address);
+    public void setAddress(OrderAddress address);
 
     /**
      * Gets the associated FulfillmentOption with this OrderMultishipOption
