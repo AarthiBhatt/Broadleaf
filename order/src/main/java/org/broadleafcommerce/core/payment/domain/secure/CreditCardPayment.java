@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.core.payment.domain.secure;
 
-import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
-
-
 /**
  * Entity associated with sensitive, secured credit card data. This data is stored specifically in the blSecurePU persistence.
  * All fetches and creates should go through {@link SecureOrderPaymentService} in order to properly decrypt/encrypt the data

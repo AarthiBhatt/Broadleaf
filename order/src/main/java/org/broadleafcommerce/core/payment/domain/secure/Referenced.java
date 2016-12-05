@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.payment.domain.secure;
 
 import org.broadleafcommerce.common.encryption.EncryptionModule;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
-import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 
 import java.io.Serializable;
 
