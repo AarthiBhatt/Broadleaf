@@ -18,9 +18,10 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import com.broadleafcommerce.order.common.domain.OrderSku;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -42,9 +43,8 @@ public class DynamicPriceDiscreteOrderItemImpl extends DiscreteOrderItemImpl imp
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void setSku(Sku sku) {
+    public void setSku(OrderSku sku) {
         this.sku = sku;
-        this.name = sku.getName();
     }
 
     @Override
