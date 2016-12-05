@@ -26,7 +26,6 @@ import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayWebResponsePrintService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayWebResponseService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
-import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
@@ -51,7 +50,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author Elbert Bautista (elbertbautista)
  */
-public abstract class PaymentGatewayAbstractController extends BroadleafAbstractController {
+public abstract class PaymentGatewayAbstractController {
 
     protected static final Log LOG = LogFactory.getLog(PaymentGatewayAbstractController.class);
     public static final String PAYMENT_PROCESSING_ERROR = "PAYMENT_PROCESSING_ERROR";

@@ -320,6 +320,7 @@
     </build>
     <modules>
         <module>catalog</module>
+        <module>payment</module>
         <module>contact</module>
         <module>rating</module>
         <module>content</module>
@@ -534,6 +535,13 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-catalog</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.broadleafcommerce</groupId>
+                <artifactId>broadleaf-payment</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
