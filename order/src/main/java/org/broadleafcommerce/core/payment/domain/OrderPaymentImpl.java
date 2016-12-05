@@ -44,11 +44,11 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderAddress;
+import org.broadleafcommerce.core.order.domain.OrderAddressImpl;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.payment.service.OrderPaymentStatusService;
 import org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -128,10 +128,10 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @AdminPresentation(excluded = true)
     protected Order order;
 
-    @ManyToOne(targetEntity = AddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinColumn(name = "ADDRESS_ID")
-    @Index(name="ORDERPAYMENT_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
-    protected Address billingAddress;
+    @ManyToOne(targetEntity = OrderAddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinColumn(name = "ORDER_ADDRESS_ID")
+    @Index(name="ORDERPAYMENT_ADDRESS_INDEX", columnNames={"ORDER_ADDRESS_ID"})
+    protected OrderAddress billingAddress;
 
     @Column(name = "AMOUNT", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderPaymentImpl_Payment_Amount", order=2000, gridOrder = 2000, prominent=true,
@@ -196,12 +196,12 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     }
 
     @Override
-    public Address getBillingAddress() {
+    public OrderAddress getBillingAddress() {
         return billingAddress;
     }
 
     @Override
-    public void setBillingAddress(Address billingAddress) {
+    public void setBillingAddress(OrderAddress billingAddress) {
         this.billingAddress = billingAddress;
     }
 

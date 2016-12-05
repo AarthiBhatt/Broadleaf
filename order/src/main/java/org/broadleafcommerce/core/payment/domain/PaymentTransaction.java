@@ -24,7 +24,7 @@ import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.profile.core.domain.AdditionalFields;
-
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
@@ -120,12 +120,12 @@ public interface PaymentTransaction extends Serializable, Status, AdditionalFiel
     public void setDate(Date date);
 
     /**
-     * Gets the {@link Customer} IP address that instigated this transaction. This is an optional field
+     * Gets the {@link OrderCustomer} IP address that instigated this transaction. This is an optional field
      */
     public String getCustomerIpAddress();
 
     /**
-     * Sets the {@link Customer} IP address that instigated the transaction. This is an optional field.
+     * Sets the {@link OrderCustomer} IP address that instigated the transaction. This is an optional field.
      */
     public void setCustomerIpAddress(String customerIpAddress);
 

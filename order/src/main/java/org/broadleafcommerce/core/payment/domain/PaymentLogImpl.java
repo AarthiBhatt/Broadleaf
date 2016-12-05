@@ -24,12 +24,12 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentLogEventType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
+import com.broadleafcommerce.order.common.domain.OrderCustomerImpl;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -84,10 +84,10 @@ public class PaymentLogImpl implements PaymentLog {
     @AdminPresentation(excluded = true, readOnly = true)
     protected Long orderPaymentId;
 
-    @ManyToOne(targetEntity = CustomerImpl.class)
+    @ManyToOne(targetEntity = OrderCustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID")
     @Index(name="PAYMENTLOG_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
-    protected Customer customer;
+    protected OrderCustomer customer;
 
     @Column(name = "ORDER_PAYMENT_REF_NUM")
     @Index(name="PAYMENTLOG_REFERENCE_INDEX", columnNames={"ORDER_PAYMENT_REFERENCE_NUMBER"})
@@ -163,12 +163,12 @@ public class PaymentLogImpl implements PaymentLog {
     }
 
     @Override
-    public Customer getCustomer() {
+    public OrderCustomer getCustomer() {
         return customer;
     }
 
     @Override
-    public void setCustomer(Customer customer) {
+    public void setCustomer(OrderCustomer customer) {
         this.customer = customer;
     }
 
