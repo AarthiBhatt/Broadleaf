@@ -7,11 +7,13 @@ import com.broadleafcommerce.order.common.domain.OrderSku;
 
 public class OrderSkuDTO {
 
+    protected String name;
     protected OrderSku sku;
     protected Money retailPrice;
     protected Money salePrice;
     protected boolean taxable;
-    protected String name;
+    protected boolean discountable;
+    protected boolean active;
     
     public OrderSku getSku() {
         return sku;
@@ -59,5 +61,21 @@ public class OrderSkuDTO {
     
     public void setName(String name) {
         this.name = name;
+    }
+    
+    public boolean isDiscountable() {
+        return discountable;
+    }
+    
+    public void setDiscountable(boolean discountable) {
+        this.discountable = discountable;
+    }
+    
+    public boolean isActive() {
+        return active;
+    }
+    
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
