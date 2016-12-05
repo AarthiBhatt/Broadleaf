@@ -25,10 +25,10 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderAddress;
 import org.broadleafcommerce.core.order.domain.TaxDetail;
 import org.broadleafcommerce.core.order.domain.TaxType;
 import org.broadleafcommerce.core.pricing.service.exception.TaxException;
-import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.State;
 
@@ -297,13 +297,13 @@ public class SimpleTaxProvider implements TaxProvider {
      * @param address
      * @return
      */
-    public BigDecimal determineItemTaxRate(Address address) {
+    public BigDecimal determineItemTaxRate(OrderAddress address) {
         if (address != null) {
             Double postalCodeRate = lookupPostalCodeRate(itemPostalCodeTaxRateMap, address.getPostalCode());
             if (postalCodeRate != null) {
                 return BigDecimal.valueOf(postalCodeRate);
             }
-            Double cityCodeRate = lookupCityRate(itemCityTaxRateMap, address.getCity());
+            Double cityCodeRate = lookupCityRate(itemCityTaxRateMap, address.getCityLocality());
             if (cityCodeRate != null) {
                 return BigDecimal.valueOf(cityCodeRate);
             }
@@ -312,7 +312,7 @@ public class SimpleTaxProvider implements TaxProvider {
             if (StringUtils.isNotBlank(address.getStateProvinceRegion())) {
                 stateCodeRate = lookupStateRate(itemStateTaxRateMap, address.getStateProvinceRegion());
             } else {
-                stateCodeRate = lookupStateRate(itemStateTaxRateMap, address.getState());
+                stateCodeRate = lookupStateRate(itemStateTaxRateMap, address.getStateProvinceRegion());
             }
 
             if (stateCodeRate != null) {
@@ -355,13 +355,13 @@ public class SimpleTaxProvider implements TaxProvider {
         }
 
         if (isTaxable) {
-            Address address = fulfillmentGroup.getAddress();
+            OrderAddress address = fulfillmentGroup.getAddress();
             if (address != null) {
                 Double postalCodeRate = lookupPostalCodeRate(fulfillmentGroupPostalCodeTaxRateMap, address.getPostalCode());
                 if (postalCodeRate != null) {
                     return BigDecimal.valueOf(postalCodeRate);
                 }
-                Double cityCodeRate = lookupCityRate(fulfillmentGroupCityTaxRateMap, address.getCity());
+                Double cityCodeRate = lookupCityRate(fulfillmentGroupCityTaxRateMap, address.getCityLocality());
                 if (cityCodeRate != null) {
                     return BigDecimal.valueOf(cityCodeRate);
                 }
@@ -370,7 +370,7 @@ public class SimpleTaxProvider implements TaxProvider {
                 if (StringUtils.isNotBlank(address.getStateProvinceRegion())) {
                     stateCodeRate = lookupStateRate(fulfillmentGroupStateTaxRateMap, address.getStateProvinceRegion());
                 } else {
-                    stateCodeRate = lookupStateRate(fulfillmentGroupStateTaxRateMap, address.getState());
+                    stateCodeRate = lookupStateRate(fulfillmentGroupStateTaxRateMap, address.getStateProvinceRegion());
                 }
 
                 if (stateCodeRate != null) {
