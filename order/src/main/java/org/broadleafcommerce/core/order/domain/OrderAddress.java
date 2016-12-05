@@ -7,6 +7,10 @@ import org.broadleafcommerce.common.copy.MultiTenantCloneable;
  */
 public interface OrderAddress extends MultiTenantCloneable<OrderAddress> {
 
+    public Long getId();
+
+    public void setId(Long id);
+
     public String getFullName();
 
     public void setFullName(String fullName);

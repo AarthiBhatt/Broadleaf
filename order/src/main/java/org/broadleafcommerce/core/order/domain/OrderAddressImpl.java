@@ -84,6 +84,12 @@ public class OrderAddressImpl implements OrderAddress {
     protected String emailAddress;
 
     @Override
+    public Long getId() { return id; }
+
+    @Override
+    public void setId(Long id) { this.id = id; }
+
+    @Override
     public String getFullName() {
         return fullName;
     }
