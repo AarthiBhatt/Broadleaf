@@ -51,6 +51,7 @@
         <!--</property>-->
     <!--</bean>-->
 
+    <!--Now defined as @Component-->
     <!--<bean id="blConfigurationManager" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager"/>-->
 
     <!--<bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.NullMessageCreator">-->

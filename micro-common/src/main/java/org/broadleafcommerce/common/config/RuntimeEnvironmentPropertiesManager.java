@@ -23,7 +23,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.stereotype.Component;
 
+@Component("blConfigurationManager")
 public class RuntimeEnvironmentPropertiesManager implements BeanFactoryAware {
 
     private static final Log LOG = LogFactory.getLog(RuntimeEnvironmentPropertiesManager.class);
