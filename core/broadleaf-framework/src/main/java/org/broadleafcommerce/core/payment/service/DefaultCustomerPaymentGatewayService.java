@@ -24,7 +24,7 @@ import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.CustomerPaymentGatewayService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.common.web.payment.controller.CustomerPaymentGatewayAbstractController;
-import org.broadleafcommerce.core.order.domain.OrderAddress;
+import com.broadleafcommerce.order.common.domain.OrderAddress;
 import org.broadleafcommerce.core.order.service.OrderAddressService;
 import org.broadleafcommerce.core.order.service.OrderCustomerService;
 import org.broadleafcommerce.core.payment.domain.CustomerPayment;

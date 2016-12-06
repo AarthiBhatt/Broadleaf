@@ -15,18 +15,15 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.order.domain;
+package com.broadleafcommerce.order.common.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -34,8 +31,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -55,7 +50,7 @@ public class OrderAddressImpl implements OrderAddress {
             strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name="segment_value", value="OrderAddressImpl"),
-                    @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.OrderAddressImpl")
+                    @Parameter(name="entity_name", value="com.broadleafcommerce.order.common.domain.OrderAddressImpl")
             }
     )
     @Column(name = "ORDER_ADDRESS_ID")

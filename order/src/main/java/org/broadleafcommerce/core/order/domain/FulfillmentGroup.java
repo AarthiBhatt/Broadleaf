@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 
+import com.broadleafcommerce.order.common.domain.OrderAddress;
 import java.io.Serializable;
 import java.util.List;
 

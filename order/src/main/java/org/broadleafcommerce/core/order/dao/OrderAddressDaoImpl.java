@@ -18,8 +18,8 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.core.order.domain.OrderAddress;
-import org.broadleafcommerce.core.order.domain.OrderAddressImpl;
+import com.broadleafcommerce.order.common.domain.OrderAddress;
+import com.broadleafcommerce.order.common.domain.OrderAddressImpl;
 import org.springframework.stereotype.Repository;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
