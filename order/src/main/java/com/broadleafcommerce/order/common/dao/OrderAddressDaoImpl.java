@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.order.dao;
+package com.broadleafcommerce.order.common.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import com.broadleafcommerce.order.common.domain.OrderAddress;
