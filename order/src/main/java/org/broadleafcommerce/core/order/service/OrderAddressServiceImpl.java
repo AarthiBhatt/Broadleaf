@@ -2,11 +2,13 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.dao.OrderAddressDao;
 import org.broadleafcommerce.core.order.domain.OrderAddress;
+import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 /**
  * Created by brandon on 12/5/16.
  */
+@Service("blOrderAddressService")
 public class OrderAddressServiceImpl implements OrderAddressService {
 
     @Resource(name = "blOrderAddressDao")
