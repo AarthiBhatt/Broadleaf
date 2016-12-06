@@ -237,7 +237,7 @@ public class BroadleafCartController extends AbstractCartController {
 
         DiscreteOrderItem orderItem = (DiscreteOrderItem) orderItemService.readOrderItemById(orderItemId);
 
-        Long productId = orderItem.getProduct().getId();
+        Long productId = orderItem.getProduct().getExternalId();
         Product product = catalogService.findProductById(productId);
         ConfigurableOrderItemRequest itemRequest = orderItemService.createConfigurableOrderItemRequestFromProduct(product);
 
