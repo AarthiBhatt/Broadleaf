@@ -65,7 +65,8 @@ public class PromotionMessageVariableExpression extends BLCVariableExpression {
         
         Map<String, List<PromotionMessageDTO>> promotionMessages = new MultiValueMap();
         for (PromotionMessageGenerator generator : generators) {
-            promotionMessages.putAll(generator.generatePromotionMessages(product));
+            // TODO microservices - deal with promotion messages
+            //promotionMessages.putAll(generator.generatePromotionMessages(product));
         }
 
         List<PromotionMessageDTO> filteredMessages = BLCPromotionMessageUtils.filterPromotionMessageDTOsByTypes(promotionMessages, filteredPlacements);
