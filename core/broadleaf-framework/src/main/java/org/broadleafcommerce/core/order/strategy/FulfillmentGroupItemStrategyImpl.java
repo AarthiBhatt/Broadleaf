@@ -49,6 +49,7 @@ import javax.annotation.Resource;
 /**
  * @author Andre Azzolini (apazzolini)
  */
+//TODO microservices - Order worflows refactoring
 @Service("blFulfillmentGroupItemStrategy")
 public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStrategy {
 
@@ -145,7 +146,9 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
      * @return
      */
     protected FulfillmentType resolveFulfillmentType(DiscreteOrderItem discreteOrderItem) {
-        return resolveFulfillmentType(discreteOrderItem.getSku());
+        // TODO microservices - Order worflows refactoring
+        //return resolveFulfillmentType(discreteOrderItem.getSku());
+        return FulfillmentType.PHYSICAL_PICKUP_OR_SHIP;
     }
     
     protected FulfillmentType resolveFulfillmentType(Sku sku) {

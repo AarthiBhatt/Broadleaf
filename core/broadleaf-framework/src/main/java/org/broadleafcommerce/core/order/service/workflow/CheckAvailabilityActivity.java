@@ -44,6 +44,7 @@ import javax.annotation.Resource;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
+//TODO microservices - Order worflows refactoring
 public class CheckAvailabilityActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
 
     private static final Log LOG = LogFactory.getLog(CheckAvailabilityActivity.class);
@@ -67,7 +68,9 @@ public class CheckAvailabilityActivity extends BaseActivity<ProcessContext<CartO
             // this must be an update request as there is an order item ID available
             OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
             if (orderItem instanceof DiscreteOrderItem) {
-                sku = ((DiscreteOrderItem) orderItem).getSku();
+                // TODO microservices - Order worflows refactoring
+                //sku = ((DiscreteOrderItem) orderItem).getSku();
+                sku = null;
             } else {
                 LOG.warn("Could not check availability; did not recognize passed-in item " + orderItem.getClass().getName());
                 return context;

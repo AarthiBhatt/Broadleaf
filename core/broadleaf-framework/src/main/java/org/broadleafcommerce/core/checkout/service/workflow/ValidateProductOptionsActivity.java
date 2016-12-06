@@ -17,26 +17,18 @@
  */
 package org.broadleafcommerce.core.checkout.service.workflow;
 
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductOption;
-import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
-import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
-import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -49,6 +41,7 @@ import javax.annotation.Resource;
  * @author Priyesh Patel
  *
  */
+//TODO microservices - Order worflows refactoring
 public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
     @Value("${solr.index.use.sku}")
@@ -59,46 +52,47 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
 
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
-        if(!useSku) {
-            Order order = context.getSeedData().getOrder();
-            List<DiscreteOrderItem> orderItems = getOrderItems(order);
-
-            for (DiscreteOrderItem discreteOI : orderItems) {
-                Map<String, OrderItemAttribute> attributeValues = discreteOI.getOrderItemAttributes();
-                Product product = discreteOI.getProduct();
-
-                if (product != null) {
-                    for (ProductOptionXref productOptionXref : ListUtils.emptyIfNull(product.getProductOptionXrefs())) {
-                        ProductOption productOption = productOptionXref.getProductOption();
-                        String attributeName = productOption.getAttributeName();
-                        OrderItemAttribute attribute = attributeValues.get(attributeName);
-                        String attributeValue = (attribute != null) ? attribute.getValue() : null;
-                        boolean isRequired = productOption.getRequired();
-                        boolean hasStrategy = productOptionValidationService.hasProductOptionValidationStrategy(productOption);
-                        boolean isAddOrNoneType = productOptionValidationService.isAddOrNoneType(productOption);
-                        boolean isSubmitType = productOptionValidationService.isSubmitType(productOption);
-
-                        if (isMissingRequiredAttribute(isRequired, hasStrategy, isAddOrNoneType, isSubmitType, attributeValue)) {
-                            String message = "Unable to validate cart, product  (" + product.getId() + ") required"
-                                             + " attribute was not provided: " + attributeName;
-                            throw new RequiredAttributeNotProvidedException(message, attributeName, String.valueOf(product.getId()));
-                        }
-
-                        boolean hasValidationType = productOption.getProductOptionValidationType() != null;
-
-                        if (shouldValidateWithException(hasValidationType, hasStrategy, isAddOrNoneType, isSubmitType)) {
-                            productOptionValidationService.validate(productOption, attributeValue);
-                        }
-
-                        if (hasStrategy && !(isAddOrNoneType || isSubmitType)) {
-                            //we need to validate however, we will not error out
-                            ActivityMessages messages = (ActivityMessages) context;
-                            productOptionValidationService.validateWithoutException(productOption, attributeValue, messages);
-                        }
-                    }
-                }
-            }
-        }
+    // TODO microservices - refactor ValidateProductOptionsActivity to be in the catalog micro service
+//        if(!useSku) {
+//            Order order = context.getSeedData().getOrder();
+//            List<DiscreteOrderItem> orderItems = getOrderItems(order);
+//
+//            for (DiscreteOrderItem discreteOI : orderItems) {
+//                Map<String, OrderItemAttribute> attributeValues = discreteOI.getOrderItemAttributes();
+//                Product product = discreteOI.getProduct();
+//
+//                if (product != null) {
+//                    for (ProductOptionXref productOptionXref : ListUtils.emptyIfNull(product.getProductOptionXrefs())) {
+//                        ProductOption productOption = productOptionXref.getProductOption();
+//                        String attributeName = productOption.getAttributeName();
+//                        OrderItemAttribute attribute = attributeValues.get(attributeName);
+//                        String attributeValue = (attribute != null) ? attribute.getValue() : null;
+//                        boolean isRequired = productOption.getRequired();
+//                        boolean hasStrategy = productOptionValidationService.hasProductOptionValidationStrategy(productOption);
+//                        boolean isAddOrNoneType = productOptionValidationService.isAddOrNoneType(productOption);
+//                        boolean isSubmitType = productOptionValidationService.isSubmitType(productOption);
+//
+//                        if (isMissingRequiredAttribute(isRequired, hasStrategy, isAddOrNoneType, isSubmitType, attributeValue)) {
+//                            String message = "Unable to validate cart, product  (" + product.getId() + ") required"
+//                                             + " attribute was not provided: " + attributeName;
+//                            throw new RequiredAttributeNotProvidedException(message, attributeName, String.valueOf(product.getId()));
+//                        }
+//
+//                        boolean hasValidationType = productOption.getProductOptionValidationType() != null;
+//
+//                        if (shouldValidateWithException(hasValidationType, hasStrategy, isAddOrNoneType, isSubmitType)) {
+//                            productOptionValidationService.validate(productOption, attributeValue);
+//                        }
+//
+//                        if (hasStrategy && !(isAddOrNoneType || isSubmitType)) {
+//                            //we need to validate however, we will not error out
+//                            ActivityMessages messages = (ActivityMessages) context;
+//                            productOptionValidationService.validateWithoutException(productOption, attributeValue, messages);
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         return context;
     }
