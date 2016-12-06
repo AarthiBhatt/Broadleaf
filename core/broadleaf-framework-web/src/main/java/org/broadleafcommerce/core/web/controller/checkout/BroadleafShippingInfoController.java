@@ -18,27 +18,26 @@
 
 package org.broadleafcommerce.core.web.controller.checkout;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderAddress;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.checkout.model.MultiShipInstructionForm;
 import org.broadleafcommerce.core.web.checkout.model.OrderMultishipOptionForm;
 import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
-import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
-import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * In charge of performing the various checkout operations
@@ -112,23 +111,9 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
             copyBillingAddressToShippingAddress(cart, shippingForm);
         }
 
-        addressService.populateAddressISOCountrySub(shippingForm.getAddress());
         shippingInfoFormValidator.validate(shippingForm, result);
         if (result.hasErrors()) {
             return getCheckoutView();
-        }
-
-        if ((shippingForm.getAddress().getPhonePrimary() != null) &&
-                (StringUtils.isEmpty(shippingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
-            shippingForm.getAddress().setPhonePrimary(null);
-        }
-        if ((shippingForm.getAddress().getPhoneSecondary() != null) &&
-                (StringUtils.isEmpty(shippingForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
-            shippingForm.getAddress().setPhoneSecondary(null);
-        }
-        if ((shippingForm.getAddress().getPhoneFax() != null) &&
-                (StringUtils.isEmpty(shippingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
-            shippingForm.getAddress().setPhoneFax(null);
         }
 
         FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);
@@ -162,9 +147,9 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
         if (order.getPayments() != null) {
             for (OrderPayment payment : order.getPayments()) {
                 if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType())) {
-                    Address billing = payment.getBillingAddress();
+                    OrderAddress billing = payment.getBillingAddress();
                     if (billing != null) {
-                        Address shipping = addressService.copyAddress(billing);
+                        OrderAddress shipping = orderAddressService.copyOrderAddress(billing);
                         shippingInfoForm.setAddress(shipping);
                     }
                 }
@@ -249,17 +234,14 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
      */
     public String saveMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model,
                                           ShippingInfoForm addressForm, BindingResult result) throws ServiceException {
-        addressService.populateAddressISOCountrySub(addressForm.getAddress());
         multishipAddAddressFormValidator.validate(addressForm, result);
         if (result.hasErrors()) {
             return showMultishipAddAddress(request, response, model);
         }
 
-        removeUnusedPhones(addressForm);
-        
         CustomerAddress customerAddress = customerAddressService.create();
         customerAddress.setAddressName(addressForm.getAddressName());
-        Address address = addressService.saveAddress(addressForm.getAddress());
+        OrderAddress address = orderAddressService.saveOrderAddress(addressForm.getAddress());
         customerAddress.setAddressExternalId(address.getId());
         customerAddress.setCustomer(CustomerState.getCustomer());
         customerAddressService.saveCustomerAddress(customerAddress);
@@ -284,23 +266,6 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
 
         //append current time to redirect to fix a problem with ajax caching in IE
         return getCheckoutPageRedirect()+ "?_=" + System.currentTimeMillis();
-    }
-
-    public void removeUnusedPhones(ShippingInfoForm form) {
-        Address address = form.getAddress();
-        Phone primaryPhone = address.getPhonePrimary();
-        Phone secondaryPhone = address.getPhoneSecondary();
-        Phone faxPhone = address.getPhoneFax();
-
-        if ((primaryPhone != null) && (StringUtils.isEmpty(primaryPhone.getPhoneNumber()))) {
-            address.setPhonePrimary(null);
-        }
-        if ((secondaryPhone != null) && (StringUtils.isEmpty(secondaryPhone.getPhoneNumber()))) {
-            address.setPhoneSecondary(null);
-        }
-        if ((faxPhone != null) && (StringUtils.isEmpty(faxPhone.getPhoneNumber()))) {
-            address.setPhoneFax(null);
-        }
     }
 
 }
