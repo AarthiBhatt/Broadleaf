@@ -19,6 +19,8 @@ package org.broadleafcommerce.core.checkout.service.workflow;
 
 import org.broadleafcommerce.core.order.domain.Order;
 
+import com.broadleafcommerce.order.common.domain.dto.OrderSkuDTO;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +28,7 @@ public class CheckoutSeed implements CheckoutResponse {
 
     protected Order order;
     protected Map<String, Object> userDefinedFields = new HashMap<>();
+    protected Map<OrderSkuDTO, Integer> inventory = new HashMap<>();
 
     public CheckoutSeed(Order order, Map<String, Object> userDefinedFields) {
         this.order = order;
@@ -43,5 +46,13 @@ public class CheckoutSeed implements CheckoutResponse {
 
     public Map<String, Object> getUserDefinedFields() {
         return userDefinedFields;
+    }
+    
+    public Map<OrderSkuDTO, Integer> getInventory() {
+        return inventory;
+    }
+    
+    public void setInventory(Map<OrderSkuDTO, Integer> inventory) {
+        this.inventory = inventory;
     }
 }
