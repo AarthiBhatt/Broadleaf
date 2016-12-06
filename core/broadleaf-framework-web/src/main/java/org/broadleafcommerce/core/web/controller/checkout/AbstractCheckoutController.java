@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.FulfillmentOptionService;
-import org.broadleafcommerce.core.order.service.OrderAddressService;
 import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.service.CustomerPaymentService;
@@ -53,6 +52,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestDataBinder;
+
+import com.broadleafcommerce.order.common.service.OrderAddressService;
 
 import java.beans.PropertyEditorSupport;
 

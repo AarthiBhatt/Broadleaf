@@ -1,12 +1,13 @@
 package org.broadleafcommerce.core.web.translation;
 
-import org.broadleafcommerce.core.order.domain.OrderAddress;
-import org.broadleafcommerce.core.order.service.OrderAddressService;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.springframework.stereotype.Service;
+
+import com.broadleafcommerce.order.common.domain.OrderAddress;
+import com.broadleafcommerce.order.common.service.OrderAddressService;
 
 import javax.annotation.Resource;
 

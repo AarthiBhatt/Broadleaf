@@ -18,10 +18,11 @@
 package org.broadleafcommerce.core.web.checkout.model;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-import org.broadleafcommerce.core.order.domain.OrderAddress;
-import org.broadleafcommerce.core.order.domain.OrderAddressImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.domain.PersonalMessageImpl;
+
+import com.broadleafcommerce.order.common.domain.OrderAddress;
+import com.broadleafcommerce.order.common.domain.OrderAddressImpl;
 
 import java.io.Serializable;
 
