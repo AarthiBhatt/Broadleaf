@@ -98,7 +98,7 @@ public class i18nUpdateCartServiceExtensionHandler extends AbstractUpdateCartSer
 
     protected void fixTranslations(Order cart) {
         for (DiscreteOrderItem orderItem : cart.getDiscreteOrderItems()) {
-            Sku sku = orderItem.getSku();
+            Sku sku = catalogService.findSkuById(orderItem.getSku().getExternalId());
             translateOrderItem(orderItem, sku);
         }
 
