@@ -20,13 +20,19 @@ package org.broadleafcommerce.core.web.checkout.validator;
 import org.broadleafcommerce.common.web.form.BroadleafFormType;
 import org.broadleafcommerce.common.web.validator.BroadleafCommonAddressValidator;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
+import org.broadleafcommerce.core.web.translation.OrderAddressTranslationService;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import javax.annotation.Resource;
+
 @Component("blBillingInfoFormValidator")
 public class BillingInfoFormValidator extends BroadleafCommonAddressValidator implements Validator {
 
+    @Resource(name = "blOrderAddressTranslationService")
+    protected OrderAddressTranslationService orderAddressTranslationService;
+    
     @SuppressWarnings("rawtypes")
     public boolean supports(Class clazz) {
         return clazz.equals(BillingInfoForm.class);
@@ -34,6 +40,10 @@ public class BillingInfoFormValidator extends BroadleafCommonAddressValidator im
 
     public void validate(Object obj, Errors errors) {
         BillingInfoForm billingInfoForm = (BillingInfoForm) obj;
-        super.validate(BroadleafFormType.BILLING_FORM, billingInfoForm.getAddress(), errors);
+        super.validate(
+                BroadleafFormType.BILLING_FORM, 
+                orderAddressTranslationService.convertOrderAddressToAddress(billingInfoForm.getAddress()), 
+                errors);
     }
+    
 }
