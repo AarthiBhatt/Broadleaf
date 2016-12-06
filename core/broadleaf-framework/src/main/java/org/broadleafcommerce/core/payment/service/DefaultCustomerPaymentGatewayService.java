@@ -25,7 +25,7 @@ import org.broadleafcommerce.common.payment.service.CustomerPaymentGatewayServic
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.common.web.payment.controller.CustomerPaymentGatewayAbstractController;
 import com.broadleafcommerce.order.common.domain.OrderAddress;
-import org.broadleafcommerce.core.order.service.OrderAddressService;
+import com.broadleafcommerce.order.common.service.OrderAddressService;
 import org.broadleafcommerce.core.order.service.OrderCustomerService;
 import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.springframework.stereotype.Service;

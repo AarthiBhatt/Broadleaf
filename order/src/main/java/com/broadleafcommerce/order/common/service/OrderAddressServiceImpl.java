@@ -15,9 +15,9 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.order.service;
+package com.broadleafcommerce.order.common.service;
 
-import org.broadleafcommerce.core.order.dao.OrderAddressDao;
+import com.broadleafcommerce.order.common.dao.OrderAddressDao;
 import com.broadleafcommerce.order.common.domain.OrderAddress;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
