@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -51,6 +52,9 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
     @Resource(name="blOrderService")
     protected OrderService orderService;
+    
+    @Resource(name="blCatalogService")
+    protected CatalogService catalogService;
     
     @Resource(name = "blUpdateCartServiceExtensionManager")
     protected UpdateCartServiceExtensionManager extensionManager;
@@ -88,7 +92,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
                 DiscreteOrderItem doi = (DiscreteOrderItem) orderItem;
                 if(checkAvailabilityInLocale(doi, currency)){
                     OrderItemRequestDTO itemRequest = new OrderItemRequestDTO();
-                    itemRequest.setProductId(doi.getProduct().getId());
+                    itemRequest.setProductId(doi.getProduct().getExternalId());
                     itemRequest.setQuantity(doi.getQuantity());
                     itemsToReprice.add(itemRequest);
                     itemsToReset.add(orderItem);
@@ -172,7 +176,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
     protected boolean checkAvailabilityInLocale(DiscreteOrderItem doi, BroadleafCurrency currency) {
         if (doi.getSku() != null && extensionManager != null) {
-            Sku sku = doi.getSku();
+            Sku sku = catalogService.findSkuById(doi.getSku().getExternalId());
             return sku.isAvailable();
         }
         
