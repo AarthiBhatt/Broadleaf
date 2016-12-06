@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package com.broadleafcommerce.order.common.domain.dto;
+package com.broadleafcommerce.order.common.dto;
 
 import org.broadleafcommerce.common.money.Money;
 

@@ -27,7 +27,7 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
 
 import com.broadleafcommerce.order.common.domain.OrderSku;
-import com.broadleafcommerce.order.common.domain.dto.OrderSkuDTO;
+import com.broadleafcommerce.order.common.dto.OrderSkuDTO;
 
 import java.util.HashMap;
 import java.util.Map;

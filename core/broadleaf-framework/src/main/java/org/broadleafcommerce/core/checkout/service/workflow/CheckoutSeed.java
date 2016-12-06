@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.checkout.service.workflow;
 
 import org.broadleafcommerce.core.order.domain.Order;
 
-import com.broadleafcommerce.order.common.domain.dto.OrderSkuDTO;
+import com.broadleafcommerce.order.common.dto.OrderSkuDTO;
 
 import java.util.HashMap;
 import java.util.Map;
