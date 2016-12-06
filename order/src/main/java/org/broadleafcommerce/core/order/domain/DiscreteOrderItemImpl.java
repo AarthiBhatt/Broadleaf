@@ -36,7 +36,7 @@ import com.broadleafcommerce.order.common.domain.OrderProduct;
 import com.broadleafcommerce.order.common.domain.OrderProductImpl;
 import com.broadleafcommerce.order.common.domain.OrderSku;
 import com.broadleafcommerce.order.common.domain.OrderSkuImpl;
-import com.broadleafcommerce.order.common.domain.dto.OrderSkuDTO;
+import com.broadleafcommerce.order.common.dto.OrderSkuDTO;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

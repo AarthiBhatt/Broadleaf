@@ -21,7 +21,7 @@ import org.broadleafcommerce.common.money.Money;
 
 import com.broadleafcommerce.order.common.domain.OrderProduct;
 import com.broadleafcommerce.order.common.domain.OrderSku;
-import com.broadleafcommerce.order.common.domain.dto.OrderSkuDTO;
+import com.broadleafcommerce.order.common.dto.OrderSkuDTO;
 
 import java.util.List;
 import java.util.Map;
