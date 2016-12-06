@@ -34,7 +34,7 @@ public interface PaymentResponseDTOToEntityService {
 
     public void populateShippingInfo(PaymentResponseDTO responseDTO, Order order);
 
-    public void populateAddressInfo(AddressDTO<PaymentResponseDTO> dto, Address address);
+    public void populateAddressInfo(AddressDTO<PaymentResponseDTO> dto, OrderAddress address);
 
     /**
      * <p>

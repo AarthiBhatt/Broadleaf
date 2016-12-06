@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderAddress;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
+import org.broadleafcommerce.core.order.service.OrderAddressService;
 import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -36,7 +37,6 @@ import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
 import org.broadleafcommerce.profile.core.service.PhoneService;
@@ -53,8 +53,8 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
 
     private static final Log LOG = LogFactory.getLog(PaymentResponseDTOToEntityServiceImpl.class);
 
-    @Resource(name = "blAddressService")
-    protected AddressService addressService;
+    @Resource(name = "blOrderAddressService")
+    protected OrderAddressService orderAddressService;
 
     @Resource(name = "blStateService")
     protected StateService stateService;
@@ -78,7 +78,7 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
     public void populateBillingInfo(PaymentResponseDTO responseDTO, OrderPayment payment, OrderAddress tempBillingAddress, boolean isUseBillingAddressFromGateway) {
         OrderAddress billingAddress = tempBillingAddress;
         if (responseDTO.getBillTo() != null && isUseBillingAddressFromGateway) {
-            billingAddress = addressService.create();
+            billingAddress = orderAddressService.create();
             AddressDTO<PaymentResponseDTO> billToDTO = responseDTO.getBillTo();
             populateAddressInfo(billToDTO, billingAddress);
         }
@@ -91,7 +91,7 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
         FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(order);
         OrderAddress shippingAddress = null;
         if (responseDTO.getShipTo() != null && shippableFulfillmentGroup != null) {
-            shippingAddress = addressService.create();
+            shippingAddress = orderAddressService.create();
             AddressDTO<PaymentResponseDTO> shipToDTO = responseDTO.getShipTo();
             populateAddressInfo(shipToDTO, shippingAddress);
 
@@ -104,58 +104,19 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
     }
 
     @Override
-    public void populateAddressInfo(AddressDTO<PaymentResponseDTO> dto, Address address) {
+    public void populateAddressInfo(AddressDTO<PaymentResponseDTO> dto, OrderAddress address) {
         address.setFirstName(dto.getAddressFirstName());
         address.setLastName(dto.getAddressLastName());
         address.setFullName(dto.getAddressFirstName() + " " + dto.getAddressLastName());
         address.setAddressLine1(dto.getAddressLine1());
         address.setAddressLine2(dto.getAddressLine2());
-        address.setCity(dto.getAddressCityLocality());
-
-        State state = null;
-        if(dto.getAddressStateRegion() != null) {
-            state = stateService.findStateByAbbreviation(dto.getAddressStateRegion());
-        }
-        if (state == null) {
-            LOG.warn("The given state from the response: " + StringUtil.sanitize(dto.getAddressStateRegion()) + " could not be found"
-                    + " as a state abbreviation in BLC_STATE");
-        }
-        address.setState(state);
-        
-        CountrySubdivision isoCountrySub = countrySubdivisionService.findSubdivisionByAbbreviation(dto.getAddressStateRegion());
-        if ( isoCountrySub != null) {
-            address.setIsoCountrySubdivision(isoCountrySub.getAbbreviation());
-            address.setStateProvinceRegion(isoCountrySub.getName());
-        } else {
-            //Integration does not conform to the ISO Code standard - just set the non-referential state province region
-            address.setStateProvinceRegion(dto.getAddressStateRegion());
-        }
-
+        address.setCityLocality(dto.getAddressCityLocality());
+        address.setStateProvinceRegion(dto.getAddressStateRegion());
         address.setPostalCode(dto.getAddressPostalCode());
-
-        Country country = null;
-        ISOCountry isoCountry = null;
-        if (dto.getAddressCountryCode() != null) {
-            country = countryService.findCountryByAbbreviation(dto.getAddressCountryCode());
-            isoCountry = isoService.findISOCountryByAlpha2Code(dto.getAddressCountryCode());
-        }
-        if (country == null) {
-            LOG.warn("The given country from the response: " + StringUtil.sanitize(dto.getAddressCountryCode()) + " could not be found"
-                    + " as a country abbreviation in BLC_COUNTRY");
-        } else if (isoCountry == null) {
-            LOG.error("The given country from the response: " + StringUtil.sanitize(dto.getAddressCountryCode()) + " could not be found"
-                    + " as a country alpha-2 code in BLC_ISO_COUNTRY");
-        }
-
-        address.setCountry(country);
-
-        //TODO: microservices - deal with I18n domain
-        //address.setIsoCountryAlpha2(isoCountry);
+        address.setCountryCode(dto.getAddressCountryCode());
 
         if (dto.getAddressPhone() != null) {
-            Phone billingPhone = phoneService.create();
-            billingPhone.setPhoneNumber(dto.getAddressPhone());
-            address.setPhonePrimary(billingPhone);
+            address.setPhone(dto.getAddressPhone());
         }
         if (dto.getAddressEmail() != null) {
             address.setEmailAddress(dto.getAddressEmail());
@@ -163,8 +124,6 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
         if (dto.getAddressCompanyName() != null) {
             address.setCompanyName(dto.getAddressCompanyName());
         }
-
-        addressService.populateAddressISOCountrySub(address);
     }
 
     @Override

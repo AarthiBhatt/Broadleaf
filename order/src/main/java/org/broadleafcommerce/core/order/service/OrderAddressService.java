@@ -15,4 +15,8 @@ public interface OrderAddressService {
 
     public void delete(OrderAddress orderAddress);
 
+    public OrderAddress copyOrderAddress(OrderAddress orig);
+
+    public OrderAddress copyOrderAddress(OrderAddress dest, OrderAddress orig);
+
 }
