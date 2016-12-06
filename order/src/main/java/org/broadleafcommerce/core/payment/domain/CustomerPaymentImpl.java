@@ -32,6 +32,8 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
+import org.broadleafcommerce.core.order.domain.OrderAddress;
+import org.broadleafcommerce.core.order.domain.OrderAddressImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -101,9 +103,10 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected OrderCustomer customer;
 
-    @Column(name = "ADDRESS_EXTERNAL_ID")
-    @Index(name="CUSTOMERPAYMENT_ADDRESS_INDEX", columnNames={"ADDRESS_EXTERNAL_ID"})
-    protected Long billingAddressExternalId;
+    @ManyToOne(targetEntity = OrderAddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinColumn(name = "ORDER_ADDRESS_ID")
+    @Index(name="CUSTOMERPAYMENT_ADDRESS_INDEX", columnNames={"ORDER_ADDRESS_ID"})
+    protected OrderAddress billingAddress;
 
     @Column(name = "PAYMENT_TOKEN")
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_paymentToken",
@@ -169,13 +172,13 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     }
 
     @Override
-    public Long getBillingAddressExternalId() {
-        return billingAddressExternalId;
+    public OrderAddress getBillingAddress() {
+        return billingAddress;
     }
 
     @Override
-    public void setBillingAddressExternalId(Long billingAddressReferenceId) {
-        this.billingAddressExternalId = billingAddressReferenceId;
+    public void setBillingAddress(OrderAddress billingAddress) {
+        this.billingAddress = billingAddress;
     }
 
     @Override
@@ -243,7 +246,7 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
         CustomerPayment cloned = createResponse.getClone();
         // dont clone
         cloned.setOrderCustomer(customer);
-        cloned.setBillingAddressExternalId(billingAddressExternalId);
+        cloned.setBillingAddress(billingAddress);
         cloned.setIsDefault(isDefault);
         cloned.setPaymentToken(paymentToken);
         for (Map.Entry<String, String> entry : additionalFields.entrySet()) {

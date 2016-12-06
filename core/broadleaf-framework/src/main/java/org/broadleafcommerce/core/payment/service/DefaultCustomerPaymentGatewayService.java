@@ -24,10 +24,10 @@ import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.CustomerPaymentGatewayService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.common.web.payment.controller.CustomerPaymentGatewayAbstractController;
+import org.broadleafcommerce.core.order.domain.OrderAddress;
+import org.broadleafcommerce.core.order.service.OrderAddressService;
 import org.broadleafcommerce.core.order.service.OrderCustomerService;
 import org.broadleafcommerce.core.payment.domain.CustomerPayment;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.service.AddressService;
 import org.springframework.stereotype.Service;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
@@ -45,8 +45,8 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
 
     private static final Log LOG = LogFactory.getLog(DefaultCustomerPaymentGatewayService.class);
 
-    @Resource(name = "blAddressService")
-    protected AddressService addressService;
+    @Resource(name = "blOrderAddressService")
+    protected OrderAddressService orderAddressService;
 
     @Resource(name = "blCustomerPaymentService")
     protected CustomerPaymentService customerPaymentService;
@@ -81,9 +81,9 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
             dtoToEntityService.populateCustomerPaymentToken(responseDTO, customerPayment);
 
             if (responseDTO.getBillTo() != null && responseDTO.getBillTo().addressPopulated()) {
-                Address billingAddress = addressService.create();
+                OrderAddress billingAddress = orderAddressService.create();
                 dtoToEntityService.populateAddressInfo(responseDTO.getBillTo(), billingAddress);
-                customerPayment.setBillingAddressExternalId(billingAddress.getId());
+                customerPayment.setBillingAddress(billingAddress);
             }
 
             if (responseDTO.getCreditCard() !=null && responseDTO.getCreditCard().creditCardPopulated()) {

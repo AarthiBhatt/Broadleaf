@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderAddress;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
@@ -229,33 +230,8 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     public void populateBillTo(Order order, PaymentRequestDTO requestDTO) {
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive()) {
-                Address billAddress = payment.getBillingAddress();
+                OrderAddress billAddress = payment.getBillingAddress();
                 if (billAddress != null) {
-                    String stateAbbr = null;
-                    String countryAbbr = null;
-                    String phone = null;
-
-                    if (StringUtils.isNotBlank(billAddress.getStateProvinceRegion())) {
-                        stateAbbr = billAddress.getStateProvinceRegion();
-                    } else if (billAddress.getState() != null) {
-                        //support legacy
-                        stateAbbr = billAddress.getState().getAbbreviation();
-                    }
-
-//TODO: microservices - deal with I18n domain
-//                    if (billAddress.getIsoCountryAlpha2() != null) {
-//                        countryAbbr = billAddress.getIsoCountryAlpha2().getAlpha2();
-//                    } else
-
-                    if (billAddress.getCountry() != null) {
-                        //support legacy
-                        countryAbbr = billAddress.getCountry().getAbbreviation();
-                    }
-
-                    if (billAddress.getPhonePrimary() != null) {
-                        phone = billAddress.getPhonePrimary().getPhoneNumber();
-                    }
-                    
                     NameResponse name = getName(billAddress);
                     
                     requestDTO.billTo()
@@ -264,11 +240,11 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                             .addressCompanyName(billAddress.getCompanyName())
                             .addressLine1(billAddress.getAddressLine1())
                             .addressLine2(billAddress.getAddressLine2())
-                            .addressCityLocality(billAddress.getCity())
-                            .addressStateRegion(stateAbbr)
+                            .addressCityLocality(billAddress.getCityLocality())
+                            .addressStateRegion(billAddress.getStateProvinceRegion())
                             .addressPostalCode(billAddress.getPostalCode())
-                            .addressCountryCode(countryAbbr)
-                            .addressPhone(phone)
+                            .addressCountryCode(billAddress.getCountryCode())
+                            .addressPhone(billAddress.getPhone())
                             .addressEmail(billAddress.getEmailAddress());
                 }
             }
@@ -276,7 +252,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     }
 
     
-    protected NameResponse getName(Address address) {
+    protected NameResponse getName(OrderAddress address) {
         NameResponse response = new NameResponse();
         
         if (BLCSystemProperty.resolveBooleanSystemProperty("validator.address.fullNameOnly")) {

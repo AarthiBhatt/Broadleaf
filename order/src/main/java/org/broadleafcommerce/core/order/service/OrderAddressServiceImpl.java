@@ -26,4 +26,35 @@ public class OrderAddressServiceImpl implements OrderAddressService {
     @Override
     public void delete(OrderAddress orderAddress) { orderAddressDao.delete(orderAddress); }
 
+    @Override
+    public OrderAddress copyOrderAddress(OrderAddress orig) {
+        return copyOrderAddress(null, orig);
+    }
+
+    @Override
+    public OrderAddress copyOrderAddress(OrderAddress dest, OrderAddress orig) {
+        if (dest == null) {
+            dest = create();
+        }
+
+        if (orig != null) {
+            dest.setFullName(orig.getFullName());
+            dest.setFirstName(orig.getFirstName());
+            dest.setLastName(orig.getLastName());
+            dest.setAddressLine1(orig.getAddressLine1());
+            dest.setAddressLine2(orig.getAddressLine2());
+            dest.setAddressLine3(orig.getAddressLine3());
+            dest.setCityLocality(orig.getCityLocality());
+            dest.setStateProvinceRegion(orig.getStateProvinceRegion());
+            dest.setCountryCode(orig.getCountryCode());
+            dest.setPostalCode(orig.getPostalCode());
+            dest.setPhone(orig.getPhone());
+            dest.setEmailAddress(orig.getEmailAddress());
+            dest.setCompanyName(orig.getCompanyName());
+
+            return dest;
+        }
+
+        return null;
+    }
 }
