@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.FulfillmentOptionService;
+import org.broadleafcommerce.core.order.service.OrderAddressService;
 import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.service.CustomerPaymentService;
@@ -119,6 +120,9 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     @Resource(name = "blCustomerAddressService")
     protected CustomerAddressService customerAddressService;
+    
+    @Resource(name = "blOrderAddressService")
+    protected OrderAddressService orderAddressService;
 
     @Resource(name = "blAddressService")
     protected AddressService addressService;
