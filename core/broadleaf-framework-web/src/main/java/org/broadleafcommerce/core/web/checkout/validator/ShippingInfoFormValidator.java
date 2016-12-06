@@ -20,14 +20,20 @@ package org.broadleafcommerce.core.web.checkout.validator;
 import org.broadleafcommerce.common.web.form.BroadleafFormType;
 import org.broadleafcommerce.common.web.validator.BroadleafCommonAddressValidator;
 import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
+import org.broadleafcommerce.core.web.translation.OrderAddressTranslationService;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import javax.annotation.Resource;
+
 @Component("blShippingInfoFormValidator")
 public class ShippingInfoFormValidator extends BroadleafCommonAddressValidator implements Validator {
 
+    @Resource(name = "blOrderAddressTranslationService")
+    protected OrderAddressTranslationService orderAddressTranslationService;
+    
     @SuppressWarnings("rawtypes")
     public boolean supports(Class clazz) {
         return clazz.equals(ShippingInfoForm.class);
@@ -35,7 +41,10 @@ public class ShippingInfoFormValidator extends BroadleafCommonAddressValidator i
 
     public void validate(Object obj, Errors errors) {
         ShippingInfoForm shippingInfoForm = (ShippingInfoForm) obj;
-        super.validate(BroadleafFormType.SHIPPING_FORM, shippingInfoForm.getAddress(), errors);
+        super.validate(
+                BroadleafFormType.SHIPPING_FORM,
+                orderAddressTranslationService.convertOrderAddressToAddress(shippingInfoForm.getAddress()),
+                errors);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "fulfillmentOptionId", "fulfillmentOptionId.required");
     }
 }
