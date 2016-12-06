@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import com.broadleafcommerce.order.common.domain.OrderAddress;
 
 /**
  * Represents a given set of options for an OrderItem in an Order in the 

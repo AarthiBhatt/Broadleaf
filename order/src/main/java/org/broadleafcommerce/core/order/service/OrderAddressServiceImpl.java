@@ -18,7 +18,7 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.dao.OrderAddressDao;
-import org.broadleafcommerce.core.order.domain.OrderAddress;
+import com.broadleafcommerce.order.common.domain.OrderAddress;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
