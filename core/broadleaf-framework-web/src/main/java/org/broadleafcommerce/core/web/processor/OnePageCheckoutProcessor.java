@@ -42,11 +42,12 @@ import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionDTO;
 import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionStateType;
 import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionViewType;
 import org.broadleafcommerce.core.web.order.CartState;
+import org.broadleafcommerce.core.web.translation.OrderAddressTranslationService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
@@ -112,6 +113,9 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
 
     @Resource(name = "blOrderToPaymentRequestDTOService")
     protected OrderToPaymentRequestDTOService orderToPaymentRequestDTOService;
+    
+    @Resource(name = "blOrderAddressTranslationService")
+    protected OrderAddressTranslationService orderAddressTranslationService;
 
     @Override
     public String getName() {
@@ -201,7 +205,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
                 CustomerAddress defaultAddress = customerAddressService.findDefaultCustomerAddress(CustomerState.getCustomer().getId());
                 if (defaultAddress != null) {
                     Address address = addressService.readAddressById(defaultAddress.getAddressExternalId());
-                    shippingForm.setAddress(address);
+                    shippingForm.setAddress(orderAddressTranslationService.convertAddressToOrderAddress(address));
                     shippingForm.setAddressName(defaultAddress.getAddressName());
                 }
             }

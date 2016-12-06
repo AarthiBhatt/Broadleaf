@@ -19,7 +19,9 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
@@ -31,6 +33,8 @@ import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 /**
  * @author Priyesh Patel
  */
@@ -38,6 +42,9 @@ import java.util.Map;
 @ConditionalOnTemplating
 public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModifierProcessor {
 
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
+    
     @Override
     public String getName() {
         return "product_option_display";
@@ -59,9 +66,9 @@ public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModi
         Object item = context.parseExpression(tagAttributes.get("orderItem"));
         if (item instanceof DiscreteOrderItem) {
             DiscreteOrderItem orderItem = (DiscreteOrderItem) item;
-
+            Product product = catalogService.findProductById(orderItem.getProduct().getExternalId());
             for (String i : orderItem.getOrderItemAttributes().keySet()) {
-                for (ProductOption option : orderItem.getProduct().getProductOptions()) {
+                for (ProductOption option : product.getProductOptions()) {
                     if (option.getAttributeName().equals(i) && !StringUtils.isEmpty(orderItem.getOrderItemAttributes().get(i).toString())) {
                         productOptionDisplayValues.put(option.getLabel(), orderItem.getOrderItemAttributes().get(i).toString());
                     }

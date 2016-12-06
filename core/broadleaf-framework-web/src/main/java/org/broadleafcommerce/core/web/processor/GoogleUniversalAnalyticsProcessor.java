@@ -23,7 +23,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -39,6 +41,8 @@ import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateNonVoidElement;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.broadleafcommerce.order.common.domain.OrderSku;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -87,6 +91,9 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagRepla
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
+    
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
     
     /**
      * This will force the domain to 127.0.0.1 which is useful to determine if the Google Analytics tag is sending
@@ -256,8 +263,8 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagRepla
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                 OrderItem orderItem = fulfillmentGroupItem.getOrderItem();
-    
-                Sku sku = ((SkuAccessor) orderItem).getSku();
+                OrderSku orderSku = ((SkuAccessor) orderItem).getSku();
+                Sku sku = catalogService.findSkuById(orderSku.getExternalId());
                 
                 sb.append("ga('" + trackerPrefix + "ecommerce:addItem', {");
                 sb.append("'id': '" + order.getOrderNumber() + "'");
@@ -280,7 +287,14 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagRepla
      */
     protected String getVariation(OrderItem item) {
         if (MapUtils.isEmpty(item.getOrderItemAttributes())) {
-            return item.getCategory() == null ? "" : item.getCategory().getName();
+            if (item.getCategory() == null) {
+                return "";
+            }
+            Category cat = catalogService.findCategoryById(item.getCategory().getExternalId());
+            if (cat == null) {
+                return "";
+            }
+            return cat.getName();
         }
         
         //use product options instead

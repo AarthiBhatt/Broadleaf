@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -78,6 +79,9 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
 
     @Resource(name = "blInventoryService")
     protected InventoryService inventoryService;
+    
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
 
     @Resource(name = "blExploitProtectionService")
     protected ExploitProtectionService eps;
@@ -180,7 +184,7 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
 
             for (OrderItem item : cart.getOrderItems()) {
                 if (item instanceof SkuAccessor) {
-                    Sku sku = ((SkuAccessor) item).getSku();
+                    Sku sku = catalogService.findSkuById(((SkuAccessor) item).getSku().getExternalId());
                     if (sku != null && sku.getProduct() != null && item.getParentOrderItem() == null) {
                         if (useSku) {
                             cartItemIdsWithoutOptions.add(sku.getId());
