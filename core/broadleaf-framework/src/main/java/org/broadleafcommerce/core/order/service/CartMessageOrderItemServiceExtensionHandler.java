@@ -19,19 +19,14 @@ package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessagePlacementType;
 import org.broadleafcommerce.core.promotionMessage.dto.PromotionMessageDTO;
 import org.broadleafcommerce.core.promotionMessage.service.PromotionMessageGenerator;
-import org.broadleafcommerce.core.promotionMessage.util.BLCPromotionMessageUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -90,21 +85,22 @@ public class CartMessageOrderItemServiceExtensionHandler extends AbstractOrderSe
     protected List<String> gatherProductCartMessages(OrderItem orderItem) {
         List<String> cartMessages = new ArrayList<>();
 
-        if (DiscreteOrderItem.class.isAssignableFrom(orderItem.getClass())) {
-            DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
-            Product product = discreteOrderItem.getProduct();
-
-            for (PromotionMessageGenerator generator : generators) {
-                Map<String, List<PromotionMessageDTO>> promotionMessages = generator.generatePromotionMessages(product);
-                List<PromotionMessageDTO> messageDTOs = new ArrayList<>();
-                addPromotionMessagesForType(messageDTOs, promotionMessages.get(PromotionMessagePlacementType.CART.getType()));
-                addPromotionMessagesForType(messageDTOs, promotionMessages.get(PromotionMessagePlacementType.EVERYWHERE.getType()));
-
-                BLCPromotionMessageUtils.sortMessagesByPriority(messageDTOs);
-
-                cartMessages.addAll(BLCPromotionMessageUtils.gatherMessagesFromDTOs(messageDTOs));
-            }
-        }
+// TODO microservices  deal with promotion messages
+//        if (DiscreteOrderItem.class.isAssignableFrom(orderItem.getClass())) {
+//            DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
+//            OrderProduct product = discreteOrderItem.getProduct();
+//
+//            for (PromotionMessageGenerator generator : generators) {
+//                Map<String, List<PromotionMessageDTO>> promotionMessages = generator.generatePromotionMessages(product);
+//                List<PromotionMessageDTO> messageDTOs = new ArrayList<>();
+//                addPromotionMessagesForType(messageDTOs, promotionMessages.get(PromotionMessagePlacementType.CART.getType()));
+//                addPromotionMessagesForType(messageDTOs, promotionMessages.get(PromotionMessagePlacementType.EVERYWHERE.getType()));
+//
+//                BLCPromotionMessageUtils.sortMessagesByPriority(messageDTOs);
+//
+//                cartMessages.addAll(BLCPromotionMessageUtils.gatherMessagesFromDTOs(messageDTOs));
+//            }
+//        }
 
         return cartMessages;
     }
