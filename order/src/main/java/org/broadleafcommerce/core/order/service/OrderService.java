@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.order.service.exception.RemoveFromCartExceptio
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 
@@ -172,23 +173,24 @@ public interface OrderService {
 //     * @return the persisted version of the OrderPayment
 //     */
 //    public OrderPayment addPaymentToOrder(Order order, OrderPayment payment, Referenced securePaymentInfo);
-//    
-//    /**
-//     * Persists the given order to the database. If the priceOrder flag is set to true,
-//     * the pricing workflow will execute before the order is written to the database.
-//     * Generally, you will want to price the order in every request scope once, and
-//     * preferrably on the last call to save() for performance reasons.
-//     * 
-//     * However, if you have logic that depends on the Order being priced, there are no
-//     * issues with saving as many times as necessary.
-//     * 
-//     * @param order
-//     * @param priceOrder
-//     * @return the persisted Order, which will be a different instance than the Order passed in
-//     * @throws PricingException
-//     */
-//    public Order save(Order order, Boolean priceOrder) throws PricingException;
-//    
+    
+    /**
+     * Persists the given order to the database. If the priceOrder flag is set to true,
+     * the pricing workflow will execute before the order is written to the database.
+     * Generally, you will want to price the order in every request scope once, and
+     * preferrably on the last call to save() for performance reasons.
+     * 
+     * However, if you have logic that depends on the Order being priced, there are no
+     * issues with saving as many times as necessary.
+     * 
+     * @param order
+     * @param priceOrder
+     * @return the persisted Order, which will be a different instance than the Order passed in
+     * @throws PricingException
+     */
+    public Order save(Order order, Boolean priceOrder) throws PricingException;
+    
+// TODO microservices - incremental implementation of order service
 //    /**
 //     * Saves the given <b>order</b> while optionally repricing the order (meaning, going through the pricing workflow)
 //     * along with updating the prices of individual items in the order, as opposed to just pricing taxes/shipping/etc.

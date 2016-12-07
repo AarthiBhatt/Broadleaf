@@ -20,6 +20,8 @@ package org.broadleafcommerce.core.order.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
@@ -37,19 +39,23 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
+import org.broadleafcommerce.core.pricing.service.PricingService;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.Processor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
+import org.hibernate.exception.LockAcquisitionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
-import com.broadleafcommerce.order.common.domain.OrderSku;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -79,9 +85,8 @@ public class OrderServiceImpl implements OrderService {
 //    protected OfferDao offerDao;
 
     /* Services */
-// TODO microservices - deal with pricing daos and services
-//    @Resource(name = "blPricingService")
-//    protected PricingService pricingService;
+    @Resource(name = "blPricingService")
+    protected PricingService pricingService;
 
 // TODO microservices - deal with orderitem daos and services
 //    @Resource(name = "blOrderItemService")
@@ -241,91 +246,91 @@ public class OrderServiceImpl implements OrderService {
 //        }
 //        return save(order, priceOrder);
 //    }
-//
-//    @Override
-//    public Order save(Order order, Boolean priceOrder) throws PricingException {
-//        //persist the order first
-//        TransactionStatus status = TransactionUtils.createTransaction("saveOrder",
-//                    TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
-//        try {
-//            order = persist(order);
-//            TransactionUtils.finalizeTransaction(status, transactionManager, false);
-//        } catch (RuntimeException ex) {
-//            TransactionUtils.finalizeTransaction(status, transactionManager, true);
-//            throw ex;
-//        }
-//
-//        //make any pricing changes - possibly retrying with the persisted state if there's a lock failure
-//        if (priceOrder) {
-//            int retryCount = 0;
-//            boolean isValid = false;
-//            while (!isValid) {
-//                try {
-//                    order = pricingService.executePricing(order);
-//                    isValid = true;
-//                } catch (Exception ex) {
-//                    boolean isValidCause = false;
-//                    Throwable cause = ex;
-//                    while (!isValidCause) {
-//                        if (cause.getClass().equals(LockAcquisitionException.class)) {
-//                            isValidCause = true;
-//                        }
-//                        cause = cause.getCause();
-//                        if (cause == null) {
-//                            break;
-//                        }
-//                    }
-//                    if (isValidCause) {
-//                        if (LOG.isInfoEnabled()) {
-//                            LOG.info("Problem acquiring lock during pricing call - attempting to price again.");
-//                        }
-//                        isValid = false;
-//                        if (retryCount >= pricingRetryCountForLockFailure) {
-//                            if (LOG.isInfoEnabled()) {
-//                                LOG.info("Problem acquiring lock during pricing call. Retry limit exceeded at (" + retryCount + "). Throwing exception.");
-//                            }
-//                            if (ex instanceof PricingException) {
-//                                throw (PricingException) ex;
-//                            } else {
-//                                throw new PricingException(ex);
-//                            }
-//                        } else {
-//                            order = findOrderById(order.getId());
-//                            retryCount++;
-//                        }
-//                        try {
-//                            Thread.sleep(pricingRetryWaitIntervalForLockFailure);
-//                        } catch (Throwable e) {
-//                            //do nothing
-//                        }
-//                    } else {
-//                        if (ex instanceof PricingException) {
-//                            throw (PricingException) ex;
-//                        } else {
-//                            throw new PricingException(ex);
-//                        }
-//                    }
-//                }
-//            }
-//
-//            //make the final save of the priced order
-//            status = TransactionUtils.createTransaction("saveOrder",
-//                                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
-//            try {
-//                order = persist(order);
-//
-//                if (extensionManager != null) {
-//                    extensionManager.getProxy().attachAdditionalDataToOrder(order, priceOrder);
-//                }
-//                TransactionUtils.finalizeTransaction(status, transactionManager, false);
-//            } catch (RuntimeException ex) {
-//                TransactionUtils.finalizeTransaction(status, transactionManager, true);
-//                throw ex;
-//            }
-//        }
-//
-//        return order;
-//    }
+
+    @Override
+    public Order save(Order order, Boolean priceOrder) throws PricingException {
+        //persist the order first
+        TransactionStatus status = TransactionUtils.createTransaction("saveOrder",
+                    TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
+        try {
+            order = persist(order);
+            TransactionUtils.finalizeTransaction(status, transactionManager, false);
+        } catch (RuntimeException ex) {
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
+            throw ex;
+        }
+
+        //make any pricing changes - possibly retrying with the persisted state if there's a lock failure
+        if (priceOrder) {
+            int retryCount = 0;
+            boolean isValid = false;
+            while (!isValid) {
+                try {
+                    order = pricingService.executePricing(order);
+                    isValid = true;
+                } catch (Exception ex) {
+                    boolean isValidCause = false;
+                    Throwable cause = ex;
+                    while (!isValidCause) {
+                        if (cause.getClass().equals(LockAcquisitionException.class)) {
+                            isValidCause = true;
+                        }
+                        cause = cause.getCause();
+                        if (cause == null) {
+                            break;
+                        }
+                    }
+                    if (isValidCause) {
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("Problem acquiring lock during pricing call - attempting to price again.");
+                        }
+                        isValid = false;
+                        if (retryCount >= pricingRetryCountForLockFailure) {
+                            if (LOG.isInfoEnabled()) {
+                                LOG.info("Problem acquiring lock during pricing call. Retry limit exceeded at (" + retryCount + "). Throwing exception.");
+                            }
+                            if (ex instanceof PricingException) {
+                                throw (PricingException) ex;
+                            } else {
+                                throw new PricingException(ex);
+                            }
+                        } else {
+                            order = findOrderById(order.getId());
+                            retryCount++;
+                        }
+                        try {
+                            Thread.sleep(pricingRetryWaitIntervalForLockFailure);
+                        } catch (Throwable e) {
+                            //do nothing
+                        }
+                    } else {
+                        if (ex instanceof PricingException) {
+                            throw (PricingException) ex;
+                        } else {
+                            throw new PricingException(ex);
+                        }
+                    }
+                }
+            }
+
+            //make the final save of the priced order
+            status = TransactionUtils.createTransaction("saveOrder",
+                                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
+            try {
+                order = persist(order);
+
+                if (extensionManager != null) {
+                    extensionManager.getProxy().attachAdditionalDataToOrder(order, priceOrder);
+                }
+                TransactionUtils.finalizeTransaction(status, transactionManager, false);
+            } catch (RuntimeException ex) {
+                TransactionUtils.finalizeTransaction(status, transactionManager, true);
+                throw ex;
+            }
+        }
+
+        return order;
+    }
     
     // This method exists to provide OrderService methods the ability to save an order
     // without having to worry about a PricingException being thrown.
