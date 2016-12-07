@@ -26,13 +26,12 @@ import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
-import com.broadleafcommerce.order.common.domain.OrderAddress;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
-import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.stereotype.Service;
 
+import com.broadleafcommerce.order.common.domain.OrderAddress;
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 import java.util.List;
@@ -182,31 +181,14 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         if (fgs != null && fgs.size() > 0) {
             FulfillmentGroup defaultFg = fgService.getFirstShippableFulfillmentGroup(order);
             if (defaultFg != null && defaultFg.getAddress() != null) {
-                Address fgAddress = defaultFg.getAddress();
+                OrderAddress fgAddress = defaultFg.getAddress();
                 String stateAbbr = null;
                 String countryAbbr = null;
                 String phone = null;
 
-                if (StringUtils.isNotBlank(fgAddress.getStateProvinceRegion())) {
-                    stateAbbr = fgAddress.getStateProvinceRegion();
-                } else if (fgAddress.getState() != null) {
-                    //support legacy
-                    stateAbbr = fgAddress.getState().getAbbreviation();
-                }
-
-//TODO: microservices - deal with I18n domain
-//                if (fgAddress.getIsoCountryAlpha2() != null) {
-//                    countryAbbr = fgAddress.getIsoCountryAlpha2().getAlpha2();
-//                } else
-
-                if (fgAddress.getCountry() != null) {
-                    //support legacy
-                    countryAbbr = fgAddress.getCountry().getAbbreviation();
-                }
-
-                if (fgAddress.getPhonePrimary() != null) {
-                    phone = fgAddress.getPhonePrimary().getPhoneNumber();
-                }
+                stateAbbr = fgAddress.getStateProvinceRegion();
+                countryAbbr = fgAddress.getCountryCode();
+                phone = fgAddress.getPhone();
                 
                 NameResponse name = getName(fgAddress);
                 
@@ -216,7 +198,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                         .addressCompanyName(fgAddress.getCompanyName())
                         .addressLine1(fgAddress.getAddressLine1())
                         .addressLine2(fgAddress.getAddressLine2())
-                        .addressCityLocality(fgAddress.getCity())
+                        .addressCityLocality(fgAddress.getCityLocality())
                         .addressStateRegion(stateAbbr)
                         .addressPostalCode(fgAddress.getPostalCode())
                         .addressCountryCode(countryAbbr)
