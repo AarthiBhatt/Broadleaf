@@ -63,7 +63,7 @@ public class OrderSkuImpl implements OrderSku {
     protected Long externalId;
 
     @Column(name = "NAME")
-    protected String Name;
+    protected String name;
 
     @Column(name = "SALE_PRICE", precision = 19, scale = 5)
     protected Money salePrice;
@@ -130,10 +130,10 @@ public class OrderSkuImpl implements OrderSku {
     }
 
     @Override
-    public String getName() { return Name; }
+    public String getName() { return name; }
 
     @Override
-    public void setName(String name) { Name = name; }
+    public void setName(String name) { name = name; }
 
     @Override
     public Money getRetailPrice() {
