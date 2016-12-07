@@ -20,8 +20,6 @@ package org.broadleafcommerce.core.order.service.call;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.Phone;
 
 import com.broadleafcommerce.order.common.domain.OrderAddress;
 
@@ -32,7 +30,6 @@ public class FulfillmentGroupRequest {
 
     protected OrderAddress orderAddress;
     protected Order order;
-    protected Phone phone;
     
     /**
      * Both of these fields uses are superceded by the FulfillmentOption paradigm
@@ -64,14 +61,6 @@ public class FulfillmentGroupRequest {
         this.order = order;
     }
 
-    public Phone getPhone() {
-        return phone;
-    }
-
-    public void setPhone(Phone phone) {
-        this.phone = phone;
-    }
-    
     public FulfillmentOption getOption() {
         return option;
     }

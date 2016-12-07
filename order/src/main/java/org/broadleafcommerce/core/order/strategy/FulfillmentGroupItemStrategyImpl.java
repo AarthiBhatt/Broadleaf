@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.order.strategy;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -143,19 +142,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
      * @return
      */
     protected FulfillmentType resolveFulfillmentType(DiscreteOrderItem discreteOrderItem) {
-        // TODO microservices - Order worflows refactoring
-        //return resolveFulfillmentType(discreteOrderItem.getSku());
-        return FulfillmentType.PHYSICAL_PICKUP_OR_SHIP;
-    }
-    
-    protected FulfillmentType resolveFulfillmentType(Sku sku) {
-        if (sku.getFulfillmentType() != null) {
-            return sku.getFulfillmentType();
-        }
-        if (sku.getDefaultProduct() != null && sku.getDefaultProduct().getDefaultCategory() != null) {
-            return sku.getDefaultProduct().getDefaultCategory().getFulfillmentType();
-        }
-        return null;
+        return discreteOrderItem.getSku().getFulfillmentType();
     }
     
     protected FulfillmentGroup addItemToFulfillmentGroup(Order order, OrderItem orderItem, FulfillmentGroup fulfillmentGroup) throws PricingException {
