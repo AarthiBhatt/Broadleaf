@@ -18,7 +18,15 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
+import org.broadleafcommerce.core.order.service.exception.AddToCartException;
+import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
+import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
+import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.broadleafcommerce.core.workflow.WorkflowException;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
@@ -311,96 +319,97 @@ public interface OrderService {
 //     * @throws PricingException
 //     */
 //    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
-//    
-//    /**
-//     * Initiates the addItem workflow that will attempt to add the given quantity of the specified item
-//     * to the Order. The item to be added can be determined in a few different ways. For example, the 
-//     * SKU can be specified directly or it can be determine based on a Product and potentially some
-//     * specified ProductOptions for that given product.
-//     *
-//     * The minimum required parameters for OrderItemRequest are: productId and quantity or alternatively, skuId and quantity
-//     *
-//     * When priceOrder is false, the system will not reprice the order.   This is more performant in
-//     * cases such as bulk adds where the repricing could be done for the last item only.
-//     * 
-//     * This method differs from the {@link #addItemWithPriceOverrides(Long, OrderItemRequestDTO, boolean)} in that it
-//     * will clear any values set on the {@link OrderItemRequestDTO} for the overrideSalePrice or overrideRetailPrice.
-//     * 
-//     * This design is intended to ensure that override pricing is not called by mistake.   Implementors should
-//     * use this method when no manual price overrides are allowed.
-//     *
-//     * @see OrderItemRequestDTO
-//     * @param orderId
-//     * @param orderItemRequest
-//     * @param priceOrder
-//     * @return the order the item was added to
-//     * @throws WorkflowException 
-//     * @throws Throwable 
-//     */
-//    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException;
-//    
-//    /**
-//     * Initiates the addItem workflow that will attempt to add the given quantity of the specified item
-//     * to the Order. The item to be added can be determined in a few different ways. For example, the 
-//     * SKU can be specified directly or it can be determine based on a Product and potentially some
-//     * specified ProductOptions for that given product.
-//     *
-//     * The minimum required parameters for OrderItemRequest are: productId and quantity or alternatively, skuId and quantity
-//     *
-//     * When priceOrder is false, the system will not reprice the order.   This is more performant in
-//     * cases such as bulk adds where the repricing could be done for the last item only.
-//     * 
-//     * As opposed to the {@link #addItem(Long, OrderItemRequestDTO, boolean)} method, this method allows
-//     * the passed in {@link OrderItemRequestDTO} to contain values for the overrideSale or overrideRetail
-//     * price fields.
-//     * 
-//     * This design is intended to ensure that override pricing is not called by mistake.   Implementors should
-//     * use this method when manual price overrides are allowed.
-//     *
-//     * @see OrderItemRequestDTO
-//     * @param orderId
-//     * @param orderItemRequest
-//     * @param priceOrder
-//     * @return the order the item was added to
-//     * @throws WorkflowException 
-//     * @throws Throwable 
-//     */
-//    public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException;
-//
-//    public int getTotalChildOrderItems(OrderItemRequestDTO orderItemRequestDTO);
-//
-//    public void addChildItems(OrderItemRequestDTO orderItemRequestDTO, int numAdditionRequests, int currentAddition, ProcessContext<CartOperationRequest> context, List<ActivityMessageDTO> orderMessages) throws WorkflowException;
-//
+    
+    /**
+     * Initiates the addItem workflow that will attempt to add the given quantity of the specified item
+     * to the Order. The item to be added can be determined in a few different ways. For example, the 
+     * SKU can be specified directly or it can be determine based on a Product and potentially some
+     * specified ProductOptions for that given product.
+     *
+     * The minimum required parameters for OrderItemRequest are: productId and quantity or alternatively, skuId and quantity
+     *
+     * When priceOrder is false, the system will not reprice the order.   This is more performant in
+     * cases such as bulk adds where the repricing could be done for the last item only.
+     * 
+     * This method differs from the {@link #addItemWithPriceOverrides(Long, OrderItemRequestDTO, boolean)} in that it
+     * will clear any values set on the {@link OrderItemRequestDTO} for the overrideSalePrice or overrideRetailPrice.
+     * 
+     * This design is intended to ensure that override pricing is not called by mistake.   Implementors should
+     * use this method when no manual price overrides are allowed.
+     *
+     * @see OrderItemRequestDTO
+     * @param orderId
+     * @param orderItemRequest
+     * @param priceOrder
+     * @return the order the item was added to
+     * @throws WorkflowException 
+     * @throws Throwable 
+     */
+    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException;
+    
+    /**
+     * Initiates the addItem workflow that will attempt to add the given quantity of the specified item
+     * to the Order. The item to be added can be determined in a few different ways. For example, the 
+     * SKU can be specified directly or it can be determine based on a Product and potentially some
+     * specified ProductOptions for that given product.
+     *
+     * The minimum required parameters for OrderItemRequest are: productId and quantity or alternatively, skuId and quantity
+     *
+     * When priceOrder is false, the system will not reprice the order.   This is more performant in
+     * cases such as bulk adds where the repricing could be done for the last item only.
+     * 
+     * As opposed to the {@link #addItem(Long, OrderItemRequestDTO, boolean)} method, this method allows
+     * the passed in {@link OrderItemRequestDTO} to contain values for the overrideSale or overrideRetail
+     * price fields.
+     * 
+     * This design is intended to ensure that override pricing is not called by mistake.   Implementors should
+     * use this method when manual price overrides are allowed.
+     *
+     * @see OrderItemRequestDTO
+     * @param orderId
+     * @param orderItemRequest
+     * @param priceOrder
+     * @return the order the item was added to
+     * @throws WorkflowException 
+     * @throws Throwable 
+     */
+    public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException;
+
+    public int getTotalChildOrderItems(OrderItemRequestDTO orderItemRequestDTO);
+
+    public void addChildItems(OrderItemRequestDTO orderItemRequestDTO, int numAdditionRequests, int currentAddition, ProcessContext<CartOperationRequest> context, List<ActivityMessageDTO> orderMessages) throws WorkflowException;
+
+// TODO microservices - incremental implementation of order service
 //    public void addDependentOrderItem(OrderItemRequestDTO parentOrderItemRequest, OrderItemRequestDTO dependentOrderItem);
-//
-//    /**
-//     * Initiates the updateItem workflow that will attempt to update the item quantity for the specified
-//     * OrderItem in the given Order. The new quantity is specified in the OrderItemRequestDTO
-//     * 
-//     * Minimum required parameters for OrderItemRequest: orderItemId, quantity
-//     * 
-//     * @see OrderItemRequestDTO
-//     * @param orderId
-//     * @param orderItemRequest
-//     * @param priceOrder
-//     * @return the order the item was added to
-//     * @throws UpdateCartException
-//     * @throws RemoveFromCartException 
-//     */
-//    public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException;
-//    
-//    /**
-//     * Initiates the removeItem workflow that will attempt to remove the specified OrderItem from 
-//     * the given Order
-//     * 
-//     * @see OrderItemRequestDTO
-//     * @param orderId
-//     * @param orderItemId
-//     * @param priceOrder
-//     * @return the order the item was added to
-//     * @throws RemoveFromCartException 
-//     */
-//    public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException;
+
+    /**
+     * Initiates the updateItem workflow that will attempt to update the item quantity for the specified
+     * OrderItem in the given Order. The new quantity is specified in the OrderItemRequestDTO
+     * 
+     * Minimum required parameters for OrderItemRequest: orderItemId, quantity
+     * 
+     * @see OrderItemRequestDTO
+     * @param orderId
+     * @param orderItemRequest
+     * @param priceOrder
+     * @return the order the item was added to
+     * @throws UpdateCartException
+     * @throws RemoveFromCartException 
+     */
+    public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException;
+
+    /**
+     * Initiates the removeItem workflow that will attempt to remove the specified OrderItem from 
+     * the given Order
+     * 
+     * @see OrderItemRequestDTO
+     * @param orderId
+     * @param orderItemId
+     * @param priceOrder
+     * @return the order the item was added to
+     * @throws RemoveFromCartException 
+     */
+    public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException;
     
     /**
      * @see #setMoveNamedOrderItems(boolean)
@@ -539,23 +548,24 @@ public interface OrderService {
 //     * @param log the Log to use to print a debug-level message
 //     */
 //    public void printOrder(Order order, Log log);
-//
-//    /**
-//     * Invokes the extension handler of the same name to provide the ability for a module to throw an exception
-//     * and interrupt a cart operation.
-//     * 
-//     * @param cart
-//     */
-//    public void preValidateCartOperation(Order cart);
-//
-//    /**
-//     * Invokes the extension handler of the same name to provide the ability for a module to throw an exception
-//     * and interrupt an update quantity operation.
-//     * 
-//     * @param cart
-//     */
-//    public void preValidateUpdateQuantityOperation(Order cart, OrderItemRequestDTO dto);
-//    
+
+    /**
+     * Invokes the extension handler of the same name to provide the ability for a module to throw an exception
+     * and interrupt a cart operation.
+     * 
+     * @param cart
+     */
+    public void preValidateCartOperation(Order cart);
+
+    /**
+     * Invokes the extension handler of the same name to provide the ability for a module to throw an exception
+     * and interrupt an update quantity operation.
+     * 
+     * @param cart
+     */
+    public void preValidateUpdateQuantityOperation(Order cart, OrderItemRequestDTO dto);
+    
+// TODO microservices - incremental implementation of order service
 //    /**
 //     * Detaches the given order from the current entity manager and then reloads a fresh version from
 //     * the database.

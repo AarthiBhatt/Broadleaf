@@ -20,16 +20,27 @@ package org.broadleafcommerce.core.order.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
+import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
+import org.broadleafcommerce.core.order.service.exception.AddToCartException;
+import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
+import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
+import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
+import org.broadleafcommerce.core.workflow.ActivityMessages;
+import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.broadleafcommerce.core.workflow.Processor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -42,6 +53,7 @@ import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import com.broadleafcommerce.order.common.domain.OrderProduct;
 import com.broadleafcommerce.order.common.domain.OrderSku;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -96,18 +108,18 @@ public class OrderServiceImpl implements OrderService {
     protected OrderServiceExtensionManager extensionManager;
     
     /* Workflows */
+    @Resource(name = "blAddItemWorkflow")
+    protected Processor addItemWorkflow;
+    
 // TODO microservices - deal with workflows
-//    @Resource(name = "blAddItemWorkflow")
-//    protected Processor addItemWorkflow;
-//    
 //    @Resource(name = "blUpdateProductOptionsForItemWorkflow")
 //    private Processor updateProductOptionsForItemWorkflow;
-//
-//    @Resource(name = "blUpdateItemWorkflow")
-//    protected Processor updateItemWorkflow;
-//    
-//    @Resource(name = "blRemoveItemWorkflow")
-//    protected Processor removeItemWorkflow;
+
+    @Resource(name = "blUpdateItemWorkflow")
+    protected Processor updateItemWorkflow;
+
+    @Resource(name = "blRemoveItemWorkflow")
+    protected Processor removeItemWorkflow;
 
     @Resource(name = "blTransactionManager")
     protected PlatformTransactionManager transactionManager;
@@ -514,130 +526,131 @@ public class OrderServiceImpl implements OrderService {
 //        return item;
 //    }
 //    
-//    @Override
-//    @Transactional(value = "blTransactionManager", rollbackFor = {AddToCartException.class})
-//    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
-//        // Don't allow overrides from this method.
-//        orderItemRequestDTO.setOverrideRetailPrice(null);
-//        orderItemRequestDTO.setOverrideSalePrice(null);
-//        return addItemWithPriceOverrides(orderId, orderItemRequestDTO, priceOrder);
-//    }
-//
-//    @Override
-//    @Transactional(value = "blTransactionManager", rollbackFor = { AddToCartException.class })
-//    public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
-//        Order order = findOrderById(orderId);
-//        preValidateCartOperation(order);
-//        if (automaticallyMergeLikeItems) {
-//            OrderItem item = findMatchingItem(order, orderItemRequestDTO);
-//            if (item != null && item.getParentOrderItem() == null) {
-//                orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
-//                orderItemRequestDTO.setOrderItemId(item.getId());
-//                try {
-//                    return updateItemQuantity(orderId, orderItemRequestDTO, priceOrder);
-//                } catch (RemoveFromCartException e) {
-//                    throw new AddToCartException("Unexpected error - system tried to remove item while adding to cart", e);
-//                } catch (UpdateCartException e) {
-//                    throw new AddToCartException("Could not update quantity for matched item", e);
-//                }
-//            }
-//        }
-//        try {
-//            // We only want to price on the last addition for performance reasons and only if the user asked for it.
-//            int numAdditionRequests = priceOrder ? (getTotalChildOrderItems(orderItemRequestDTO)) : -1;
-//            int currentAddition = 1;
-//
-//            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, currentAddition == numAdditionRequests);
-//            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(cartOpRequest);
-//
-//            List<ActivityMessageDTO> orderMessages = new ArrayList<ActivityMessageDTO>();
-//            orderMessages.addAll(((ActivityMessages) context).getActivityMessages());
-//
-//            // Update the orderItemRequest incase it changed during the initial add to cart workflow
-//            orderItemRequestDTO = context.getSeedData().getItemRequest();
-//            numAdditionRequests = priceOrder ? (getTotalChildOrderItems(orderItemRequestDTO) - 1) : -1;
-//            addChildItems(orderItemRequestDTO, numAdditionRequests, currentAddition, context, orderMessages);
-//
-//            context.getSeedData().getOrder().setOrderMessages(orderMessages);
-//            return context.getSeedData().getOrder();
-//        } catch (WorkflowException e) {
-//            throw new AddToCartException("Could not add to cart", getCartOperationExceptionRootCause(e));
-//        }
-//
-//    }
-//
-//    @Override
-//    public int getTotalChildOrderItems(OrderItemRequestDTO orderItemRequestDTO) {
-//        int count = 1;
-//        for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
-//            count += getTotalChildOrderItems(childRequest);
-//        }
-//        return count;
-//    }
-//
-//    @Override
-//    public void addChildItems(OrderItemRequestDTO orderItemRequestDTO, int numAdditionRequests, int currentAddition, ProcessContext<CartOperationRequest> context, List<ActivityMessageDTO> orderMessages) throws WorkflowException {
-//        if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
-//            Long parentOrderItemId = context.getSeedData().getOrderItem().getId();
-//            for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
-//                childRequest.setParentOrderItemId(parentOrderItemId);
-//                currentAddition++;
-//
-//                if (childRequest.getQuantity() > 0) {
-//                    CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);
-//                    ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
-//                    orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
-//
-//                    addChildItems(childRequest, numAdditionRequests, currentAddition, childContext, orderMessages);
-//                }
-//            }
-//        }
-//    }
-//
+    @Override
+    @Transactional(value = "blTransactionManager", rollbackFor = {AddToCartException.class})
+    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
+        // Don't allow overrides from this method.
+        orderItemRequestDTO.setOverrideRetailPrice(null);
+        orderItemRequestDTO.setOverrideSalePrice(null);
+        return addItemWithPriceOverrides(orderId, orderItemRequestDTO, priceOrder);
+    }
+
+    @Override
+    @Transactional(value = "blTransactionManager", rollbackFor = { AddToCartException.class })
+    public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
+        Order order = findOrderById(orderId);
+        preValidateCartOperation(order);
+        if (automaticallyMergeLikeItems) {
+            OrderItem item = findMatchingItem(order, orderItemRequestDTO);
+            if (item != null && item.getParentOrderItem() == null) {
+                orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
+                orderItemRequestDTO.setOrderItemId(item.getId());
+                try {
+                    return updateItemQuantity(orderId, orderItemRequestDTO, priceOrder);
+                } catch (RemoveFromCartException e) {
+                    throw new AddToCartException("Unexpected error - system tried to remove item while adding to cart", e);
+                } catch (UpdateCartException e) {
+                    throw new AddToCartException("Could not update quantity for matched item", e);
+                }
+            }
+        }
+        try {
+            // We only want to price on the last addition for performance reasons and only if the user asked for it.
+            int numAdditionRequests = priceOrder ? (getTotalChildOrderItems(orderItemRequestDTO)) : -1;
+            int currentAddition = 1;
+
+            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, currentAddition == numAdditionRequests);
+            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(cartOpRequest);
+
+            List<ActivityMessageDTO> orderMessages = new ArrayList<ActivityMessageDTO>();
+            orderMessages.addAll(((ActivityMessages) context).getActivityMessages());
+
+            // Update the orderItemRequest incase it changed during the initial add to cart workflow
+            orderItemRequestDTO = context.getSeedData().getItemRequest();
+            numAdditionRequests = priceOrder ? (getTotalChildOrderItems(orderItemRequestDTO) - 1) : -1;
+            addChildItems(orderItemRequestDTO, numAdditionRequests, currentAddition, context, orderMessages);
+
+            context.getSeedData().getOrder().setOrderMessages(orderMessages);
+            return context.getSeedData().getOrder();
+        } catch (WorkflowException e) {
+            throw new AddToCartException("Could not add to cart", getCartOperationExceptionRootCause(e));
+        }
+
+    }
+
+    @Override
+    public int getTotalChildOrderItems(OrderItemRequestDTO orderItemRequestDTO) {
+        int count = 1;
+        for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
+            count += getTotalChildOrderItems(childRequest);
+        }
+        return count;
+    }
+
+    @Override
+    public void addChildItems(OrderItemRequestDTO orderItemRequestDTO, int numAdditionRequests, int currentAddition, ProcessContext<CartOperationRequest> context, List<ActivityMessageDTO> orderMessages) throws WorkflowException {
+        if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
+            Long parentOrderItemId = context.getSeedData().getOrderItem().getId();
+            for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
+                childRequest.setParentOrderItemId(parentOrderItemId);
+                currentAddition++;
+
+                if (childRequest.getQuantity() > 0) {
+                    CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);
+                    ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
+                    orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
+
+                    addChildItems(childRequest, numAdditionRequests, currentAddition, childContext, orderMessages);
+                }
+            }
+        }
+    }
+
+// TODO microservices - incremental implementation of order service
 //    @Override
 //    public void addDependentOrderItem(OrderItemRequestDTO parentOrderItemRequest, OrderItemRequestDTO dependentOrderItem) {
 //        parentOrderItemRequest.getChildOrderItems().add(dependentOrderItem);
 //    }
-//
-//    @Override
-//    @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
-//    public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
-//        preValidateCartOperation(findOrderById(orderId));
-//        preValidateUpdateQuantityOperation(findOrderById(orderId), orderItemRequestDTO);
-//        if (orderItemRequestDTO.getQuantity() == 0) {
-//            return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
-//        }
-//        
-//        try {
-//            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-//            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) updateItemWorkflow.doActivities(cartOpRequest);
-//            context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
-//            return context.getSeedData().getOrder();
-//        } catch (WorkflowException e) {
-//            throw new UpdateCartException("Could not update cart quantity", getCartOperationExceptionRootCause(e));
-//        }
-//    }
-//
-//    @Override
-//    @Transactional(value = "blTransactionManager", rollbackFor = {RemoveFromCartException.class})
-//    public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
-//        preValidateCartOperation(findOrderById(orderId));
-//        try {
-//            OrderItem oi = orderItemService.readOrderItemById(orderItemId);
-//            if (oi == null) {
-//                throw new WorkflowException(new ItemNotFoundException());
-//            }
-//            List<Long> childrenToRemove = new ArrayList<Long>();
-//            findAllChildrenToRemove(childrenToRemove, oi);
-//            for (Long childToRemove : childrenToRemove) {
-//                removeItemInternal(orderId, childToRemove, false);
-//            }                    
-//
-//            return removeItemInternal(orderId, orderItemId, priceOrder);
-//        } catch (WorkflowException e) {
-//            throw new RemoveFromCartException("Could not remove from cart", getCartOperationExceptionRootCause(e));
-//        }
-//    }
+
+    @Override
+    @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
+    public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
+        preValidateCartOperation(findOrderById(orderId));
+        preValidateUpdateQuantityOperation(findOrderById(orderId), orderItemRequestDTO);
+        if (orderItemRequestDTO.getQuantity() == 0) {
+            return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
+        }
+        
+        try {
+            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) updateItemWorkflow.doActivities(cartOpRequest);
+            context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
+            return context.getSeedData().getOrder();
+        } catch (WorkflowException e) {
+            throw new UpdateCartException("Could not update cart quantity", getCartOperationExceptionRootCause(e));
+        }
+    }
+
+    @Override
+    @Transactional(value = "blTransactionManager", rollbackFor = {RemoveFromCartException.class})
+    public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
+        preValidateCartOperation(findOrderById(orderId));
+        try {
+            OrderItem oi = null;// TODO microservices - deal with orderitem service and dao orderItemService.readOrderItemById(orderItemId);
+            if (oi == null) {
+                throw new WorkflowException(new ItemNotFoundException());
+            }
+            List<Long> childrenToRemove = new ArrayList<Long>();
+            findAllChildrenToRemove(childrenToRemove, oi);
+            for (Long childToRemove : childrenToRemove) {
+                removeItemInternal(orderId, childToRemove, false);
+            }                    
+
+            return removeItemInternal(orderId, orderItemId, priceOrder);
+        } catch (WorkflowException e) {
+            throw new RemoveFromCartException("Could not remove from cart", getCartOperationExceptionRootCause(e));
+        }
+    }
 
     protected void findAllChildrenToRemove(List<Long> childrenToRemove, OrderItem orderItem){
         if (CollectionUtils.isNotEmpty(orderItem.getChildOrderItems())) {
@@ -648,15 +661,16 @@ public class OrderServiceImpl implements OrderService {
         }
     }
     
+    protected Order removeItemInternal(Long orderId, Long orderItemId, boolean priceOrder) throws WorkflowException {
+        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setOrderItemId(orderItemId);
+        CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+        ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) removeItemWorkflow.doActivities(cartOpRequest);
+        context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
+        return context.getSeedData().getOrder();
+    }
+    
 // TODO microservices - incremental implementation of order service
-//    protected Order removeItemInternal(Long orderId, Long orderItemId, boolean priceOrder) throws WorkflowException {
-//        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
-//        orderItemRequestDTO.setOrderItemId(orderItemId);
-//        CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-//        ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) removeItemWorkflow.doActivities(cartOpRequest);
-//        context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
-//        return context.getSeedData().getOrder();
-//    }
 //
 //    @Override
 //    @Transactional(value = "blTransactionManager", rollbackFor = { RemoveFromCartException.class })
@@ -909,25 +923,25 @@ public class OrderServiceImpl implements OrderService {
 //        log.debug(tc.toString());
 //    }
 //    
-//    @Override
-//    public void preValidateCartOperation(Order cart) {
-//        ExtensionResultHolder erh = new ExtensionResultHolder();
-//        extensionManager.getProxy().preValidateCartOperation(cart, erh);
-//        if (erh.getThrowable() instanceof IllegalCartOperationException) {
-//            throw ((IllegalCartOperationException) erh.getThrowable());
-//        } else if (erh.getThrowable() != null) {
-//            throw new RuntimeException(erh.getThrowable());
-//        }
-//    }
-//
-//    @Override
-//    public void preValidateUpdateQuantityOperation(Order cart, OrderItemRequestDTO dto) {
-//        ExtensionResultHolder erh = new ExtensionResultHolder();
-//        extensionManager.getProxy().preValidateUpdateQuantityOperation(cart, dto, erh);
-//        if (erh.getThrowable() instanceof IllegalCartOperationException) {
-//            throw ((IllegalCartOperationException) erh.getThrowable());
-//        } else if (erh.getThrowable() != null) {
-//            throw new RuntimeException(erh.getThrowable());
-//        }
-//    }
+    @Override
+    public void preValidateCartOperation(Order cart) {
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        extensionManager.getProxy().preValidateCartOperation(cart, erh);
+        if (erh.getThrowable() instanceof IllegalCartOperationException) {
+            throw ((IllegalCartOperationException) erh.getThrowable());
+        } else if (erh.getThrowable() != null) {
+            throw new RuntimeException(erh.getThrowable());
+        }
+    }
+    
+    @Override
+    public void preValidateUpdateQuantityOperation(Order cart, OrderItemRequestDTO dto) {
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        extensionManager.getProxy().preValidateUpdateQuantityOperation(cart, dto, erh);
+        if (erh.getThrowable() instanceof IllegalCartOperationException) {
+            throw ((IllegalCartOperationException) erh.getThrowable());
+        } else if (erh.getThrowable() != null) {
+            throw new RuntimeException(erh.getThrowable());
+        }
+    }
 }
