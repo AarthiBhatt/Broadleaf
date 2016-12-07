@@ -21,9 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.payment.PaymentType;
-import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -37,49 +35,28 @@ import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
-import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
-import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
-import org.broadleafcommerce.core.order.service.exception.AddToCartException;
-import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
-import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
-import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
-import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
-import org.broadleafcommerce.core.payment.domain.OrderPayment;
-import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
-import org.broadleafcommerce.core.pricing.service.PricingService;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.core.workflow.ActivityMessages;
-import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.core.workflow.Processor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
-import org.hibernate.exception.LockAcquisitionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import com.broadleafcommerce.order.common.domain.OrderProduct;
 import com.broadleafcommerce.order.common.domain.OrderSku;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -98,44 +75,51 @@ public class OrderServiceImpl implements OrderService {
     
     @Resource(name = "blOrderDao")
     protected OrderDao orderDao;
-    
-    @Resource(name = "blOfferDao")
-    protected OfferDao offerDao;
+
+// TODO microservices - deal with offer daos and services
+//    @Resource(name = "blOfferDao")
+//    protected OfferDao offerDao;
 
     /* Services */
-    @Resource(name = "blPricingService")
-    protected PricingService pricingService;
-    
-    @Resource(name = "blOrderItemService")
-    protected OrderItemService orderItemService;
-    
-    @Resource(name = "blFulfillmentGroupService")
-    protected FulfillmentGroupService fulfillmentGroupService;
-    
-    @Resource(name = "blOfferService")
-    protected OfferService offerService;
+// TODO microservices - deal with pricing daos and services
+//    @Resource(name = "blPricingService")
+//    protected PricingService pricingService;
+
+// TODO microservices - deal with orderitem daos and services
+//    @Resource(name = "blOrderItemService")
+//    protected OrderItemService orderItemService;
+
+// TODO microservices - deal with fulfillmentgroup daos and services
+//    @Resource(name = "blFulfillmentGroupService")
+//    protected FulfillmentGroupService fulfillmentGroupService;
+
+// TODO microservices - deal with offer daos and services
+//    @Resource(name = "blOfferService")
+//    protected OfferService offerService;
 
     @Resource(name = "blSecureOrderPaymentService")
     protected SecureOrderPaymentService securePaymentInfoService;
 
-    @Resource(name = "blMergeCartService")
-    protected MergeCartService mergeCartService;
+// TODO microservices - deal with merge cart service
+//    @Resource(name = "blMergeCartService")
+//    protected MergeCartService mergeCartService;
     
     @Resource(name = "blOrderServiceExtensionManager")
     protected OrderServiceExtensionManager extensionManager;
     
     /* Workflows */
-    @Resource(name = "blAddItemWorkflow")
-    protected Processor addItemWorkflow;
-    
-    @Resource(name = "blUpdateProductOptionsForItemWorkflow")
-    private Processor updateProductOptionsForItemWorkflow;
-
-    @Resource(name = "blUpdateItemWorkflow")
-    protected Processor updateItemWorkflow;
-    
-    @Resource(name = "blRemoveItemWorkflow")
-    protected Processor removeItemWorkflow;
+// TODO microservices - deal with workflows
+//    @Resource(name = "blAddItemWorkflow")
+//    protected Processor addItemWorkflow;
+//    
+//    @Resource(name = "blUpdateProductOptionsForItemWorkflow")
+//    private Processor updateProductOptionsForItemWorkflow;
+//
+//    @Resource(name = "blUpdateItemWorkflow")
+//    protected Processor updateItemWorkflow;
+//    
+//    @Resource(name = "blRemoveItemWorkflow")
+//    protected Processor removeItemWorkflow;
 
     @Resource(name = "blTransactionManager")
     protected PlatformTransactionManager transactionManager;
@@ -152,8 +136,9 @@ public class OrderServiceImpl implements OrderService {
 
     protected Boolean automaticallyMergeLikeItems;
 
-    @Resource(name = "blOrderMultishipOptionService")
-    protected OrderMultishipOptionService orderMultishipOptionService;
+// TODO microservices - deal with multiship
+//    @Resource(name = "blOrderMultishipOptionService")
+//    protected OrderMultishipOptionService orderMultishipOptionService;
 
     @Override
     @Transactional("blTransactionManager")
@@ -173,8 +158,8 @@ public class OrderServiceImpl implements OrderService {
             extensionManager.getProxy().attachAdditionalDataToNewNamedCart(orderCustomer, namedOrder);
         }
         
-        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
-            namedOrder.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
+        if (CommonRequestContext.getCommonRequestContext() != null) {
+            namedOrder.setLocale(CommonRequestContext.getCommonRequestContext().getLocale());
         }
         
         return persist(namedOrder); // No need to price here
@@ -230,118 +215,119 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.readOrdersForCustomersInDateRange(customerIds, startDate, endDate);
     }
 
-    @Override
-    public List<OrderPayment> findPaymentsForOrder(Order order) {
-        return paymentDao.readPaymentsForOrder(order);
-    }
-    
-    @Override
-    @Transactional("blTransactionManager")
-    public OrderPayment addPaymentToOrder(Order order, OrderPayment payment, Referenced securePaymentInfo) {
-        payment.setOrder(order);
-        order.getPayments().add(payment);
-        order = persist(order);
-        int paymentIndex = order.getPayments().size() - 1;
-
-        if (securePaymentInfo != null) {
-            securePaymentInfoService.save(securePaymentInfo);
-        }
-
-        return order.getPayments().get(paymentIndex);
-    }
-    
-    @Override
-    public Order save(Order order, boolean priceOrder, boolean repriceItems) throws PricingException {
-        if (repriceItems) {
-            order.updatePrices();
-        }
-        return save(order, priceOrder);
-    }
-
-    @Override
-    public Order save(Order order, Boolean priceOrder) throws PricingException {
-        //persist the order first
-        TransactionStatus status = TransactionUtils.createTransaction("saveOrder",
-                    TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
-        try {
-            order = persist(order);
-            TransactionUtils.finalizeTransaction(status, transactionManager, false);
-        } catch (RuntimeException ex) {
-            TransactionUtils.finalizeTransaction(status, transactionManager, true);
-            throw ex;
-        }
-
-        //make any pricing changes - possibly retrying with the persisted state if there's a lock failure
-        if (priceOrder) {
-            int retryCount = 0;
-            boolean isValid = false;
-            while (!isValid) {
-                try {
-                    order = pricingService.executePricing(order);
-                    isValid = true;
-                } catch (Exception ex) {
-                    boolean isValidCause = false;
-                    Throwable cause = ex;
-                    while (!isValidCause) {
-                        if (cause.getClass().equals(LockAcquisitionException.class)) {
-                            isValidCause = true;
-                        }
-                        cause = cause.getCause();
-                        if (cause == null) {
-                            break;
-                        }
-                    }
-                    if (isValidCause) {
-                        if (LOG.isInfoEnabled()) {
-                            LOG.info("Problem acquiring lock during pricing call - attempting to price again.");
-                        }
-                        isValid = false;
-                        if (retryCount >= pricingRetryCountForLockFailure) {
-                            if (LOG.isInfoEnabled()) {
-                                LOG.info("Problem acquiring lock during pricing call. Retry limit exceeded at (" + retryCount + "). Throwing exception.");
-                            }
-                            if (ex instanceof PricingException) {
-                                throw (PricingException) ex;
-                            } else {
-                                throw new PricingException(ex);
-                            }
-                        } else {
-                            order = findOrderById(order.getId());
-                            retryCount++;
-                        }
-                        try {
-                            Thread.sleep(pricingRetryWaitIntervalForLockFailure);
-                        } catch (Throwable e) {
-                            //do nothing
-                        }
-                    } else {
-                        if (ex instanceof PricingException) {
-                            throw (PricingException) ex;
-                        } else {
-                            throw new PricingException(ex);
-                        }
-                    }
-                }
-            }
-
-            //make the final save of the priced order
-            status = TransactionUtils.createTransaction("saveOrder",
-                                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
-            try {
-                order = persist(order);
-
-                if (extensionManager != null) {
-                    extensionManager.getProxy().attachAdditionalDataToOrder(order, priceOrder);
-                }
-                TransactionUtils.finalizeTransaction(status, transactionManager, false);
-            } catch (RuntimeException ex) {
-                TransactionUtils.finalizeTransaction(status, transactionManager, true);
-                throw ex;
-            }
-        }
-
-        return order;
-    }
+// TODO microservices - incremental implementation of order service
+//    @Override
+//    public List<OrderPayment> findPaymentsForOrder(Order order) {
+//        return paymentDao.readPaymentsForOrder(order);
+//    }
+//    
+//    @Override
+//    @Transactional("blTransactionManager")
+//    public OrderPayment addPaymentToOrder(Order order, OrderPayment payment, Referenced securePaymentInfo) {
+//        payment.setOrder(order);
+//        order.getPayments().add(payment);
+//        order = persist(order);
+//        int paymentIndex = order.getPayments().size() - 1;
+//
+//        if (securePaymentInfo != null) {
+//            securePaymentInfoService.save(securePaymentInfo);
+//        }
+//
+//        return order.getPayments().get(paymentIndex);
+//    }
+//    
+//    @Override
+//    public Order save(Order order, boolean priceOrder, boolean repriceItems) throws PricingException {
+//        if (repriceItems) {
+//            order.updatePrices();
+//        }
+//        return save(order, priceOrder);
+//    }
+//
+//    @Override
+//    public Order save(Order order, Boolean priceOrder) throws PricingException {
+//        //persist the order first
+//        TransactionStatus status = TransactionUtils.createTransaction("saveOrder",
+//                    TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
+//        try {
+//            order = persist(order);
+//            TransactionUtils.finalizeTransaction(status, transactionManager, false);
+//        } catch (RuntimeException ex) {
+//            TransactionUtils.finalizeTransaction(status, transactionManager, true);
+//            throw ex;
+//        }
+//
+//        //make any pricing changes - possibly retrying with the persisted state if there's a lock failure
+//        if (priceOrder) {
+//            int retryCount = 0;
+//            boolean isValid = false;
+//            while (!isValid) {
+//                try {
+//                    order = pricingService.executePricing(order);
+//                    isValid = true;
+//                } catch (Exception ex) {
+//                    boolean isValidCause = false;
+//                    Throwable cause = ex;
+//                    while (!isValidCause) {
+//                        if (cause.getClass().equals(LockAcquisitionException.class)) {
+//                            isValidCause = true;
+//                        }
+//                        cause = cause.getCause();
+//                        if (cause == null) {
+//                            break;
+//                        }
+//                    }
+//                    if (isValidCause) {
+//                        if (LOG.isInfoEnabled()) {
+//                            LOG.info("Problem acquiring lock during pricing call - attempting to price again.");
+//                        }
+//                        isValid = false;
+//                        if (retryCount >= pricingRetryCountForLockFailure) {
+//                            if (LOG.isInfoEnabled()) {
+//                                LOG.info("Problem acquiring lock during pricing call. Retry limit exceeded at (" + retryCount + "). Throwing exception.");
+//                            }
+//                            if (ex instanceof PricingException) {
+//                                throw (PricingException) ex;
+//                            } else {
+//                                throw new PricingException(ex);
+//                            }
+//                        } else {
+//                            order = findOrderById(order.getId());
+//                            retryCount++;
+//                        }
+//                        try {
+//                            Thread.sleep(pricingRetryWaitIntervalForLockFailure);
+//                        } catch (Throwable e) {
+//                            //do nothing
+//                        }
+//                    } else {
+//                        if (ex instanceof PricingException) {
+//                            throw (PricingException) ex;
+//                        } else {
+//                            throw new PricingException(ex);
+//                        }
+//                    }
+//                }
+//            }
+//
+//            //make the final save of the priced order
+//            status = TransactionUtils.createTransaction("saveOrder",
+//                                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
+//            try {
+//                order = persist(order);
+//
+//                if (extensionManager != null) {
+//                    extensionManager.getProxy().attachAdditionalDataToOrder(order, priceOrder);
+//                }
+//                TransactionUtils.finalizeTransaction(status, transactionManager, false);
+//            } catch (RuntimeException ex) {
+//                TransactionUtils.finalizeTransaction(status, transactionManager, true);
+//                throw ex;
+//            }
+//        }
+//
+//        return order;
+//    }
     
     // This method exists to provide OrderService methods the ability to save an order
     // without having to worry about a PricingException being thrown.
@@ -355,64 +341,65 @@ public class OrderServiceImpl implements OrderService {
         orderDao.delete(order);
     }
 
-    @Override
-    @Transactional("blTransactionManager")
-    public void deleteOrder(Order order) {
-        orderMultishipOptionService.deleteAllOrderMultishipOptions(order);
-        orderDao.delete(order);
-    }
-
-    @Override
-    @Transactional("blTransactionManager")
-    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferException {
-        ArrayList<OfferCode> offerCodes = new ArrayList<OfferCode>();
-        offerCodes.add(offerCode);
-        return addOfferCodes(order, offerCodes, priceOrder);
-    }
-
-    @Override
-    @Transactional("blTransactionManager")
-    public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferException {
-        preValidateCartOperation(order);
-        Set<Offer> addedOffers = offerService.getUniqueOffersFromOrder(order);
-        if (extensionManager != null) {
-            extensionManager.getProxy().addOfferCodes(order, offerCodes, priceOrder);
-        }
-        if (offerCodes != null && !offerCodes.isEmpty()) {
-            for (OfferCode offerCode : offerCodes) {
-                
-                if (order.getAddedOfferCodes().contains(offerCode) || addedOffers.contains(offerCode.getOffer())) {
-                    throw new OfferAlreadyAddedException("The offer has already been added.");
-                } else if (!offerService.verifyMaxCustomerUsageThreshold(order.getOrderCustomer(), offerCode)) {
-                    throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
-                } else if (!offerCode.isActive() || !offerCode.getOffer().isActive()) {
-                    throw new OfferExpiredException("The offer has expired.");
-                }
-                
-                order.getAddedOfferCodes().add(offerCode);
-                
-            }
-            order = save(order, priceOrder);
-        }
-
-        return order;
-    }
-
-    @Override
-    @Transactional("blTransactionManager")
-    public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException {
-        order.getAddedOfferCodes().remove(offerCode);
-        order = save(order, priceOrder);
-        return order;   
-    }
-
-    @Override
-    @Transactional("blTransactionManager")
-    public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException {
-         order.getAddedOfferCodes().clear();
-         order = save(order, priceOrder);
-         return order;  
-    }
+// TODO microservices - incremental implementation of order service
+//    @Override
+//    @Transactional("blTransactionManager")
+//    public void deleteOrder(Order order) {
+//        orderMultishipOptionService.deleteAllOrderMultishipOptions(order);
+//        orderDao.delete(order);
+//    }
+//
+//    @Override
+//    @Transactional("blTransactionManager")
+//    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferException {
+//        ArrayList<OfferCode> offerCodes = new ArrayList<OfferCode>();
+//        offerCodes.add(offerCode);
+//        return addOfferCodes(order, offerCodes, priceOrder);
+//    }
+//
+//    @Override
+//    @Transactional("blTransactionManager")
+//    public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferException {
+//        preValidateCartOperation(order);
+//        Set<Offer> addedOffers = offerService.getUniqueOffersFromOrder(order);
+//        if (extensionManager != null) {
+//            extensionManager.getProxy().addOfferCodes(order, offerCodes, priceOrder);
+//        }
+//        if (offerCodes != null && !offerCodes.isEmpty()) {
+//            for (OfferCode offerCode : offerCodes) {
+//                
+//                if (order.getAddedOfferCodes().contains(offerCode) || addedOffers.contains(offerCode.getOffer())) {
+//                    throw new OfferAlreadyAddedException("The offer has already been added.");
+//                } else if (!offerService.verifyMaxCustomerUsageThreshold(order.getOrderCustomer(), offerCode)) {
+//                    throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
+//                } else if (!offerCode.isActive() || !offerCode.getOffer().isActive()) {
+//                    throw new OfferExpiredException("The offer has expired.");
+//                }
+//                
+//                order.getAddedOfferCodes().add(offerCode);
+//                
+//            }
+//            order = save(order, priceOrder);
+//        }
+//
+//        return order;
+//    }
+//
+//    @Override
+//    @Transactional("blTransactionManager")
+//    public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException {
+//        order.getAddedOfferCodes().remove(offerCode);
+//        order = save(order, priceOrder);
+//        return order;   
+//    }
+//
+//    @Override
+//    @Transactional("blTransactionManager")
+//    public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException {
+//         order.getAddedOfferCodes().clear();
+//         order = save(order, priceOrder);
+//         return order;  
+//    }
 
     @Override
     @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
@@ -420,26 +407,27 @@ public class OrderServiceImpl implements OrderService {
         this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
     }
     
-    @Override
-    public OrderItem findLastMatchingItem(Order order, Long skuId, Long productId) {
-        if (order.getOrderItems() != null) {
-            for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
-                OrderItem currentItem = (order.getOrderItems().get(i));
-                if (currentItem instanceof DiscreteOrderItem) {
-                    DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
-                    if (skuId != null) {
-                        if (discreteItem.getSku() != null && skuId.equals(discreteItem.getSku().getExternalId())) {
-                            return discreteItem;
-                        }
-                    } else if (productId != null && discreteItem.getProduct() != null && productId.equals(discreteItem.getProduct().getExternalId())) {
-                        return discreteItem;
-                    }
-
-                }
-            }
-        }
-        return null;
-    }
+// TODO microservices - incremental implementation of order service
+//    @Override
+//    public OrderItem findLastMatchingItem(Order order, Long skuId, Long productId) {
+//        if (order.getOrderItems() != null) {
+//            for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
+//                OrderItem currentItem = (order.getOrderItems().get(i));
+//                if (currentItem instanceof DiscreteOrderItem) {
+//                    DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
+//                    if (skuId != null) {
+//                        if (discreteItem.getSku() != null && skuId.equals(discreteItem.getSku().getExternalId())) {
+//                            return discreteItem;
+//                        }
+//                    } else if (productId != null && discreteItem.getProduct() != null && productId.equals(discreteItem.getProduct().getExternalId())) {
+//                        return discreteItem;
+//                    }
+//
+//                }
+//            }
+//        }
+//        return null;
+//    }
     
     @Override
     @Transactional("blTransactionManager")
@@ -671,32 +659,33 @@ public class OrderServiceImpl implements OrderService {
         }
     }
     
-    protected Order removeItemInternal(Long orderId, Long orderItemId, boolean priceOrder) throws WorkflowException {
-        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
-        orderItemRequestDTO.setOrderItemId(orderItemId);
-        CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-        ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) removeItemWorkflow.doActivities(cartOpRequest);
-        context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
-        return context.getSeedData().getOrder();
-    }
-
-    @Override
-    @Transactional(value = "blTransactionManager", rollbackFor = { RemoveFromCartException.class })
-    public Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException {
-        Order order = findOrderById(orderId);
-        try {
-
-            for (OrderItem currentItem : new ArrayList<OrderItem>(order.getOrderItems())) {
-                if (!currentItem.isSkuActive()) {
-                    removeItem(orderId, currentItem.getId(), priceOrder);
-                }
-            }
-
-        } catch (Exception e) {
-            throw new RemoveFromCartException("Could not remove from cart", e.getCause());
-        }
-        return findOrderById(orderId);
-    }
+// TODO microservices - incremental implementation of order service
+//    protected Order removeItemInternal(Long orderId, Long orderItemId, boolean priceOrder) throws WorkflowException {
+//        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+//        orderItemRequestDTO.setOrderItemId(orderItemId);
+//        CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+//        ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) removeItemWorkflow.doActivities(cartOpRequest);
+//        context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
+//        return context.getSeedData().getOrder();
+//    }
+//
+//    @Override
+//    @Transactional(value = "blTransactionManager", rollbackFor = { RemoveFromCartException.class })
+//    public Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException {
+//        Order order = findOrderById(orderId);
+//        try {
+//
+//            for (OrderItem currentItem : new ArrayList<OrderItem>(order.getOrderItems())) {
+//                if (!currentItem.isSkuActive()) {
+//                    removeItem(orderId, currentItem.getId(), priceOrder);
+//                }
+//            }
+//
+//        } catch (Exception e) {
+//            throw new RemoveFromCartException("Could not remove from cart", e.getCause());
+//        }
+//        return findOrderById(orderId);
+//    }
 
     @Override
     public boolean getAutomaticallyMergeLikeItems() {
@@ -731,56 +720,57 @@ public class OrderServiceImpl implements OrderService {
         return deleteEmptyNamedOrders;
     }
 
-    @Override
-    @Transactional("blTransactionManager")
-    public void removeAllPaymentsFromOrder(Order order) {
-        removePaymentsFromOrder(order, null);
-    }
-
-    @Override
-    @Transactional("blTransactionManager")
-    public void removePaymentsFromOrder(Order order, PaymentType paymentInfoType) {
-        List<OrderPayment> infos = new ArrayList<OrderPayment>();
-        for (OrderPayment paymentInfo : order.getPayments()) {
-            if (paymentInfoType == null || paymentInfoType.equals(paymentInfo.getType())) {
-                infos.add(paymentInfo);
-            }
-        }
-        order.getPayments().removeAll(infos);
-        for (OrderPayment paymentInfo : infos) {
-            try {
-                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfo.getReferenceNumber(), paymentInfo.getType());
-            } catch (WorkflowException e) {
-                // do nothing--this is an acceptable condition
-                LOG.debug("No secure payment is associated with the OrderPayment", e);
-            }
-            order.getPayments().remove(paymentInfo);
-            paymentInfo = paymentDao.readPaymentById(paymentInfo.getId());
-            paymentDao.delete(paymentInfo);
-        }
-    }
-
-    @Override
-    @Transactional("blTransactionManager")
-    public void removePaymentFromOrder(Order order, OrderPayment payment){
-        OrderPayment paymentToRemove = null;
-        for (OrderPayment info : order.getPayments()){
-            if (info.equals(payment)){
-                paymentToRemove = info;
-            }
-        }
-        if (paymentToRemove != null){
-            try {
-                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentToRemove.getReferenceNumber(), payment.getType());
-            } catch (WorkflowException e) {
-                // do nothing--this is an acceptable condition
-                LOG.debug("No secure payment is associated with the OrderPayment", e);
-            }
-            order.getPayments().remove(paymentToRemove);
-            payment = paymentDao.readPaymentById(paymentToRemove.getId());
-            paymentDao.delete(payment);
-        }
-    }
+// TODO microservices - incremental implementation of order service
+//    @Override
+//    @Transactional("blTransactionManager")
+//    public void removeAllPaymentsFromOrder(Order order) {
+//        removePaymentsFromOrder(order, null);
+//    }
+//
+//    @Override
+//    @Transactional("blTransactionManager")
+//    public void removePaymentsFromOrder(Order order, PaymentType paymentInfoType) {
+//        List<OrderPayment> infos = new ArrayList<OrderPayment>();
+//        for (OrderPayment paymentInfo : order.getPayments()) {
+//            if (paymentInfoType == null || paymentInfoType.equals(paymentInfo.getType())) {
+//                infos.add(paymentInfo);
+//            }
+//        }
+//        order.getPayments().removeAll(infos);
+//        for (OrderPayment paymentInfo : infos) {
+//            try {
+//                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfo.getReferenceNumber(), paymentInfo.getType());
+//            } catch (WorkflowException e) {
+//                // do nothing--this is an acceptable condition
+//                LOG.debug("No secure payment is associated with the OrderPayment", e);
+//            }
+//            order.getPayments().remove(paymentInfo);
+//            paymentInfo = paymentDao.readPaymentById(paymentInfo.getId());
+//            paymentDao.delete(paymentInfo);
+//        }
+//    }
+//
+//    @Override
+//    @Transactional("blTransactionManager")
+//    public void removePaymentFromOrder(Order order, OrderPayment payment){
+//        OrderPayment paymentToRemove = null;
+//        for (OrderPayment info : order.getPayments()){
+//            if (info.equals(payment)){
+//                paymentToRemove = info;
+//            }
+//        }
+//        if (paymentToRemove != null){
+//            try {
+//                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentToRemove.getReferenceNumber(), payment.getType());
+//            } catch (WorkflowException e) {
+//                // do nothing--this is an acceptable condition
+//                LOG.debug("No secure payment is associated with the OrderPayment", e);
+//            }
+//            order.getPayments().remove(paymentToRemove);
+//            payment = paymentDao.readPaymentById(paymentToRemove.getId());
+//            paymentDao.delete(payment);
+//        }
+//    }
     
     /**
      * This method will return the exception that is immediately below the deepest 
@@ -981,3 +971,4 @@ public class OrderServiceImpl implements OrderService {
         return candidateOrder;
     }
 }
+
