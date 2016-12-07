@@ -17,50 +17,44 @@
  */
 package org.broadleafcommerce.core.order.service.workflow.remove;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.OrderItemService;
-import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-/**
- * This class is responsible for determining which OrderItems should be removed from the order, taking into account
- * the fact that removing an OrderItem should also remove all of its child order items.
- * 
- * @author Andre Azzolini (apazzolini)
- */
-public class RemoveOrderItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
-
-    @Resource(name = "blOrderService")
-    protected OrderService orderService;
-    
-    @Resource(name = "blOrderItemService")
-    protected OrderItemService orderItemService;
+public class ValidateRemoveRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
     
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
+        OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
 
-        OrderItem orderItem = request.getOrderItem();
-        removeItemAndChildren(request.getOisToDelete(), orderItem);
+        // Throw an exception if the user did not specify an orderItemId
+        if (orderItemRequestDTO.getOrderItemId() == null) {
+            throw new IllegalArgumentException("OrderItemId must be specified when removing from order");
+        }
+
+        // Throw an exception if the user did not specify an order to add the item to
+        if (request.getOrder() == null) {
+            throw new IllegalArgumentException("Order is required when updating item quantities");
+        }
+        
+        // Throw an exception if the user is trying to remove an order item that is part of a bundle
+        OrderItem orderItem = null;
+        for (OrderItem oi : request.getOrder().getOrderItems()) {
+            if (oi.getId().equals(orderItemRequestDTO.getOrderItemId())) {
+                orderItem = oi;
+            }
+        }
+        
+        if (orderItem == null) {
+            throw new IllegalArgumentException("Could not find order item to remove");
+        }
+        
+        request.setOrderItem(orderItem);
         
         return context;
     }
     
-    protected void removeItemAndChildren(List<OrderItem> oisToDelete, OrderItem orderItem) {
-        if (CollectionUtils.isNotEmpty(orderItem.getChildOrderItems())) {
-            for (OrderItem childOrderItem : orderItem.getChildOrderItems()) {
-                removeItemAndChildren(oisToDelete, childOrderItem);
-            }
-        }
-        
-        oisToDelete.add(orderItem);
-    }
-
 }
