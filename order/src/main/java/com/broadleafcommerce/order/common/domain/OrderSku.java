@@ -18,6 +18,81 @@
 package com.broadleafcommerce.order.common.domain;
 
 
+import org.broadleafcommerce.common.money.Money;
+
+import java.math.BigDecimal;
+
 public interface OrderSku {
+
+    public Long getId();
+
+    public void setId(Long id);
+
     public Long getExternalId();
+
+    public void setExternalId(Long externalId);
+
+    public String getName();
+
+    public void setName(String name);
+
+    public Money getRetailPrice();
+
+    public void setRetailPrice(Money retailPrice);
+
+    public Money getSalePrice();
+
+    public void setSalePrice(Money salePrice);
+
+    public Boolean getTaxable();
+
+    public void setTaxable(Boolean taxable);
+
+    public String getTaxCode();
+
+    public void setTaxCode(String taxCode);
+
+    public String getFulfillmentType();
+
+    public void setFulfillmentType(String fulfillmentType);
+
+    public BigDecimal getWidth();
+
+    public void setWidth(BigDecimal width);
+
+    public BigDecimal getHeight();
+
+    public void setHeight(BigDecimal height);
+
+    public BigDecimal getDepth();
+
+    public void setDepth(BigDecimal depth);
+
+    public BigDecimal getGirth();
+
+    public void setGirth(BigDecimal girth);
+
+    public String getSize();
+
+    public void setSize(String size);
+
+    public String getContainer();
+
+    public void setContainer(String container);
+
+    public String getDimensionUnitOfMeasure();
+
+    public void setDimensionUnitOfMeasure(String dimensionUnitOfMeasure);
+
+    public BigDecimal getWeight();
+
+    public void setWeight(BigDecimal weight);
+
+    public String getWeightUnitOfMeasure();
+
+    public void setWeightUnitOfMeasure(String weightUnitOfMeasure);
+
+    public String getSkuAttributesJson();
+
+    public void setSkuAttributesJson(String skuAttributesJson);
 }

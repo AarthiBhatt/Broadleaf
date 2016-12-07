@@ -48,7 +48,19 @@ public interface OrderCustomer {
     public void setFirstName(String firstName);
     
     public void setCustomerPayments(List<CustomerPayment> customerPayments);
-    
+
+    Boolean getTaxExempt();
+
+    void setTaxExempt(Boolean taxExempt);
+
+    String getTaxExemptionCode();
+
+    void setTaxExemptionCode(String taxExemptionCode);
+
+    String getCustomerAttributesJson();
+
+    void setCustomerAttributesJson(String customerAttributesJson);
+
     public void setAnonymous(boolean anonymous);
 
 }

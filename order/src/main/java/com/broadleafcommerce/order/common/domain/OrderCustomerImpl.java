@@ -41,6 +41,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -87,7 +88,19 @@ public class OrderCustomerImpl implements OrderCustomer {
             addType = AddMethodType.PERSIST,
             readOnly = true)
     protected List<CustomerPayment> customerPayments = new ArrayList<>();
-    
+
+    @Column(name = "IS_TAX_EXEMPT")
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Is_Tax_Exempt", group = GroupName.Customer)
+    protected Boolean isTaxExempt = false;
+
+    @Column(name = "TAX_EXEMPTION_CODE")
+    @AdminPresentation(friendlyName = "OrderImpl_Order_TaxExemptCode", group = GroupName.Customer)
+    protected String taxExemptionCode;
+
+    @Lob
+    @Column(name = "CUSTOMER_ATTRIBUTES_JSON", length = Integer.MAX_VALUE - 1)
+    protected String customerAttributesJson;
+
     @Transient
     protected boolean anonymous;
     
@@ -152,9 +165,25 @@ public class OrderCustomerImpl implements OrderCustomer {
     }
     
     @Override
-    public void setCustomerPayments(List<CustomerPayment> customerPayments) {
-        this.customerPayments = customerPayments;
-    }
+    public void setCustomerPayments(List<CustomerPayment> customerPayments) { this.customerPayments = customerPayments; }
+
+    @Override
+    public Boolean getTaxExempt() { return isTaxExempt; }
+
+    @Override
+    public void setTaxExempt(Boolean taxExempt) { isTaxExempt = taxExempt; }
+
+    @Override
+    public String getTaxExemptionCode() { return taxExemptionCode; }
+
+    @Override
+    public void setTaxExemptionCode(String taxExemptionCode) { this.taxExemptionCode = taxExemptionCode; }
+
+    @Override
+    public String getCustomerAttributesJson() { return customerAttributesJson; }
+
+    @Override
+    public void setCustomerAttributesJson(String customerAttributesJson) { this.customerAttributesJson = customerAttributesJson; }
 
     @Override
     public void setAnonymous(boolean anonymous) {
