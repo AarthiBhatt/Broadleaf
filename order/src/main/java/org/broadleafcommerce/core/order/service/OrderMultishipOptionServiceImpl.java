@@ -23,8 +23,9 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl;
 import org.broadleafcommerce.core.order.service.call.OrderMultishipOptionDTO;
-import org.broadleafcommerce.profile.core.service.AddressService;
 import org.springframework.stereotype.Service;
+
+import com.broadleafcommerce.order.common.service.OrderAddressService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,8 +45,8 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
     @Resource(name = "blOrderMultishipOptionDao")
     OrderMultishipOptionDao orderMultishipOptionDao;
     
-    @Resource(name = "blAddressService")
-    protected AddressService addressService;
+    @Resource(name = "blOrderAddressService")
+    protected OrderAddressService orderAddressService;
     
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
@@ -114,7 +115,7 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
             option.setOrderItem(orderItemService.readOrderItemById(dto.getOrderItemId()));
             
             if (dto.getAddressId() != null) {
-                option.setAddress(addressService.readAddressById(dto.getAddressId()));
+                option.setAddress(orderAddressService.readOrderAddressById(dto.getAddressId()));
             } else {
                 option.setAddress(null);
             }
@@ -174,7 +175,7 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
         for (OrderMultishipOptionDTO optionDto : optionDtos) {
             OrderMultishipOption option = new OrderMultishipOptionImpl();
             if (optionDto.getAddressId() != null) {
-                option.setAddress(addressService.readAddressById(optionDto.getAddressId()));
+                option.setAddress(orderAddressService.readOrderAddressById(optionDto.getAddressId()));
             }   
             if (optionDto.getFulfillmentOptionId() != null) {
                 option.setFulfillmentOption(fulfillmentOptionService.readFulfillmentOptionById(optionDto.getFulfillmentOptionId()));
