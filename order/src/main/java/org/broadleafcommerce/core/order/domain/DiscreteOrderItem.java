@@ -32,7 +32,7 @@ public interface DiscreteOrderItem extends OrderItem, SkuAccessor, Cloneable {
 
     void setSku(OrderSku sku);
     
-    void setSku(OrderSkuDTO skuDTO);
+    void setSkuInformation(OrderSkuDTO skuDTO);
 
     OrderProduct getProduct();
 
