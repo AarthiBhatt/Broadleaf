@@ -20,22 +20,12 @@ package org.broadleafcommerce.core.order.service.workflow.update;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.OrderItemService;
-import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
-
 public class UpdateOrderMultishipOptionActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
-    
-    @Resource(name = "blOrderMultishipOptionService")
-    protected OrderMultishipOptionService orderMultishipOptionService;
-
-    @Resource(name = "blOrderItemService")
-    protected OrderItemService orderItemService;
     
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
