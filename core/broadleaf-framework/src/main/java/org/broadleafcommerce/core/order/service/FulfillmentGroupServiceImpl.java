@@ -36,6 +36,8 @@ import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.broadleafcommerce.order.common.domain.OrderAddress;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -95,7 +97,6 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         FulfillmentGroup fg = fulfillmentGroupDao.create();
         fg.setAddress(fulfillmentGroupRequest.getAddress());
         fg.setOrder(fulfillmentGroupRequest.getOrder());
-        fg.setPhone(fulfillmentGroupRequest.getPhone());
         fg.setFulfillmentOption(fulfillmentGroupRequest.getOption());
         fg.setType(fulfillmentGroupRequest.getFulfillmentType());
 
@@ -401,7 +402,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         return orderService.save(order, priceOrder);
     }
     
-    protected String getKey(Address address, FulfillmentOption option, FulfillmentType fulfillmentType) {
+    protected String getKey(OrderAddress address, FulfillmentOption option, FulfillmentType fulfillmentType) {
         Long addressKey = (address == null) ? -1 : address.getId();
         Long fulfillmentOptionKey = (option == null) ? -1 : option.getId();
         String fulfillmentTypeKey = (fulfillmentType == null) ? "-1" : fulfillmentType.getType();

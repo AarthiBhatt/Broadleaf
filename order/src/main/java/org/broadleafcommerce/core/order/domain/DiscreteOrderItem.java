@@ -31,8 +31,6 @@ public interface DiscreteOrderItem extends OrderItem, SkuAccessor, Cloneable {
 
     void setSku(OrderSku sku);
     
-    void setSkuInformation(OrderSkuDTO skuDTO);
-
     Money getTaxablePrice();
 
     /**
