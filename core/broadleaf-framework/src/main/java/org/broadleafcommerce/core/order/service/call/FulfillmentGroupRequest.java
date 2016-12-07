@@ -23,12 +23,14 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Phone;
 
+import com.broadleafcommerce.order.common.domain.OrderAddress;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class FulfillmentGroupRequest {
 
-    protected Address address;
+    protected OrderAddress orderAddress;
     protected Order order;
     protected Phone phone;
     
@@ -46,12 +48,12 @@ public class FulfillmentGroupRequest {
 
     protected FulfillmentType fulfillmentType;
 
-    public Address getAddress() {
-        return address;
+    public OrderAddress getAddress() {
+        return orderAddress;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setAddress(OrderAddress address) {
+        this.orderAddress = address;
     }
 
     public Order getOrder() {

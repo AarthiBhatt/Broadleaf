@@ -49,7 +49,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
-import com.broadleafcommerce.order.common.domain.OrderProduct;
 import com.broadleafcommerce.order.common.domain.OrderSku;
 
 import java.util.ArrayList;
@@ -822,23 +821,6 @@ public class OrderServiceImpl implements OrderService {
         return true;
     }
 
-    protected boolean itemMatches(OrderSku item1Sku, OrderProduct item1Product, Map<String, OrderItemAttribute> item1Attributes,
-            OrderItemRequestDTO item2) {
-        // Must match on SKU and options
-        if (item1Sku != null && item2.getSkuId() != null) {
-            if (item1Sku.getExternalId().equals(item2.getSkuId())) {
-                return true;
-            }
-        } else {
-            if (item1Product != null && item2.getProductId() != null) {
-                if (item1Product.getExternalId().equals(item2.getProductId())) {
-                    return compareAttributes(item1Attributes, item2);
-                }
-            }
-        }
-        return false;
-    }
-
     protected OrderItem findMatchingItem(Order order, OrderItemRequestDTO itemToFind) {
         if (order == null) {
             return null;
@@ -846,9 +828,10 @@ public class OrderServiceImpl implements OrderService {
         for (OrderItem currentItem : order.getOrderItems()) {
             if (currentItem instanceof DiscreteOrderItem) {
                 DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
-                if (itemMatches(discreteItem.getSku(), discreteItem.getProduct(), discreteItem.getOrderItemAttributes(),
-                        itemToFind)) {
-                    return discreteItem;
+                if (discreteItem.getSku() != null && itemToFind.getSkuId() != null) {
+                    if (discreteItem.getSku().getExternalId().equals(itemToFind.getSkuId())) {
+                        return discreteItem;
+                    }
                 }
             }
         }
