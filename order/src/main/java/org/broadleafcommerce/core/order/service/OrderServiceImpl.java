@@ -88,13 +88,11 @@ public class OrderServiceImpl implements OrderService {
     @Resource(name = "blPricingService")
     protected PricingService pricingService;
 
-// TODO microservices - deal with orderitem daos and services
-//    @Resource(name = "blOrderItemService")
-//    protected OrderItemService orderItemService;
+    @Resource(name = "blOrderItemService")
+    protected OrderItemService orderItemService;
 
-// TODO microservices - deal with fulfillmentgroup daos and services
-//    @Resource(name = "blFulfillmentGroupService")
-//    protected FulfillmentGroupService fulfillmentGroupService;
+    @Resource(name = "blFulfillmentGroupService")
+    protected FulfillmentGroupService fulfillmentGroupService;
 
 // TODO microservices - deal with offer daos and services
 //    @Resource(name = "blOfferService")
@@ -139,9 +137,8 @@ public class OrderServiceImpl implements OrderService {
 
     protected Boolean automaticallyMergeLikeItems;
 
-// TODO microservices - deal with multiship
-//    @Resource(name = "blOrderMultishipOptionService")
-//    protected OrderMultishipOptionService orderMultishipOptionService;
+    @Resource(name = "blOrderMultishipOptionService")
+    protected OrderMultishipOptionService orderMultishipOptionService;
 
     @Override
     @Transactional("blTransactionManager")
@@ -639,7 +636,7 @@ public class OrderServiceImpl implements OrderService {
     public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
         preValidateCartOperation(findOrderById(orderId));
         try {
-            OrderItem oi = null;// TODO microservices - deal with orderitem service and dao orderItemService.readOrderItemById(orderItemId);
+            OrderItem oi = orderItemService.readOrderItemById(orderItemId);
             if (oi == null) {
                 throw new WorkflowException(new ItemNotFoundException());
             }
