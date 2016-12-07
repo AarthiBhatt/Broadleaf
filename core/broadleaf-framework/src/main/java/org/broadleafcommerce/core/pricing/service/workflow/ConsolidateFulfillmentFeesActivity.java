@@ -58,7 +58,8 @@ public class ConsolidateFulfillmentFeesActivity extends BaseActivity<ProcessCont
             for (FulfillmentGroupItem item : fulfillmentGroup.getFulfillmentGroupItems()) {
                 List<SkuFee> fees = null;
                 if (item.getOrderItem() instanceof DiscreteOrderItem) {
-                    fees = ((DiscreteOrderItem)item.getOrderItem()).getSku().getFees();
+                    // TODO microservices - deal with fees (it has been suggested just to remove fees)
+                    //fees = ((DiscreteOrderItem)item.getOrderItem()).getSku().getFees();
                 }
                 
                 if (fees != null) {
