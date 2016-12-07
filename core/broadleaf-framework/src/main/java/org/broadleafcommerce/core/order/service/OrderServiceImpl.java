@@ -25,8 +25,6 @@ import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -72,6 +70,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
+import com.broadleafcommerce.order.common.domain.OrderProduct;
+import com.broadleafcommerce.order.common.domain.OrderSku;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -427,10 +427,10 @@ public class OrderServiceImpl implements OrderService {
                 if (currentItem instanceof DiscreteOrderItem) {
                     DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
                     if (skuId != null) {
-                        if (discreteItem.getSku() != null && skuId.equals(discreteItem.getSku().getId())) {
+                        if (discreteItem.getSku() != null && skuId.equals(discreteItem.getSku().getExternalId())) {
                             return discreteItem;
                         }
-                    } else if (productId != null && discreteItem.getProduct() != null && productId.equals(discreteItem.getProduct().getId())) {
+                    } else if (productId != null && discreteItem.getProduct() != null && productId.equals(discreteItem.getProduct().getExternalId())) {
                         return discreteItem;
                     }
 
@@ -823,16 +823,16 @@ public class OrderServiceImpl implements OrderService {
         return true;
     }
 
-    protected boolean itemMatches(Sku item1Sku, Product item1Product, Map<String, OrderItemAttribute> item1Attributes,
+    protected boolean itemMatches(OrderSku item1Sku, OrderProduct item1Product, Map<String, OrderItemAttribute> item1Attributes,
             OrderItemRequestDTO item2) {
         // Must match on SKU and options
         if (item1Sku != null && item2.getSkuId() != null) {
-            if (item1Sku.getId().equals(item2.getSkuId())) {
+            if (item1Sku.getExternalId().equals(item2.getSkuId())) {
                 return true;
             }
         } else {
             if (item1Product != null && item2.getProductId() != null) {
-                if (item1Product.getId().equals(item2.getProductId())) {
+                if (item1Product.getExternalId().equals(item2.getProductId())) {
                     return compareAttributes(item1Attributes, item2);
                 }
             }
