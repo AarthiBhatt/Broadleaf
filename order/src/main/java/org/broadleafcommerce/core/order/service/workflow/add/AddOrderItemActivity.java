@@ -18,11 +18,9 @@
 package org.broadleafcommerce.core.order.service.workflow.add;
 
 import org.broadleafcommerce.common.dao.GenericEntityDao;
-import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
-import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
@@ -32,15 +30,9 @@ import javax.annotation.Resource;
 
 public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
     
-    @Resource(name = "blOrderService")
-    protected OrderService orderService;
-    
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
     
-    @Resource(name = "blCatalogService")
-    protected CatalogService catalogService;
-
     @Resource(name = "blGenericEntityDao")
     protected GenericEntityDao genericEntityDao;
 
