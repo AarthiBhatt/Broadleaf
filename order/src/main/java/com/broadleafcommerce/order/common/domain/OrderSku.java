@@ -19,6 +19,7 @@ package com.broadleafcommerce.order.common.domain;
 
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 
 import java.math.BigDecimal;
 
@@ -52,9 +53,9 @@ public interface OrderSku {
 
     public void setTaxCode(String taxCode);
 
-    public String getFulfillmentType();
+    public FulfillmentType getFulfillmentType();
 
-    public void setFulfillmentType(String fulfillmentType);
+    public void setFulfillmentType(FulfillmentType fulfillmentType);
 
     public BigDecimal getWidth();
 

@@ -20,6 +20,7 @@ package com.broadleafcommerce.order.common.domain;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -174,13 +175,15 @@ public class OrderSkuImpl implements OrderSku {
     }
 
     @Override
-    public String getFulfillmentType() {
-        return fulfillmentType;
+    public FulfillmentType getFulfillmentType() {
+        return FulfillmentType.getInstance(this.fulfillmentType);
     }
 
     @Override
-    public void setFulfillmentType(String fulfillmentType) {
-        this.fulfillmentType = fulfillmentType;
+    public void setFulfillmentType(FulfillmentType fulfillmentType) {
+        if (fulfillmentType != null) {
+            this.fulfillmentType = fulfillmentType.getType();
+        }
     }
 
     @Override
