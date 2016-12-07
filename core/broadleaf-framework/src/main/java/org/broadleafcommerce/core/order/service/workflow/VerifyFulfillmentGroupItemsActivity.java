@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.order.service.workflow;
 
+import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.order.strategy.FulfillmentGroupItemStrategy;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
