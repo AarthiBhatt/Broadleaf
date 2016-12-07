@@ -24,8 +24,6 @@ import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 
-import com.broadleafcommerce.order.common.domain.OrderCategory;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -212,10 +210,6 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      * @param orderItemPriceDetails
      */
     void setOrderItemPriceDetails(List<OrderItemPriceDetail> orderItemPriceDetails);
-
-    OrderCategory getCategory();
-
-    void setCategory(OrderCategory category);
 
     List<CandidateItemOffer> getCandidateItemOffers();
 

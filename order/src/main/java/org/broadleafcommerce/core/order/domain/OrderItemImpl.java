@@ -58,9 +58,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import com.broadleafcommerce.order.common.domain.OrderCategory;
-import com.broadleafcommerce.order.common.domain.OrderCategoryImpl;
-
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -119,14 +116,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Column(name = "ORDER_ITEM_ID")
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
-
-    @ManyToOne(targetEntity = OrderCategoryImpl.class)
-    @JoinColumn(name = "CATEGORY_ID")
-    @Index(name="ORDERITEM_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "OrderItemImpl_Category", order=Presentation.FieldOrder.CATEGORY,
-            group = Presentation.Group.Name.Catalog, groupOrder = Presentation.Group.Order.Catalog)
-    @AdminPresentationToOneLookup()
-    protected OrderCategory category;
 
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
@@ -836,7 +825,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                 }
             }
             
-            clonedOrderItem.setCategory(category);
             clonedOrderItem.setGiftWrapOrderItem(giftWrapOrderItem);
             clonedOrderItem.setName(name);
             clonedOrderItem.setOrder(order);
@@ -860,7 +848,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((category == null) ? 0 : category.hashCode());
         result = prime * result + ((giftWrapOrderItem == null) ? 0 : giftWrapOrderItem.hashCode());
         result = prime * result + ((order == null) ? 0 : order.hashCode());
         result = prime * result + ((orderItemType == null) ? 0 : orderItemType.hashCode());
@@ -890,13 +877,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             return id.equals(other.id);
         }
 
-        if (category == null) {
-            if (other.category != null) {
-                return false;
-            }
-        } else if (!category.equals(other.category)) {
-            return false;
-        }
         if (giftWrapOrderItem == null) {
             if (other.giftWrapOrderItem != null) {
                 return false;
@@ -967,7 +947,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         }
         OrderItem cloned = createResponse.getClone();
         cloned.setOrder(order == null ? null : order.createOrRetrieveCopyInstance(context).getClone());
-        cloned.setCategory(category);
         cloned.setName(name);
         cloned.setOrderItemType(convertOrderItemType(orderItemType));
         cloned.setTaxable(isTaxable());

@@ -20,10 +20,9 @@ package com.broadleafcommerce.order.common.dto;
 import lombok.Data;
 
 import org.broadleafcommerce.common.money.Money;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 @Data
 public class OrderSkuDTO implements Serializable {
@@ -32,26 +31,11 @@ public class OrderSkuDTO implements Serializable {
 
     protected Long externalId;
     protected String name;
-    protected String description;
-    protected String longDescription;
-    protected String upc;
-    protected Money retailPrice;
     protected Money salePrice;
-    protected Money cost;
+    protected Money retailPrice;
     protected Boolean taxable;
     protected String taxCode;
-    protected Boolean discountable;
-    protected Boolean active;
-    protected String inventoryType;
     protected String fulfillmentType;
-    protected Boolean available;
-    protected Integer quantityAvailable = 0;
-
-    protected OrderProductDTO product;
-    protected OrderProductDTO defaultProduct;
-    protected Map<String, String> skuAttributes = new HashMap<String, String>();
-
-    //Dimension information
     protected BigDecimal width;
     protected BigDecimal height;
     protected BigDecimal depth;
@@ -59,12 +43,9 @@ public class OrderSkuDTO implements Serializable {
     protected String size;
     protected String container;
     protected String dimensionUnitOfMeasure;
-
-    //Weight information
     protected BigDecimal weight;
     protected String weightUnitOfMeasure;
-
-    protected Boolean machineSortable;
+    protected String skuAttributesJson;
 
     public boolean hasRetailPrice() {
         return getRetailPrice() != null;

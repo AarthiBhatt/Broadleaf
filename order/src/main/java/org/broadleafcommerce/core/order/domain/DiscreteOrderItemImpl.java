@@ -32,8 +32,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
-import com.broadleafcommerce.order.common.domain.OrderProduct;
-import com.broadleafcommerce.order.common.domain.OrderProductImpl;
 import com.broadleafcommerce.order.common.domain.OrderSku;
 import com.broadleafcommerce.order.common.domain.OrderSkuImpl;
 import com.broadleafcommerce.order.common.dto.OrderSkuDTO;
@@ -84,14 +82,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @AdminPresentationToOneLookup()
     protected OrderSku sku;
 
-    @ManyToOne(targetEntity = OrderProductImpl.class)
-    @JoinColumn(name = "PRODUCT_ID")
-    @Index(name="DISCRETE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
-    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Product", order=Presentation.FieldOrder.PRODUCT,
-            group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
-    @AdminPresentationToOneLookup()
-    protected OrderProduct product;
-
     @ElementCollection
     @MapKeyColumn(name="NAME")
     @Column(name="VALUE")
@@ -135,16 +125,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Override
     public Boolean isTaxable() {
         return itemTaxable;
-    }
-
-    @Override
-    public OrderProduct getProduct() {
-        return product;
-    }
-
-    @Override
-    public void setProduct(OrderProduct product) {
-        this.product = product;
     }
 
     @Override
@@ -304,7 +284,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         }
         orderItem.setBaseRetailPrice(convertToMoney(baseRetailPrice));
         orderItem.setBaseSalePrice(convertToMoney(baseSalePrice));
-        orderItem.setProduct(product);
         orderItem.setSku(sku);
 
         if (orderItem.getOrder() == null) {
@@ -370,9 +349,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         DiscreteOrderItem cloned = createResponse.getClone();
         cloned.setBaseRetailPrice(getBaseRetailPrice());
         cloned.setBaseSalePrice(getBaseSalePrice());
-        cloned.setProduct(product);
         cloned.setSku(sku);
-        cloned.setCategory(category);
         ((DiscreteOrderItemImpl)cloned).discountsAllowed = discountsAllowed;
         cloned.setName(name);
         // dont clone

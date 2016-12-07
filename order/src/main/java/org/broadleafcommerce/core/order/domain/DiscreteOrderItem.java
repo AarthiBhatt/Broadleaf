@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.money.Money;
 
-import com.broadleafcommerce.order.common.domain.OrderProduct;
 import com.broadleafcommerce.order.common.domain.OrderSku;
 import com.broadleafcommerce.order.common.dto.OrderSkuDTO;
 
@@ -33,10 +32,6 @@ public interface DiscreteOrderItem extends OrderItem, SkuAccessor, Cloneable {
     void setSku(OrderSku sku);
     
     void setSkuInformation(OrderSkuDTO skuDTO);
-
-    OrderProduct getProduct();
-
-    void setProduct(OrderProduct product);
 
     Money getTaxablePrice();
 
