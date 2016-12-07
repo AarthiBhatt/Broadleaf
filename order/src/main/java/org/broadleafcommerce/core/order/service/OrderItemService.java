@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.order.service;
 
-import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -32,7 +31,6 @@ import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public interface OrderItemService {
     
@@ -68,11 +66,13 @@ public interface OrderItemService {
 
     public void priceOrderItem(OrderItem item);
 
-    public Set<Product> findAllProductsInRequest(ConfigurableOrderItemRequest itemRequest);
+// TODO microservices - refactor to unbind from product
+//    public Set<Product> findAllProductsInRequest(ConfigurableOrderItemRequest itemRequest);
 
     public void applyAdditionalOrderItemProperties(OrderItem orderItem);
 
-    public ConfigurableOrderItemRequest createConfigurableOrderItemRequestFromProduct(Product product);
+// TODO microservices - refactor to unbind from product
+//    public ConfigurableOrderItemRequest createConfigurableOrderItemRequestFromProduct(Product product);
 
     public void modifyOrderItemRequest(ConfigurableOrderItemRequest itemRequest);
 
