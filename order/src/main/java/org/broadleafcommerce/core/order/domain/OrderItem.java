@@ -24,6 +24,8 @@ import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 
+import com.broadleafcommerce.order.common.domain.OrderSku;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -337,6 +339,10 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      * @param name
      */
     void setName(String name);
+
+    OrderSku getSku();
+
+    void setSku(OrderSku sku);
 
     OrderItem clone();
 

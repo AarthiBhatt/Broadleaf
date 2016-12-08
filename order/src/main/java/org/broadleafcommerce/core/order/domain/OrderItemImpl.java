@@ -58,6 +58,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import com.broadleafcommerce.order.common.domain.OrderSku;
+import com.broadleafcommerce.order.common.domain.OrderSkuImpl;
+
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -146,6 +149,14 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
             fieldType = SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
+
+    @ManyToOne(targetEntity = OrderSkuImpl.class, optional=false)
+    @JoinColumn(name = "ORDER_SKU_ID", nullable = false)
+    @Index(name="DISCRETE_SKU_INDEX", columnNames={"ORDER_SKU_ID"})
+    @AdminPresentation(friendlyName = "OrderItemImpl_Sku", order= OrderItemImpl.Presentation.FieldOrder.SKU,
+            group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
+    @AdminPresentationToOneLookup()
+    protected OrderSku sku;
 
     @Column(name = "NAME")
     @AdminPresentation(friendlyName = "OrderItemImpl_Item_Name", order=Presentation.FieldOrder.NAME,
@@ -380,6 +391,12 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public OrderSku getSku() { return sku; }
+
+    @Override
+    public void setSku(OrderSku sku) { this.sku = sku; }
 
     @Override
     public List<OrderItemQualifier> getOrderItemQualifiers() {
@@ -1022,6 +1039,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             public static final int PRICEDETAILS = 1000;
             public static final int ADJUSTMENTS = 2000;
             public static final int DISCOUNTALLOWED = 3000;
+            public static final int SKU = 3000;
         }
     }
 
