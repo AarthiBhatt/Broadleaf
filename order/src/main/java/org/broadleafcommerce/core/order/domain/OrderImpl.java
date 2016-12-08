@@ -515,36 +515,10 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
 
     @Override
-    public List<DiscreteOrderItem> getDiscreteOrderItems() {
-        List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
-        for (OrderItem orderItem : orderItems) {
-            if (orderItem instanceof DiscreteOrderItem) {
-                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
-                discreteOrderItems.add(discreteOrderItem);
-            }
-        }
-        return discreteOrderItems;
-    }
-
-    @Override
-    public List<OrderItem> getNonDiscreteOrderItems() {
-        List<OrderItem> nonDiscreteOrderItems = new ArrayList<OrderItem>();
-        for (OrderItem orderItem : orderItems) {
-            if (!SkuAccessor.class.isAssignableFrom(orderItem.getClass())) {
-                nonDiscreteOrderItems.add(orderItem);
-            }
-        }
-        return nonDiscreteOrderItems;
-    }
-
-    @Override
     public boolean containsSku(OrderSku sku) {
         for (OrderItem orderItem : getOrderItems()) {
-            if (orderItem instanceof DiscreteOrderItem) {
-                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
-                if (discreteOrderItem.getSku() != null && discreteOrderItem.getSku().equals(sku)) {
-                    return true;
-                }
+            if (orderItem.getSku() != null && orderItem.getSku().equals(sku)) {
+                return true;
             }
         }
         
@@ -699,12 +673,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Override
     public int getItemCount() {
         int count = 0;
-        for (DiscreteOrderItem doi : getDiscreteOrderItems()) {
-            if (doi.getParentOrderItem() == null) {
-                count += doi.getQuantity();
-            }
-        }
-        for (OrderItem oi : getNonDiscreteOrderItems()) {
+        for (OrderItem oi : getOrderItems()) {
             count += oi.getQuantity();
         }
         return count;

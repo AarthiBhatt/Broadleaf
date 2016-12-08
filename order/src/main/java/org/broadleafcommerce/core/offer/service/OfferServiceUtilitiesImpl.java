@@ -34,9 +34,9 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferMarkTargets;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.domain.OrderItemContainer;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
@@ -274,16 +274,12 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
 
     @Override
     public boolean isAddOnOrderItem(OrderItem orderItem) {
-        if (DiscreteOrderItem.class.isAssignableFrom(orderItem.getClass())) {
-            DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
 
-            Map<String, String> attributes = discreteOrderItem.getAdditionalAttributes();
-            boolean isAddOnOrderItem = attributes.containsKey("addOnXrefId");
-            boolean isChildOrderItem = discreteOrderItem.isChildOrderItem();
+        Map<String, OrderItemAttribute> attributes = orderItem.getOrderItemAttributes();
+        boolean isAddOnOrderItem = attributes.containsKey("addOnXrefId");
+        boolean isChildOrderItem = orderItem.isChildOrderItem();
 
-            return isChildOrderItem && isAddOnOrderItem;
-        }
-        return false;
+        return isChildOrderItem && isAddOnOrderItem;
     }
 
     /**

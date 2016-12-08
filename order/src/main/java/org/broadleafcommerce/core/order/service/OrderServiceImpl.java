@@ -32,7 +32,6 @@ import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.dao.OrderDao;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
@@ -830,12 +829,9 @@ public class OrderServiceImpl implements OrderService {
             return null;
         }
         for (OrderItem currentItem : order.getOrderItems()) {
-            if (currentItem instanceof DiscreteOrderItem) {
-                DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
-                if (discreteItem.getSku() != null && itemToFind.getOrderSkuDTO() != null) {
-                    if (discreteItem.getSku().getExternalId().equals(itemToFind.getOrderSkuDTO())) {
-                        return discreteItem;
-                    }
+            if (currentItem.getSku() != null && itemToFind.getOrderSkuDTO() != null) {
+                if (currentItem.getSku().getExternalId().equals(itemToFind.getOrderSkuDTO().getExternalId())) {
+                    return currentItem;
                 }
             }
         }

@@ -33,7 +33,7 @@ import java.util.List;
 @Table(name = "BLC_GIFTWRAP_ORDER_ITEM")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationClass(friendlyName = "GiftWrapOrderItemImpl_giftWrapOrderItem")
-public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements GiftWrapOrderItem {
+public class GiftWrapOrderItemImpl extends OrderItemImpl implements GiftWrapOrderItem {
 
     private static final long serialVersionUID = 1L;
 
@@ -61,8 +61,8 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
     }
 
     @Override
-    public CreateResponse<DiscreteOrderItem> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<DiscreteOrderItem> createResponse = super.createOrRetrieveCopyInstance(context);
+    public CreateResponse<OrderItem> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<OrderItem> createResponse = super.createOrRetrieveCopyInstance(context);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }

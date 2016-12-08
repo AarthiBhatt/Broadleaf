@@ -323,8 +323,6 @@ public interface FulfillmentGroup extends Serializable, MultiTenantCloneable<Ful
     @Deprecated
     public void setService(String service);
     
-    public List<DiscreteOrderItem> getDiscreteOrderItems();
-    
     public Money getFulfillmentGroupAdjustmentsValue();
 
     /**

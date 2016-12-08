@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.order.domain;
 
 import java.util.List;
 
-public interface GiftWrapOrderItem extends DiscreteOrderItem {
+public interface GiftWrapOrderItem extends OrderItem {
 
     public List<OrderItem> getWrappedItems();
 
