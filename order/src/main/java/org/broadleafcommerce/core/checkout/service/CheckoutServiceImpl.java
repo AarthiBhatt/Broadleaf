@@ -22,7 +22,6 @@ import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
@@ -83,8 +82,6 @@ public class CheckoutServiceImpl implements CheckoutService {
             throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e, seed);
         } catch (WorkflowException e) {
             throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e.getRootCause(), seed);
-        } catch (RequiredAttributeNotProvidedException e) {
-            throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e.getCause(), seed);
         } finally {
             // The order has completed processing, remove the order from the processing map
             removeLock(order.getId());
