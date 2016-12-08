@@ -37,7 +37,7 @@ import java.util.Map;
  * Personal message is optional.
  *
  */
-public abstract class AbstractOrderItemRequest {
+public class OrderItemRequest {
 
     protected OrderSku sku;
     protected Order order;
@@ -104,7 +104,7 @@ public abstract class AbstractOrderItemRequest {
         this.retailPriceOverride = retailPriceOverride;
     }
 
-    protected void copyProperties(AbstractOrderItemRequest newRequest) {
+    protected void copyProperties(OrderItemRequest newRequest) {
         newRequest.setItemAttributes(itemAttributes);
         newRequest.setAdditionalAttributes(additionalAttributes);
         newRequest.setPersonalMessage(personalMessage);
@@ -121,7 +121,7 @@ public abstract class AbstractOrderItemRequest {
         if (o == null) return false;
         if (!getClass().isAssignableFrom(o.getClass())) return false;
 
-        AbstractOrderItemRequest that = (AbstractOrderItemRequest) o;
+        OrderItemRequest that = (OrderItemRequest) o;
 
         if (quantity != that.quantity) return false;
         if (salePriceOverride != null ? !salePriceOverride.equals(that.salePriceOverride) : that.salePriceOverride != null)
