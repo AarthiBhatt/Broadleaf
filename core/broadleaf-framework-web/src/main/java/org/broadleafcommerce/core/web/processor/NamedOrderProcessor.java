@@ -19,8 +19,8 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.OrderCustomerFacadeService;
 import org.broadleafcommerce.core.web.expression.OrderVariableExpression;
+import org.broadleafcommerce.core.web.order.translation.OrderCustomerFacadeService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
