@@ -38,6 +38,8 @@ import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -215,26 +217,25 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.readOrdersForCustomersInDateRange(customerIds, startDate, endDate);
     }
 
-// TODO microservices - incremental implementation of order service
-//    @Override
-//    public List<OrderPayment> findPaymentsForOrder(Order order) {
-//        return paymentDao.readPaymentsForOrder(order);
-//    }
-//    
-//    @Override
-//    @Transactional("blTransactionManager")
-//    public OrderPayment addPaymentToOrder(Order order, OrderPayment payment, Referenced securePaymentInfo) {
-//        payment.setOrder(order);
-//        order.getPayments().add(payment);
-//        order = persist(order);
-//        int paymentIndex = order.getPayments().size() - 1;
-//
-//        if (securePaymentInfo != null) {
-//            securePaymentInfoService.save(securePaymentInfo);
-//        }
-//
-//        return order.getPayments().get(paymentIndex);
-//    }
+    @Override
+    public List<OrderPayment> findPaymentsForOrder(Order order) {
+        return paymentDao.readPaymentsForOrder(order);
+    }
+    
+    @Override
+    @Transactional("blTransactionManager")
+    public OrderPayment addPaymentToOrder(Order order, OrderPayment payment, Referenced securePaymentInfo) {
+        payment.setOrder(order);
+        order.getPayments().add(payment);
+        order = persist(order);
+        int paymentIndex = order.getPayments().size() - 1;
+
+        if (securePaymentInfo != null) {
+            securePaymentInfoService.save(securePaymentInfo);
+        }
+
+        return order.getPayments().get(paymentIndex);
+    }
 //    
 //    @Override
 //    public Order save(Order order, boolean priceOrder, boolean repriceItems) throws PricingException {
