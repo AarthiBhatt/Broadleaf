@@ -19,22 +19,18 @@ package org.broadleafcommerce.core.payment.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.dto.AddressDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
-import com.broadleafcommerce.order.common.domain.OrderAddress;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
-import com.broadleafcommerce.order.common.service.OrderAddressService;
 import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
-import org.broadleafcommerce.profile.core.service.CountryService;
-import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
-import org.broadleafcommerce.profile.core.service.PhoneService;
-import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.stereotype.Service;
+
+import com.broadleafcommerce.order.common.domain.OrderAddress;
+import com.broadleafcommerce.order.common.service.OrderAddressService;
 
 import javax.annotation.Resource;
 
@@ -49,23 +45,8 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
     @Resource(name = "blOrderAddressService")
     protected OrderAddressService orderAddressService;
 
-    @Resource(name = "blStateService")
-    protected StateService stateService;
-
-    @Resource(name = "blCountryService")
-    protected CountryService countryService;
-
-    @Resource(name = "blISOService")
-    protected ISOService isoService;
-
-    @Resource(name = "blPhoneService")
-    protected PhoneService phoneService;
-
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
-
-    @Resource(name = "blCountrySubdivisionService")
-    protected CountrySubdivisionService countrySubdivisionService;
 
     @Override
     public void populateBillingInfo(PaymentResponseDTO responseDTO, OrderPayment payment, OrderAddress tempBillingAddress, boolean isUseBillingAddressFromGateway) {
