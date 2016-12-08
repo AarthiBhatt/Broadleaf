@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface OrderItemService {
     
@@ -73,4 +74,6 @@ public interface OrderItemService {
     public void mergeOrderItemRequest(ConfigurableOrderItemRequest itemRequest, OrderItem orderItem);
 
     public List<OrderItem> findOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
+
+    public void populateProductOptionAttributes(OrderItem item, Map<String, String> attributes);
 }
