@@ -17,11 +17,16 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.logging.Log;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
+import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
+import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
@@ -289,40 +294,39 @@ public interface OrderService {
      */
     public Order confirmOrder(Order order);
     
-// TODO microservices - incremental implementation of order service
-//    /**
-//     * Looks through the given order and returns the latest added OrderItem that matches on the skuId
-//     * and productId. Generally, this is used to retrieve the OrderItem that was just added to the cart.
-//     * The default Broadleaf implementation will attempt to match on skuId first, and failing that, it will
-//     * look at the productId.
-//     * 
-//     * Note that the behavior is slightly undeterministic in the case that {@link setAutomaticallyMergeLikeItems}
-//     * is set to true and the last added sku matches on a previously added sku. In this case, the sku that has the
-//     * merged items would be returned, so the total quantity of the OrderItem might not match exactly what was 
-//     * just added.
-//     * 
-//     * @param order
-//     * @param skuId
-//     * @param productId
-//     * @return the best matching OrderItem with highest index in the list of OrderItems in the order
-//     */
-//    public OrderItem findLastMatchingItem(Order order, Long skuId, Long productId);
-//    
-//    /**
-//     * Adds a GiftWrapItem to the order based on the itemRequest. A GiftWrapItem is a product (for example,
-//     * a "Gift Box with Red Ribbon") that contains a list of OrderItems that should be wrapped by this
-//     * GiftWrapItem.
-//     * 
-//     * The OrderItems must already exist and belong to an order before they are able to be wrapped by the
-//     * GiftWrapItem
-//     * 
-//     * @param order
-//     * @param itemRequest
-//     * @param priceOrder
-//     * @return the GiftWrapItem instance that was created and attached to the order
-//     * @throws PricingException
-//     */
-//    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
+    /**
+     * Looks through the given order and returns the latest added OrderItem that matches on the skuId
+     * and productId. Generally, this is used to retrieve the OrderItem that was just added to the cart.
+     * The default Broadleaf implementation will attempt to match on skuId first, and failing that, it will
+     * look at the productId.
+     * 
+     * Note that the behavior is slightly undeterministic in the case that {@link setAutomaticallyMergeLikeItems}
+     * is set to true and the last added sku matches on a previously added sku. In this case, the sku that has the
+     * merged items would be returned, so the total quantity of the OrderItem might not match exactly what was 
+     * just added.
+     * 
+     * @param order
+     * @param skuId
+     * @param productId
+     * @return the best matching OrderItem with highest index in the list of OrderItems in the order
+     */
+    public OrderItem findLastMatchingItem(Order order, Long skuId, Long productId);
+    
+    /**
+     * Adds a GiftWrapItem to the order based on the itemRequest. A GiftWrapItem is a product (for example,
+     * a "Gift Box with Red Ribbon") that contains a list of OrderItems that should be wrapped by this
+     * GiftWrapItem.
+     * 
+     * The OrderItems must already exist and belong to an order before they are able to be wrapped by the
+     * GiftWrapItem
+     * 
+     * @param order
+     * @param itemRequest
+     * @param priceOrder
+     * @return the GiftWrapItem instance that was created and attached to the order
+     * @throws PricingException
+     */
+    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
     
     /**
      * Initiates the addItem workflow that will attempt to add the given quantity of the specified item
@@ -383,8 +387,7 @@ public interface OrderService {
 
     public void addChildItems(OrderItemRequestDTO orderItemRequestDTO, int numAdditionRequests, int currentAddition, ProcessContext<CartOperationRequest> context, List<ActivityMessageDTO> orderMessages) throws WorkflowException;
 
-// TODO microservices - incremental implementation of order service
-//    public void addDependentOrderItem(OrderItemRequestDTO parentOrderItemRequest, OrderItemRequestDTO dependentOrderItem);
+    public void addDependentOrderItem(OrderItemRequestDTO parentOrderItemRequest, OrderItemRequestDTO dependentOrderItem);
 
     /**
      * Initiates the updateItem workflow that will attempt to update the item quantity for the specified
@@ -442,116 +445,115 @@ public interface OrderService {
      */
     public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders);
 
-// TODO microservices - incremental implementation of order service
-//    /**
-//     * Adds the passed in orderItem to the current cart for the same Customer that owns the
-//     * named order. This method will remove the item from the wishlist based on whether the 
-//     * {@link setMoveNamedOrderItems} flag is set.
-//     * 
-//     * Note that if an item was in a wishlist and is no longer able to be added to the cart,
-//     * the item will still be removed from the wishlist.
-//     * 
-//     * Note that this method does not change the association of the OrderItems to the new
-//     * order -- instead, those OrderItems is completely removed and a new OrderItem that mirrors
-//     * it is created.
-//     * 
-//     * @param namedOrder 
-//     * @param orderItem 
-//     * @param priceOrder 
-//     * @return the cart with the requested orderItem added to it
-//     * @throws RemoveFromCartException
-//     * @throws AddToCartException
-//     */
-//    public Order addItemFromNamedOrder(Order namedOrder, OrderItem orderItem, boolean priceOrder) throws RemoveFromCartException, AddToCartException;
-//    
-//    /**
-//     * This method performs the same function as addItemFromNamedOrder(Order, OrderItem, boolean)
-//     * except that instead of adding all of the quantity from the named order to the cart, it will
-//     * only add/move the specific quantity requested.
-//     * 
-//     * @see #addItemFromNamedOrder(Order, OrderItem, boolean)
-//     * 
-//     * @param namedOrder 
-//     * @param orderItem 
-//     * @param quantity
-//     * @param priceOrder 
-//     * @return the cart with the requested orderItem added to it
-//     * @throws RemoveFromCartException
-//     * @throws AddToCartException
-//     * @throws UpdateCartException 
-//     */
-//    public Order addItemFromNamedOrder(Order namedOrder, OrderItem orderItem, int quantity, boolean priceOrder) throws RemoveFromCartException, AddToCartException, UpdateCartException;
-//
-//    /**
-//     * Adds all orderItems to the current cart from the same Customer that owns the named
-//     * order. This method will remove the item from the wishlist based on whether the 
-//     * {@link setMoveNamedOrderItems} flag is set.
-//     * 
-//     * Note that any items that are in the wishlist but are no longer able to be added to a cart
-//     * will still be removed from the wishlist.
-//     * 
-//     * Note that this method does not change the association of the OrderItems to the new
-//     * order -- instead, those OrderItems is completely removed and a new OrderItem that mirrors
-//     * it is created.
-//     * 
-//     * @param namedOrder
-//     * @param priceOrder
-//     * @return
-//     * @throws RemoveFromCartException
-//     * @throws AddToCartException
-//     */
-//    public Order addAllItemsFromNamedOrder(Order namedOrder, boolean priceOrder) throws RemoveFromCartException, AddToCartException;
-//
-//    /**
-//     * Deletes all the OrderPayment Info's on the order.
-//     *
-//     * @param order
-//     */
-//    public void removeAllPaymentsFromOrder(Order order);
-//
-//    /**
-//     * Deletes the OrderPayment Info of the passed in type from the order
-//     * Note that this method will also delete any associated Secure OrderPayment Infos if necessary.
-//     *
-//     * @param order
-//     * @param paymentInfoType
-//     */
-//    public void removePaymentsFromOrder(Order order, PaymentType paymentInfoType);
-//
-//    /**
-//     * Deletes the OrderPayment Info from the order.
-//     * Note that this method will also delete any associated Secure OrderPayment Infos if necessary.
-//     *
-//     * @param order
-//     * @param paymentInfo
-//     */
-//    public void removePaymentFromOrder(Order order, OrderPayment paymentInfo);
-//
+    /**
+     * Adds the passed in orderItem to the current cart for the same Customer that owns the
+     * named order. This method will remove the item from the wishlist based on whether the 
+     * {@link setMoveNamedOrderItems} flag is set.
+     * 
+     * Note that if an item was in a wishlist and is no longer able to be added to the cart,
+     * the item will still be removed from the wishlist.
+     * 
+     * Note that this method does not change the association of the OrderItems to the new
+     * order -- instead, those OrderItems is completely removed and a new OrderItem that mirrors
+     * it is created.
+     * 
+     * @param namedOrder 
+     * @param orderItem 
+     * @param priceOrder 
+     * @return the cart with the requested orderItem added to it
+     * @throws RemoveFromCartException
+     * @throws AddToCartException
+     */
+    public Order addItemFromNamedOrder(Order namedOrder, OrderItem orderItem, boolean priceOrder) throws RemoveFromCartException, AddToCartException;
+    
+    /**
+     * This method performs the same function as addItemFromNamedOrder(Order, OrderItem, boolean)
+     * except that instead of adding all of the quantity from the named order to the cart, it will
+     * only add/move the specific quantity requested.
+     * 
+     * @see #addItemFromNamedOrder(Order, OrderItem, boolean)
+     * 
+     * @param namedOrder 
+     * @param orderItem 
+     * @param quantity
+     * @param priceOrder 
+     * @return the cart with the requested orderItem added to it
+     * @throws RemoveFromCartException
+     * @throws AddToCartException
+     * @throws UpdateCartException 
+     */
+    public Order addItemFromNamedOrder(Order namedOrder, OrderItem orderItem, int quantity, boolean priceOrder) throws RemoveFromCartException, AddToCartException, UpdateCartException;
+
+    /**
+     * Adds all orderItems to the current cart from the same Customer that owns the named
+     * order. This method will remove the item from the wishlist based on whether the 
+     * {@link setMoveNamedOrderItems} flag is set.
+     * 
+     * Note that any items that are in the wishlist but are no longer able to be added to a cart
+     * will still be removed from the wishlist.
+     * 
+     * Note that this method does not change the association of the OrderItems to the new
+     * order -- instead, those OrderItems is completely removed and a new OrderItem that mirrors
+     * it is created.
+     * 
+     * @param namedOrder
+     * @param priceOrder
+     * @return
+     * @throws RemoveFromCartException
+     * @throws AddToCartException
+     */
+    public Order addAllItemsFromNamedOrder(Order namedOrder, boolean priceOrder) throws RemoveFromCartException, AddToCartException;
+
+    /**
+     * Deletes all the OrderPayment Info's on the order.
+     *
+     * @param order
+     */
+    public void removeAllPaymentsFromOrder(Order order);
+
+    /**
+     * Deletes the OrderPayment Info of the passed in type from the order
+     * Note that this method will also delete any associated Secure OrderPayment Infos if necessary.
+     *
+     * @param order
+     * @param paymentInfoType
+     */
+    public void removePaymentsFromOrder(Order order, PaymentType paymentInfoType);
+
+    /**
+     * Deletes the OrderPayment Info from the order.
+     * Note that this method will also delete any associated Secure OrderPayment Infos if necessary.
+     *
+     * @param order
+     * @param paymentInfo
+     */
+    public void removePaymentFromOrder(Order order, OrderPayment paymentInfo);
+
     public void deleteOrder(Order cart);
-//
-//    Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException;
-//
-//    /**
-//     * Since required product option can be added after the item is in the cart, we use this method 
-//     * to apply product option on an existing item in the cart. No validation will happen at this time, as the validation 
-//     * at checkout will take care of any missing product options. 
-//     * 
-//     * @param orderId
-//     * @param orderItemRequestDTO
-//     * @param priceOrder
-//     * @return Order
-//     * @throws UpdateCartException
-//     */
-//    Order updateProductOptionsForItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException;
-//
-//    /**
-//     * This debugging method will print out a console-suitable representation of the current state of the order, including
-//     * the items in the order and all pricing related information for the order.
-//     * 
-//     * @param order the order to debug
-//     * @param log the Log to use to print a debug-level message
-//     */
-//    public void printOrder(Order order, Log log);
+
+    Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException;
+
+    /**
+     * Since required product option can be added after the item is in the cart, we use this method 
+     * to apply product option on an existing item in the cart. No validation will happen at this time, as the validation 
+     * at checkout will take care of any missing product options. 
+     * 
+     * @param orderId
+     * @param orderItemRequestDTO
+     * @param priceOrder
+     * @return Order
+     * @throws UpdateCartException
+     */
+    Order updateProductOptionsForItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException;
+
+    /**
+     * This debugging method will print out a console-suitable representation of the current state of the order, including
+     * the items in the order and all pricing related information for the order.
+     * 
+     * @param order the order to debug
+     * @param log the Log to use to print a debug-level message
+     */
+    public void printOrder(Order order, Log log);
 
     /**
      * Invokes the extension handler of the same name to provide the ability for a module to throw an exception
@@ -569,49 +571,50 @@ public interface OrderService {
      */
     public void preValidateUpdateQuantityOperation(Order cart, OrderItemRequestDTO dto);
     
-// TODO microservices - incremental implementation of order service
-//    /**
-//     * Detaches the given order from the current entity manager and then reloads a fresh version from
-//     * the database.
-//     * 
-//     * @param order
-//     * @return the newly read order
-//     */
-//    public Order reloadOrder(Order order);
-//
-//    /**
-//     * @see OrderDao#acquireLock(Order)
-//     * @param order
-//     * @return whether or not the lock was acquired
-//     */
-//    public boolean acquireLock(Order order);
-//
-//    /**
-//     * @see OrderDao#releaseLock(Order)
-//     * @param order
-//     * @return whether or not the lock was released
-//     */
-//    public boolean releaseLock(Order order);
-//
-//    void refresh(Order order);
-//
-//    /**
-//     * Retrieve an enhanced version of the cart for the customer. Enhanced carts are generally provided by commercial Broadleaf
-//     * modules.
-//     *
-//     * @param customer the user for whom the enhanced cart is retrieved
-//     * @return the enhanced cart, or the basic cart if no enhancement is available
-//     */
-//    Order findCartForCustomerWithEnhancements(Customer customer);
-//
-//    /**
-//     * For the customer, use the candidateOrder as the source of enhancement for generating an enhanced cart. Enhanced carts
-//     * are generally provided by commercial Broadleaf modules.
-//     *
-//     * @param customer the user for whom the enhanced cart is generated
-//     * @param candidateOrder the source of enhancement
-//     * @return the enhanced cart, or the untouched candidateOrder if no enhancement is available
-//     */
-//    Order findCartForCustomerWithEnhancements(Customer customer, Order candidateOrder);
+    /**
+     * Detaches the given order from the current entity manager and then reloads a fresh version from
+     * the database.
+     * 
+     * @param order
+     * @return the newly read order
+     */
+    public Order reloadOrder(Order order);
+
+
+    /**
+     * @see OrderDao#acquireLock(Order)
+     * @param order
+     * @return whether or not the lock was acquired
+     */
+    public boolean acquireLock(Order order);
+
+    /**
+     * @see OrderDao#releaseLock(Order)
+     * @param order
+     * @return whether or not the lock was released
+     */
+    public boolean releaseLock(Order order);
+
+    void refresh(Order order);
+
+    /**
+     * Retrieve an enhanced version of the cart for the customer. Enhanced carts are generally provided by commercial Broadleaf
+     * modules.
+     *
+     * @param customer the user for whom the enhanced cart is retrieved
+     * @return the enhanced cart, or the basic cart if no enhancement is available
+     */
+    Order findCartForCustomerWithEnhancements(Customer customer);
+
+    /**
+     * For the customer, use the candidateOrder as the source of enhancement for generating an enhanced cart. Enhanced carts
+     * are generally provided by commercial Broadleaf modules.
+     *
+     * @param customer the user for whom the enhanced cart is generated
+     * @param candidateOrder the source of enhancement
+     * @return the enhanced cart, or the untouched candidateOrder if no enhancement is available
+     */
+    Order findCartForCustomerWithEnhancements(Customer customer, Order candidateOrder);
+
 }
 
