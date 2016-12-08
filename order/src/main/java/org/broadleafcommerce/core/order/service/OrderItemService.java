@@ -23,7 +23,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
@@ -42,9 +41,7 @@ public interface OrderItemService {
     
     public PersonalMessage createPersonalMessage();
 
-    public DiscreteOrderItem createDiscreteOrderItem(DiscreteOrderItemRequest itemRequest);
-    
-    public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
+    //public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
 
     public GiftWrapOrderItem createGiftWrapOrderItem(GiftWrapOrderItemRequest itemRequest);
 
@@ -58,7 +55,7 @@ public interface OrderItemService {
      */
     public OrderItemRequestDTO buildOrderItemRequestDTOFromOrderItem(OrderItem item);
 
-    public OrderItem updateDiscreteOrderItem(OrderItem orderItem, DiscreteOrderItemRequest itemRequest);
+    public OrderItem updateOrderItem(OrderItem orderItem, OrderItemRequest itemRequest);
 
     public OrderItem createOrderItem(OrderItemRequest itemRequest);
 

@@ -17,34 +17,26 @@
  */
 package org.broadleafcommerce.core.order.service;
 
-import org.apache.commons.collections.MapUtils;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductOption;
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.pricing.SkuPriceWrapper;
-import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
-import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
+import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.core.order.dao.OrderItemDao;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.domain.OrderItemAttributeImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
-import org.broadleafcommerce.core.order.service.call.AbstractOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.extension.OrderItemServiceExtensionManager;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
+
+import com.broadleafcommerce.order.common.domain.OrderSku;
+import com.broadleafcommerce.order.common.dto.OrderSkuDTO;
+import com.broadleafcommerce.order.common.service.OrderSkuService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,14 +55,11 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Resource(name="blOrderItemDao")
     protected OrderItemDao orderItemDao;
     
-    @Resource(name="blDynamicSkuPricingService" )
-    protected DynamicSkuPricingService dynamicSkuPricingService;
-
     @Resource(name="blOrderItemServiceExtensionManager")
     protected OrderItemServiceExtensionManager extensionManager;
 
-    @Resource(name = "blCatalogService")
-    protected CatalogService catalogService;
+    @Resource(name="blOrderSkuService")
+    protected OrderSkuService orderSkuService;
 
     @Override
     public OrderItem readOrderItemById(final Long orderItemId) {
@@ -90,17 +79,6 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public PersonalMessage createPersonalMessage() {
         return orderItemDao.createPersonalMessage();
-    }
-    
-    protected void populateDiscreteOrderItem(DiscreteOrderItem item, AbstractOrderItemRequest itemRequest) {
-        item.setSku(itemRequest.getSku());
-        item.setQuantity(itemRequest.getQuantity());
-        item.setCategory(itemRequest.getCategory());
-        item.setProduct(itemRequest.getProduct());
-        item.setOrder(itemRequest.getOrder());
-        Map<String, String> attributes = itemRequest.getItemAttributes();
-        populateProductOptionAttributes(item, attributes);
-        applyAdditionalOrderItemProperties(item);
     }
 
     protected void populateProductOptionAttributes(OrderItem item, Map<String, String> attributes) {
@@ -124,10 +102,14 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public OrderItem createOrderItem(final OrderItemRequest itemRequest) {
         final OrderItem item = orderItemDao.create(OrderItemType.BASIC);
-        item.setName(itemRequest.getItemName());
+        item.setName(itemRequest.getSku().getName());
         item.setQuantity(itemRequest.getQuantity());
         item.setOrder(itemRequest.getOrder());
-        
+        item.setSku(itemRequest.getSku());
+
+        item.setSalePrice(itemRequest.getSku().getSalePrice());
+        item.setRetailPrice(itemRequest.getSku().getRetailPrice());
+
         if (itemRequest.getSalePriceOverride() != null) {
             item.setSalePriceOverride(Boolean.TRUE);
             item.setSalePrice(itemRequest.getSalePriceOverride());
@@ -138,146 +120,60 @@ public class OrderItemServiceImpl implements OrderItemService {
             item.setRetailPrice(itemRequest.getRetailPriceOverride());
         }
 
-        if (MapUtils.isNotEmpty(itemRequest.getItemAttributes())) {
-            Map<String, OrderItemAttribute> attributeMap = item.getOrderItemAttributes();
-            if (attributeMap == null) {
-                attributeMap = new HashMap<String, OrderItemAttribute>();
-                item.setOrderItemAttributes(attributeMap);
-            }
-            
-            for (Entry<String, String> entry : itemRequest.getItemAttributes().entrySet()) {
-                OrderItemAttribute orderItemAttribute = new OrderItemAttributeImpl();
-                
-                orderItemAttribute.setName(entry.getKey());
-                orderItemAttribute.setValue(entry.getValue());
-                orderItemAttribute.setOrderItem(item);
-                
-                attributeMap.put(entry.getKey(), orderItemAttribute);
-            }
-        }
+        Map<String, String> attributes = itemRequest.getItemAttributes();
+        populateProductOptionAttributes(item, attributes);
 
+        item.setPersonalMessage(itemRequest.getPersonalMessage());
         applyAdditionalOrderItemProperties(item);
 
         return item;
     }
 
     @Override
-    public OrderItem updateDiscreteOrderItem(OrderItem item, final DiscreteOrderItemRequest itemRequest) {
-        List<ProductOption> productOptions = null;
-        if (item instanceof DiscreteOrderItem) {
-            productOptions = ((DiscreteOrderItem) item).getProduct().getProductOptions();
-        }
-        List<String> removeKeys = new ArrayList<String>();
-        if (productOptions != null && itemRequest.getItemAttributes() != null) {
-            for (String name : itemRequest.getItemAttributes().keySet()) {
-                //we do not let them update all product options. 
-                //Only allow them to update those options that can have validation to take place at later time
-                //if  option.getProductOptionValidationType()  is null then it might change the sku, so we dont allow those
-                for (ProductOption option : productOptions) {
-                    if (option.getAttributeName().equals(name) && option.getProductOptionValidationStrategyType() == null) {
-
-                        removeKeys.add(name);
-                        break;
-                    }
-                }
-            }
-        }
-        for (String name : removeKeys) {
-            itemRequest.getItemAttributes().remove(name);
-        }
+    public OrderItem updateOrderItem(OrderItem item, final OrderItemRequest itemRequest) {
+        item.setSku(itemRequest.getSku());
         populateProductOptionAttributes(item, itemRequest.getItemAttributes());
         applyAdditionalOrderItemProperties(item);
         return item;
     }
 
-    @Override
-    public DiscreteOrderItem createDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest) {
-        final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
-        populateDiscreteOrderItem(item, itemRequest);
-        
-        item.setBaseSalePrice(itemRequest.getSalePriceOverride()==null?itemRequest.getSku().getSalePrice():itemRequest.getSalePriceOverride());
-        item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
-        item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
-
-        if (itemRequest.getSalePriceOverride() != null) {
-            item.setSalePriceOverride(Boolean.TRUE);
-            item.setSalePrice(itemRequest.getSalePriceOverride());
-            item.setBaseSalePrice(itemRequest.getSalePriceOverride());
-        }
-
-        if (itemRequest.getRetailPriceOverride() != null) {
-            item.setRetailPriceOverride(Boolean.TRUE);
-            item.setRetailPrice(itemRequest.getRetailPriceOverride());
-            item.setBaseRetailPrice(itemRequest.getRetailPriceOverride());
-        }
-
-        for (DiscreteOrderItemFeePrice feePrice : item.getDiscreteOrderItemFeePrices()) {
-            feePrice.setDiscreteOrderItem(item);
-        }
-
-        if (MapUtils.isNotEmpty(itemRequest.getAdditionalAttributes())) {
-            item.setAdditionalAttributes(itemRequest.getAdditionalAttributes());
-        }
-
-        item.setPersonalMessage(itemRequest.getPersonalMessage());
-
-        applyAdditionalOrderItemProperties(item);
-
-        return item;
-    }
-
-    public DiscreteOrderItem createDiscreteOrderItem(final AbstractOrderItemRequest itemRequest) {
-        final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
-        populateDiscreteOrderItem(item, itemRequest);
-        item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
-        item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
-        // item.updatePrices();
-        item.updateSaleAndRetailPrices();
-
-        item.assignFinalPrice();
-        item.setPersonalMessage(itemRequest.getPersonalMessage());
-
-        applyAdditionalOrderItemProperties(item);
-
-        return item;
-    }
-    
-    @Override
-    public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) {
-        final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.EXTERNALLY_PRICED);
-        populateDiscreteOrderItem(item, itemRequest);
-
-        SkuPriceWrapper wrapper = new SkuPriceWrapper(itemRequest.getSku());
-        DynamicSkuPrices prices = dynamicSkuPricingService.getSkuPrices(wrapper, skuPricingConsiderations);
-        item.setBaseRetailPrice(prices.getRetailPrice());
-        item.setBaseSalePrice(prices.getSalePrice());
-        item.setSalePrice(prices.getSalePrice());
-        item.setRetailPrice(prices.getRetailPrice());
-
-        if (itemRequest.getSalePriceOverride() != null) {
-            item.setSalePriceOverride(Boolean.TRUE);
-            item.setSalePrice(itemRequest.getSalePriceOverride());
-            item.setBaseSalePrice(itemRequest.getSalePriceOverride());
-        }
-
-        if (itemRequest.getRetailPriceOverride() != null) {
-            item.setRetailPriceOverride(Boolean.TRUE);
-            item.setRetailPrice(itemRequest.getRetailPriceOverride());
-            item.setBaseRetailPrice(itemRequest.getRetailPriceOverride());
-        }
-
-        item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
-        for (DiscreteOrderItemFeePrice fee : itemRequest.getDiscreteOrderItemFeePrices()) {
-            item.setSalePrice(item.getSalePrice().add(fee.getAmount()));
-            item.setRetailPrice(item.getRetailPrice().add(fee.getAmount()));
-        }
-
-        item.setPersonalMessage(itemRequest.getPersonalMessage());
-
-        applyAdditionalOrderItemProperties(item);
-
-        return item;
-    }
+//TODO: microservices - deal with dynamic pricing in catalog before sending item requests
+//    @Override
+//    public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) {
+//        final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.EXTERNALLY_PRICED);
+//        populateDiscreteOrderItem(item, itemRequest);
+//
+//        SkuPriceWrapper wrapper = new SkuPriceWrapper(itemRequest.getSku());
+//        DynamicSkuPrices prices = dynamicSkuPricingService.getSkuPrices(wrapper, skuPricingConsiderations);
+//        item.setBaseRetailPrice(prices.getRetailPrice());
+//        item.setBaseSalePrice(prices.getSalePrice());
+//        item.setSalePrice(prices.getSalePrice());
+//        item.setRetailPrice(prices.getRetailPrice());
+//
+//        if (itemRequest.getSalePriceOverride() != null) {
+//            item.setSalePriceOverride(Boolean.TRUE);
+//            item.setSalePrice(itemRequest.getSalePriceOverride());
+//            item.setBaseSalePrice(itemRequest.getSalePriceOverride());
+//        }
+//
+//        if (itemRequest.getRetailPriceOverride() != null) {
+//            item.setRetailPriceOverride(Boolean.TRUE);
+//            item.setRetailPrice(itemRequest.getRetailPriceOverride());
+//            item.setBaseRetailPrice(itemRequest.getRetailPriceOverride());
+//        }
+//
+//        item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
+//        for (DiscreteOrderItemFeePrice fee : itemRequest.getDiscreteOrderItemFeePrices()) {
+//            item.setSalePrice(item.getSalePrice().add(fee.getAmount()));
+//            item.setRetailPrice(item.getRetailPrice().add(fee.getAmount()));
+//        }
+//
+//        item.setPersonalMessage(itemRequest.getPersonalMessage());
+//
+//        applyAdditionalOrderItemProperties(item);
+//
+//        return item;
+//    }
 
     @Override
     public GiftWrapOrderItem createGiftWrapOrderItem(final GiftWrapOrderItemRequest itemRequest) {
@@ -285,11 +181,8 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setSku(itemRequest.getSku());
         item.setOrder(itemRequest.getOrder());
         item.setQuantity(itemRequest.getQuantity());
-        item.setCategory(itemRequest.getCategory());
-        item.setProduct(itemRequest.getProduct());
         item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
-        item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
 
         if (itemRequest.getSalePriceOverride() != null) {
             item.setSalePriceOverride(Boolean.TRUE);
@@ -318,88 +211,64 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     public OrderItemRequestDTO buildOrderItemRequestDTOFromOrderItem(OrderItem item) {
-        OrderItemRequestDTO orderItemRequest; 
-        if (item instanceof DiscreteOrderItem) {
-            DiscreteOrderItem doi = (DiscreteOrderItem) item;
-            orderItemRequest = new OrderItemRequestDTO();
-            orderItemRequest.setQuantity(doi.getQuantity());
-            
-            if (doi.getCategory() != null) {
-                orderItemRequest.setCategoryId(doi.getCategory().getExternalId());
+        OrderItemRequestDTO orderItemRequest = new OrderItemRequestDTO();
+
+        orderItemRequest.setOrderSkuDTO(buildOrderSkuDTOFromSku(item.getSku()));
+        orderItemRequest.setQuantity(item.getQuantity());
+        if (item.getOrderItemAttributes() != null) {
+            for (Entry<String, OrderItemAttribute> entry : item.getOrderItemAttributes().entrySet()) {
+                orderItemRequest.getItemAttributes().put(entry.getKey(), entry.getValue().getValue());
             }
-            
-            if (doi.getProduct() != null) {
-                orderItemRequest.setProductId(doi.getProduct().getExternalId());
-            }
-            
-            if (doi.getSku() != null) {
-                orderItemRequest.setSkuId(doi.getSku().getExternalId());
-            }
-            
-            if (doi.getOrderItemAttributes() != null) {
-                for (Entry<String, OrderItemAttribute> entry : item.getOrderItemAttributes().entrySet()) {
-                    orderItemRequest.getItemAttributes().put(entry.getKey(), entry.getValue().getValue());
-                }
-            }
-        } else {
-            orderItemRequest = new NonDiscreteOrderItemRequestDTO();
-            NonDiscreteOrderItemRequestDTO ndr = (NonDiscreteOrderItemRequestDTO) orderItemRequest;
-            
-            ndr.setItemName(item.getName());
-            ndr.setQuantity(item.getQuantity());
-            ndr.setOverrideRetailPrice(item.getRetailPrice());
-            ndr.setOverrideSalePrice(item.getSalePrice());
         }
-        
+
+        orderItemRequest.setQuantity(item.getQuantity());
+        orderItemRequest.setOverrideRetailPrice(item.getRetailPrice());
+        orderItemRequest.setOverrideSalePrice(item.getSalePrice());
+
         return orderItemRequest;
+    }
+
+    protected OrderSkuDTO buildOrderSkuDTOFromSku(OrderSku orderSku) {
+        OrderSkuDTO orderSkuDTO = new OrderSkuDTO();
+
+        orderSkuDTO.setExternalId(orderSku.getExternalId());
+        orderSkuDTO.setName(orderSku.getName());
+        orderSkuDTO.setFulfillmentType(orderSku.getFulfillmentType().getType());
+
+        orderSkuDTO.setTaxable(orderSku.getTaxable());
+        orderSkuDTO.setTaxCode(orderSku.getTaxCode());
+        orderSkuDTO.setRetailPrice(orderSku.getRetailPrice());
+        orderSkuDTO.setSalePrice(orderSku.getSalePrice());
+
+        //dimensions
+        orderSkuDTO.setContainer(orderSku.getContainer());
+        orderSkuDTO.setSize(orderSku.getSize());
+        orderSkuDTO.setWidth(orderSku.getWidth());
+        orderSkuDTO.setHeight(orderSku.getHeight());
+        orderSkuDTO.setDepth(orderSku.getDepth());
+        orderSkuDTO.setGirth(orderSku.getGirth());
+        orderSkuDTO.setDimensionUnitOfMeasure(orderSku.getDimensionUnitOfMeasure());
+
+        //weight
+        orderSkuDTO.setWeight(orderSku.getWeight());
+        orderSkuDTO.setWeightUnitOfMeasure(orderSku.getWeightUnitOfMeasure().getType());
+
+        return orderSkuDTO;
     }
 
     @Override
     public OrderItem buildOrderItemFromDTO(Order order, OrderItemRequestDTO orderItemRequestDTO) {
-        Sku sku = null;
-        if (orderItemRequestDTO.getSkuId() != null) {
-            sku = catalogService.findSkuById(orderItemRequestDTO.getSkuId());
-        }
+        OrderSku orderSku = buildOrderSkuFromDTO(orderItemRequestDTO.getOrderSkuDTO());
 
-        Product product = null;
-        if (orderItemRequestDTO.getProductId() != null) {
-            product = catalogService.findProductById(orderItemRequestDTO.getProductId());
-        }
+        OrderItemRequest itemRequest = new OrderItemRequest();
+        itemRequest.setSku(orderSku);
+        itemRequest.setQuantity(orderItemRequestDTO.getQuantity());
+        itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
+        itemRequest.setOrder(order);
+        itemRequest.setSalePriceOverride(orderItemRequestDTO.getOverrideSalePrice());
+        itemRequest.setRetailPriceOverride(orderItemRequestDTO.getOverrideRetailPrice());
 
-        Category category = null;
-        if (orderItemRequestDTO.getCategoryId() != null) {
-            category = catalogService.findCategoryById(orderItemRequestDTO.getCategoryId());
-        }
-
-        if (category == null && product != null) {
-            category = product.getDefaultCategory();
-        }
-
-        OrderItem item;
-        if (orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO) {
-            NonDiscreteOrderItemRequestDTO ndr = (NonDiscreteOrderItemRequestDTO) orderItemRequestDTO;
-            OrderItemRequest itemRequest = new OrderItemRequest();
-            itemRequest.setQuantity(ndr.getQuantity());
-            itemRequest.setRetailPriceOverride(ndr.getOverrideRetailPrice());
-            itemRequest.setSalePriceOverride(ndr.getOverrideSalePrice());
-            itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
-            itemRequest.setAdditionalAttributes(orderItemRequestDTO.getAdditionalAttributes());
-            itemRequest.setItemName(ndr.getItemName());
-            itemRequest.setOrder(order);
-            item = createOrderItem(itemRequest);
-        } else {
-            DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
-            itemRequest.setCategory(category);
-            itemRequest.setProduct(product);
-            itemRequest.setSku(sku);
-            itemRequest.setQuantity(orderItemRequestDTO.getQuantity());
-            itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
-            itemRequest.setAdditionalAttributes(orderItemRequestDTO.getAdditionalAttributes());
-            itemRequest.setOrder(order);
-            itemRequest.setSalePriceOverride(orderItemRequestDTO.getOverrideSalePrice());
-            itemRequest.setRetailPriceOverride(orderItemRequestDTO.getOverrideRetailPrice());
-            item = createDiscreteOrderItem(itemRequest);
-        }
+        OrderItem item = createOrderItem(itemRequest);
 
         if (orderItemRequestDTO.getParentOrderItemId() != null) {
             OrderItem parent = readOrderItemById(orderItemRequestDTO.getParentOrderItemId());
@@ -423,6 +292,38 @@ public class OrderItemServiceImpl implements OrderItemService {
         applyAdditionalOrderItemProperties(item);
 
         return item;
+    }
+
+    protected OrderSku buildOrderSkuFromDTO(OrderSkuDTO orderSkuDTO) {
+        OrderSku orderSku = orderSkuService.create();
+        orderSku.setExternalId(orderSkuDTO.getExternalId());
+        orderSku.setName(orderSkuDTO.getName());
+
+        if (FulfillmentType.getInstance(orderSkuDTO.getFulfillmentType()) != null) {
+            orderSku.setFulfillmentType(FulfillmentType.getInstance(orderSkuDTO.getFulfillmentType()));
+        }
+
+        orderSku.setTaxable(orderSkuDTO.getTaxable());
+        orderSku.setTaxCode(orderSkuDTO.getTaxCode());
+        orderSku.setRetailPrice(orderSkuDTO.getRetailPrice());
+        orderSku.setSalePrice(orderSkuDTO.getSalePrice());
+
+        //dimensions
+        orderSku.setContainer(orderSkuDTO.getContainer());
+        orderSku.setSize(orderSkuDTO.getSize());
+        orderSku.setWidth(orderSkuDTO.getWidth());
+        orderSku.setHeight(orderSkuDTO.getHeight());
+        orderSku.setDepth(orderSkuDTO.getDepth());
+        orderSku.setGirth(orderSkuDTO.getGirth());
+        orderSku.setDimensionUnitOfMeasure(orderSkuDTO.getDimensionUnitOfMeasure());
+
+        //weight
+        orderSku.setWeight(orderSkuDTO.getWeight());
+        if (WeightUnitOfMeasureType.getInstance(orderSkuDTO.getWeightUnitOfMeasure()) != null) {
+            orderSku.setWeightUnitOfMeasure(WeightUnitOfMeasureType.getInstance(orderSkuDTO.getWeightUnitOfMeasure()));
+        }
+
+        return orderSku;
     }
 
     @Override
@@ -460,7 +361,6 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public ConfigurableOrderItemRequest createConfigurableOrderItemRequestFromProduct(Product product) {
         ConfigurableOrderItemRequest itemRequest = new ConfigurableOrderItemRequest();
-        itemRequest.setProduct(product);
         itemRequest.setSkuId(product.getDefaultSku().getId());
         itemRequest.setQuantity(1);
         itemRequest.setDisplayPrice(product.getDefaultSku().getPrice());
