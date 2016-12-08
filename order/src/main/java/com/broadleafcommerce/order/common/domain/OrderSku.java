@@ -19,6 +19,7 @@ package com.broadleafcommerce.order.common.domain;
 
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 
 import java.math.BigDecimal;
@@ -89,9 +90,9 @@ public interface OrderSku {
 
     public void setWeight(BigDecimal weight);
 
-    public String getWeightUnitOfMeasure();
+    public WeightUnitOfMeasureType getWeightUnitOfMeasure();
 
-    public void setWeightUnitOfMeasure(String weightUnitOfMeasure);
+    public void setWeightUnitOfMeasure(WeightUnitOfMeasureType weightUnitOfMeasure);
 
     public String getSkuAttributesJson();
 
