@@ -25,6 +25,8 @@ import org.broadleafcommerce.core.order.service.exception.RemoveFromCartExceptio
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.WorkflowException;
@@ -153,26 +155,25 @@ public interface OrderService {
 
     List<Order> findOrdersForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
 
-// TODO microservices - incremental implementation of order service
-//    /**
-//     * Returns all OrderPayment objects that are associated with the given order
-//     * 
-//     * @param order
-//     * @return the list of all OrderPayment objects
-//     */
-//    public List<OrderPayment> findPaymentsForOrder(Order order);
-//
-//    /**
-//     * Associates a given OrderPayment with an Order and then saves the order. Note that it is acceptable for the 
-//     * securePaymentInfo to be null. For example, if the secure credit card details are 
-//     * handled by a third party, a given application may never have associated securePaymentInfos
-//     * 
-//     * @param order
-//     * @param payment
-//     * @param securePaymentInfo - null if it doesn't exist
-//     * @return the persisted version of the OrderPayment
-//     */
-//    public OrderPayment addPaymentToOrder(Order order, OrderPayment payment, Referenced securePaymentInfo);
+    /**
+     * Returns all OrderPayment objects that are associated with the given order
+     * 
+     * @param order
+     * @return the list of all OrderPayment objects
+     */
+    public List<OrderPayment> findPaymentsForOrder(Order order);
+
+    /**
+     * Associates a given OrderPayment with an Order and then saves the order. Note that it is acceptable for the 
+     * securePaymentInfo to be null. For example, if the secure credit card details are 
+     * handled by a third party, a given application may never have associated securePaymentInfos
+     * 
+     * @param order
+     * @param payment
+     * @param securePaymentInfo - null if it doesn't exist
+     * @return the persisted version of the OrderPayment
+     */
+    public OrderPayment addPaymentToOrder(Order order, OrderPayment payment, Referenced securePaymentInfo);
     
     /**
      * Persists the given order to the database. If the priceOrder flag is set to true,
