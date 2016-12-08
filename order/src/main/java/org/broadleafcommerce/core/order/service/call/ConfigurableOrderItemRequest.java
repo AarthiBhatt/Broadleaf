@@ -22,7 +22,7 @@ import org.broadleafcommerce.common.money.Money;
 
 import java.util.List;
 
-public class ConfigurableOrderItemRequest extends AddToCartItem {
+public class ConfigurableOrderItemRequest extends OrderItemRequestDTO {
 
     protected List<ConfigurableOrderItemRequest> productChoices;
 
