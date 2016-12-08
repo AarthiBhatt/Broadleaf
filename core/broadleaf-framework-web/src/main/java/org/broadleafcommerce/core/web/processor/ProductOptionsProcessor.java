@@ -125,6 +125,7 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
             skuPricing.add(dto);
         }
         writeJSONToModel(newModelVars, "skuPricing", skuPricing);
+        newModelVars.put("skus", skus);
     }
 
     protected void addAllProductOptionsToModel(Map<String, Object> newModelVars, Product product) {
