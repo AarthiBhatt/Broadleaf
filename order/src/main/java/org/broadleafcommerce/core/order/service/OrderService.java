@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.service.exception.OfferException;
+import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
@@ -191,18 +194,17 @@ public interface OrderService {
      */
     public Order save(Order order, Boolean priceOrder) throws PricingException;
     
-// TODO microservices - incremental implementation of order service
-//    /**
-//     * Saves the given <b>order</b> while optionally repricing the order (meaning, going through the pricing workflow)
-//     * along with updating the prices of individual items in the order, as opposed to just pricing taxes/shipping/etc.
-//     * 
-//     * @param order
-//     * @param priceOrder
-//     * @param repriceItems whether or not to reprice the items inside of the order via {@link Order#updatePrices()}
-//     * @return the persisted Order, which will be a different instance than the Order passed in
-//     * @throws PricingException
-//     */
-//    public Order save(Order order, boolean priceOrder, boolean repriceItems) throws PricingException;
+    /**
+     * Saves the given <b>order</b> while optionally repricing the order (meaning, going through the pricing workflow)
+     * along with updating the prices of individual items in the order, as opposed to just pricing taxes/shipping/etc.
+     * 
+     * @param order
+     * @param priceOrder
+     * @param repriceItems whether or not to reprice the items inside of the order via {@link Order#updatePrices()}
+     * @return the persisted Order, which will be a different instance than the Order passed in
+     * @throws PricingException
+     */
+    public Order save(Order order, boolean priceOrder, boolean repriceItems) throws PricingException;
     
     /**
      * Deletes the given order. Note that the default Broadleaf implementation in 
@@ -212,53 +214,52 @@ public interface OrderService {
      */
     public void cancelOrder(Order order);
     
-// TODO microservices - incremental implementation of order service
-//    /**
-//     * Adds the given OfferCode to the order. Optionally prices the order as well.
-//     * 
-//     * @param order
-//     * @param offerCode
-//     * @param priceOrder
-//     * @return the modified Order
-//     * @throws PricingException
-//     * @throws OfferMaxUseExceededException
-//     * @throws OfferException 
-//     */
-//    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferException;
-//    
-//    /**
-//     * Adds the given OfferCodes to the order. Optionally prices the order as well.
-//     * 
-//     * @param order
-//     * @param offerCodes
-//     * @param priceOrder
-//     * @return
-//     * @throws PricingException
-//     * @throws OfferMaxUseExceededException
-//     * @throws OfferException 
-//     */
-//    public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferException;
-//
-//    /**
-//     * Remove the given OfferCode for the order. Optionally prices the order as well.
-//     * 
-//     * @param order
-//     * @param offerCode 
-//     * @param priceOrder
-//     * @return the modified Order
-//     * @throws PricingException
-//     */
-//    public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException;
-//    
-//    /**
-//     * Removes all offer codes for the given order. Optionally prices the order as well.
-//     * 
-//     * @param order
-//     * @param priceOrder
-//     * @return the modified Order
-//     * @throws PricingException
-//     */
-//    public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException;
+    /**
+     * Adds the given OfferCode to the order. Optionally prices the order as well.
+     * 
+     * @param order
+     * @param offerCode
+     * @param priceOrder
+     * @return the modified Order
+     * @throws PricingException
+     * @throws OfferMaxUseExceededException
+     * @throws OfferException 
+     */
+    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferException;
+    
+    /**
+     * Adds the given OfferCodes to the order. Optionally prices the order as well.
+     * 
+     * @param order
+     * @param offerCodes
+     * @param priceOrder
+     * @return
+     * @throws PricingException
+     * @throws OfferMaxUseExceededException
+     * @throws OfferException 
+     */
+    public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferException;
+
+    /**
+     * Remove the given OfferCode for the order. Optionally prices the order as well.
+     * 
+     * @param order
+     * @param offerCode 
+     * @param priceOrder
+     * @return the modified Order
+     * @throws PricingException
+     */
+    public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException;
+    
+    /**
+     * Removes all offer codes for the given order. Optionally prices the order as well.
+     * 
+     * @param order
+     * @param priceOrder
+     * @return the modified Order
+     * @throws PricingException
+     */
+    public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException;
     
     /**
      * @see #setAutomaticallyMergeLikeItems(boolean)
@@ -526,7 +527,7 @@ public interface OrderService {
 //     */
 //    public void removePaymentFromOrder(Order order, OrderPayment paymentInfo);
 //
-//    public void deleteOrder(Order cart);
+    public void deleteOrder(Order cart);
 //
 //    Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException;
 //
