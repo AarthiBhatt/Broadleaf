@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.order.fulfillment.domain;
 
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
