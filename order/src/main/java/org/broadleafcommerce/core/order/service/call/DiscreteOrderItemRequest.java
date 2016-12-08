@@ -30,10 +30,8 @@ public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
     }
 
     public DiscreteOrderItemRequest(AbstractOrderItemRequest request) {
-        setCategory(request.getCategory());
         setItemAttributes(request.getItemAttributes());
         setPersonalMessage(request.getPersonalMessage());
-        setProduct(request.getProduct());
         setQuantity(request.getQuantity());
         setSku(request.getSku());
         setOrder(request.getOrder());
