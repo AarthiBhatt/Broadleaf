@@ -63,13 +63,12 @@ public interface OrderItemService {
 
     public void priceOrderItem(OrderItem item);
 
-// TODO microservices - refactor to unbind from product
-//    public Set<Product> findAllProductsInRequest(ConfigurableOrderItemRequest itemRequest);
-
     public void applyAdditionalOrderItemProperties(OrderItem orderItem);
 
-// TODO microservices - refactor to unbind from product
-//    public ConfigurableOrderItemRequest createConfigurableOrderItemRequestFromProduct(Product product);
+//TODO: microservices - deal with finding products and creating products related to configurable item requests
+    //public Set<Product> findAllProductsInRequest(ConfigurableOrderItemRequest itemRequest);
+
+    //public ConfigurableOrderItemRequest createConfigurableOrderItemRequestFromProduct(Product product);
 
     public void modifyOrderItemRequest(ConfigurableOrderItemRequest itemRequest);
 

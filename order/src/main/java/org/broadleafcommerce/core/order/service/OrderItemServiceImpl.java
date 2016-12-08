@@ -331,42 +331,44 @@ public class OrderItemServiceImpl implements OrderItemService {
         extensionManager.getProxy().modifyOrderItemPrices(item);
     }
 
-    @Override
-    public Set<Product> findAllProductsInRequest(ConfigurableOrderItemRequest itemRequest) {
-        Set<Product> allProductsSet = findAllChildProductsInRequest(itemRequest.getChildOrderItems());
-        allProductsSet.add(itemRequest.getProduct());
-        return allProductsSet;
-    }
-
-    protected Set<Product> findAllChildProductsInRequest(List<OrderItemRequestDTO> childItems) {
-        Set<Product> allProductsSet = new HashSet<Product>();
-        for (OrderItemRequestDTO child : childItems) {
-            ConfigurableOrderItemRequest configChild = (ConfigurableOrderItemRequest) child;
-            Product childProduct = configChild.getProduct();
-            if (childProduct != null) {
-                allProductsSet.add(childProduct);
-            } else {
-                List<OrderItemRequestDTO> productChoices = new ArrayList<OrderItemRequestDTO>(configChild.getProductChoices());
-                allProductsSet.addAll(findAllChildProductsInRequest(productChoices));
-            }
-        }
-        return allProductsSet;
-    }
+//TODO: microservices - deal with finding all the sku's from a configurable request in the catalog service
+//    @Override
+//    public Set<Product> findAllProductsInRequest(ConfigurableOrderItemRequest itemRequest) {
+//        Set<Product> allProductsSet = findAllChildProductsInRequest(itemRequest.getChildOrderItems());
+//        allProductsSet.add(itemRequest.getProduct());
+//        return allProductsSet;
+//    }
+//
+//    protected Set<Product> findAllChildProductsInRequest(List<OrderItemRequestDTO> childItems) {
+//        Set<Product> allProductsSet = new HashSet<Product>();
+//        for (OrderItemRequestDTO child : childItems) {
+//            ConfigurableOrderItemRequest configChild = (ConfigurableOrderItemRequest) child;
+//            Product childProduct = configChild.getProduct();
+//            if (childProduct != null) {
+//                allProductsSet.add(childProduct);
+//            } else {
+//                List<OrderItemRequestDTO> productChoices = new ArrayList<OrderItemRequestDTO>(configChild.getProductChoices());
+//                allProductsSet.addAll(findAllChildProductsInRequest(productChoices));
+//            }
+//        }
+//        return allProductsSet;
+//    }
 
     @Override
     public void applyAdditionalOrderItemProperties(OrderItem orderItem) {
         extensionManager.getProxy().applyAdditionalOrderItemProperties(orderItem);
     }
 
-    @Override
-    public ConfigurableOrderItemRequest createConfigurableOrderItemRequestFromProduct(Product product) {
-        ConfigurableOrderItemRequest itemRequest = new ConfigurableOrderItemRequest();
-        itemRequest.setSkuId(product.getDefaultSku().getId());
-        itemRequest.setQuantity(1);
-        itemRequest.setDisplayPrice(product.getDefaultSku().getPrice());
-        itemRequest.setDiscountsAllowed(product.getDefaultSku().isDiscountable());
-        return itemRequest;
-    }
+//TODO: microservices - deal with creating configurable request from product
+//    @Override
+//    public ConfigurableOrderItemRequest createConfigurableOrderItemRequestFromProduct(Product product) {
+//        ConfigurableOrderItemRequest itemRequest = new ConfigurableOrderItemRequest();
+//        itemRequest.setSkuId(product.getDefaultSku().getId());
+//        itemRequest.setQuantity(1);
+//        itemRequest.setDisplayPrice(product.getDefaultSku().getPrice());
+//        itemRequest.setDiscountsAllowed(product.getDefaultSku().isDiscountable());
+//        return itemRequest;
+//    }
 
     @Override
     public void modifyOrderItemRequest(ConfigurableOrderItemRequest itemRequest) {
