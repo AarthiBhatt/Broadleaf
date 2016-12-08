@@ -22,7 +22,7 @@ package org.broadleafcommerce.core.web.expression;
 
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.OrderCustomerFacadeService;
+import org.broadleafcommerce.core.web.order.translation.OrderCustomerFacadeService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 

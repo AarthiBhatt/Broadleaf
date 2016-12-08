@@ -19,8 +19,8 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.order.service.OrderCustomerFacadeService;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.web.order.translation.OrderCustomerFacadeService;
 
 import javax.annotation.Resource;
 
