@@ -109,7 +109,7 @@ public class OrderSkuImpl implements OrderSku {
     protected BigDecimal weight;
 
     @Column(name = "WEIGHT_UNIT_OF_MEASURE")
-    protected WeightUnitOfMeasureType weightUnitOfMeasure;
+    protected String weightUnitOfMeasure;
 
     @Lob
     @Column(name = "SKU_ATTRIBUTES_JSON", length = Integer.MAX_VALUE - 1)
@@ -266,13 +266,13 @@ public class OrderSkuImpl implements OrderSku {
     }
 
     @Override
-    public WeightUnitOfMeasureType getWeightUnitOfMeasure() {
-        return weightUnitOfMeasure;
-    }
+    public WeightUnitOfMeasureType getWeightUnitOfMeasure() { return WeightUnitOfMeasureType.getInstance(this.weightUnitOfMeasure); }
 
     @Override
     public void setWeightUnitOfMeasure(WeightUnitOfMeasureType weightUnitOfMeasure) {
-        this.weightUnitOfMeasure = weightUnitOfMeasure;
+        if (weightUnitOfMeasure != null) {
+            this.weightUnitOfMeasure = weightUnitOfMeasure.getType();
+        }
     }
 
     @Override
