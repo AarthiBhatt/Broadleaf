@@ -17,9 +17,9 @@
  */
 package org.broadleafcommerce.core.order.service.workflow.update;
 
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
@@ -33,6 +33,9 @@ public class UpdateOrderItemActivity extends BaseActivity<ProcessContext<CartOpe
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
+    
+    @Resource(name = "blOrderItemService")
+    protected OrderItemService orderItemService;
 
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
@@ -55,13 +58,10 @@ public class UpdateOrderItemActivity extends BaseActivity<ProcessContext<CartOpe
         if (orderItemRequestDTO.getQuantity() >= 0) {
             request.setOrderItemQuantityDelta(orderItemRequestDTO.getQuantity() - itemFromOrder.getQuantity());
             itemFromOrder.setQuantity(orderItemRequestDTO.getQuantity());
-
+            itemFromOrder.setOrderItemAttributes(null);
+            
             // Update any additional attributes of the passed in request
-            if (itemFromOrder instanceof DiscreteOrderItem) {
-                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) itemFromOrder;
-                discreteOrderItem.getAdditionalAttributes().putAll(orderItemRequestDTO.getAdditionalAttributes());
-            }
-
+            orderItemService.populateProductOptionAttributes(itemFromOrder, orderItemRequestDTO.getItemAttributes());
             request.setOrderItem(itemFromOrder);
         }
 
