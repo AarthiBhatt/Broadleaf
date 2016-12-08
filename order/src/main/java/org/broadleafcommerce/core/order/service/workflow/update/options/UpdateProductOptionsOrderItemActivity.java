@@ -18,9 +18,10 @@
 package org.broadleafcommerce.core.order.service.workflow.update.options;
 
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
@@ -41,11 +42,11 @@ public class UpdateProductOptionsOrderItemActivity extends BaseActivity<ProcessC
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         Order order = request.getOrder();
-        
-        if (orderItemService.readOrderItemById(Long.valueOf(orderItemRequestDTO.getOrderItemId())) != null) {
-            DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
+        OrderItem orderItem = orderItemService.readOrderItemById(Long.valueOf(orderItemRequestDTO.getOrderItemId()));
+        if (orderItem != null) {
+            OrderItemRequest itemRequest = new OrderItemRequest();
             itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
-            orderItemService.updateDiscreteOrderItem(orderItemService.readOrderItemById(Long.valueOf(orderItemRequestDTO.getOrderItemId())), itemRequest);
+            orderItemService.updateOrderItem(orderItem, itemRequest);
 
         }
 
