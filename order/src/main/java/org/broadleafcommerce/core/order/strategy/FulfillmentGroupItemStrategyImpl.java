@@ -21,7 +21,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -48,7 +47,6 @@ import javax.annotation.Resource;
 /**
  * @author Andre Azzolini (apazzolini)
  */
-//TODO microservices - Order worflows refactoring
 @Service("blFulfillmentGroupItemStrategy")
 public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStrategy {
 
@@ -91,19 +89,13 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
             }
         }
         
-        if (orderItem instanceof DiscreteOrderItem) {
-            DiscreteOrderItem doi = (DiscreteOrderItem)orderItem;
+        FulfillmentType type = resolveFulfillmentType(orderItem);
+        if (type != null) {
             FulfillmentGroup fulfillmentGroup = null;
-            FulfillmentType type = resolveFulfillmentType(doi);
-            if (type == null) {
-                //Use the fulfillment group with a null type
-                fulfillmentGroup = nullFulfillmentTypeGroup;
-            } else {
-                if (FulfillmentType.PHYSICAL_PICKUP_OR_SHIP.equals(type)) {
-                    //This is really a special case. "PICKUP_OR_SHIP" is convenient to allow a sku to be picked up or shipped.
-                    //However, it is ambiguous when actually trying to create a fulfillment group. So we default to "PHYSICAL_SHIP".
-                    type = FulfillmentType.PHYSICAL_SHIP;
-                }
+            if (FulfillmentType.PHYSICAL_PICKUP_OR_SHIP.equals(type)) {
+                //This is really a special case. "PICKUP_OR_SHIP" is convenient to allow a sku to be picked up or shipped.
+                //However, it is ambiguous when actually trying to create a fulfillment group. So we default to "PHYSICAL_SHIP".
+                type = FulfillmentType.PHYSICAL_SHIP;
                 
                 //Use the fulfillment group with the specified type
                 fulfillmentGroup = fulfillmentGroups.get(type);
@@ -141,8 +133,11 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
      * @param discreteOrderItem
      * @return
      */
-    protected FulfillmentType resolveFulfillmentType(DiscreteOrderItem discreteOrderItem) {
-        return discreteOrderItem.getSku().getFulfillmentType();
+    protected FulfillmentType resolveFulfillmentType(OrderItem orderItem) {
+        if (orderItem.getSku() == null) {
+            return null;
+        }
+        return orderItem.getSku().getFulfillmentType();
     }
     
     protected FulfillmentGroup addItemToFulfillmentGroup(Order order, OrderItem orderItem, FulfillmentGroup fulfillmentGroup) throws PricingException {

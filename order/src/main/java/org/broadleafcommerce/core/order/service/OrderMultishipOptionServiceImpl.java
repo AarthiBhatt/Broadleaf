@@ -18,8 +18,8 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.dao.OrderMultishipOptionDao;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl;
 import org.broadleafcommerce.core.order.service.call.OrderMultishipOptionDTO;
@@ -143,7 +143,7 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
         
         // Create a map representing the current discrete order item counts for the order
         Map<Long, Integer> orderDiscreteOrderItemCounts = new HashMap<Long, Integer>();
-        for (DiscreteOrderItem item : order.getDiscreteOrderItems()) {
+        for (OrderItem item : order.getOrderItems()) {
             orderDiscreteOrderItemCounts.put(item.getId(), item.getQuantity());
         }
         
@@ -159,7 +159,7 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
         }
         
         for (Entry<Long, Integer> entry : orderDiscreteOrderItemCounts.entrySet()) {
-            DiscreteOrderItem item = (DiscreteOrderItem) orderItemService.readOrderItemById(entry.getKey());
+            OrderItem item = orderItemService.readOrderItemById(entry.getKey());
             orderMultishipOptions.addAll(createPopulatedOrderMultishipOption(order, item, entry.getValue()));
         }
         
@@ -191,16 +191,16 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
     @Override
     public List<OrderMultishipOption> generateOrderMultishipOptions(Order order) {
         List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
-        for (DiscreteOrderItem discreteOrderItem : order.getDiscreteOrderItems()) {
+        for (OrderItem discreteOrderItem : order.getOrderItems()) {
             orderMultishipOptions.addAll(createPopulatedOrderMultishipOption(order, discreteOrderItem, discreteOrderItem.getQuantity()));
         }
         
         return orderMultishipOptions;
     }
     
-    protected List<OrderMultishipOption> createPopulatedOrderMultishipOption(Order order, DiscreteOrderItem item, Integer quantity) {
+    protected List<OrderMultishipOption> createPopulatedOrderMultishipOption(Order order, OrderItem item, Integer quantity) {
         List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
-        if (!fulfillmentGroupService.isShippable(item.getSku().getFulfillmentType())) {
+        if (item.getSku() == null || !fulfillmentGroupService.isShippable(item.getSku().getFulfillmentType())) {
             return orderMultishipOptions;
         }
         for (int i = 0; i < quantity; i++) {
