@@ -134,8 +134,7 @@ public class MergeCartServiceImpl implements MergeCartService {
 
             for (OrderItem orderItem : customerCart.getOrderItems()) {
                 if (orderItem instanceof DiscreteOrderItem) {
-                    DiscreteOrderItem doi = (DiscreteOrderItem) orderItem;
-                    if (!checkActive(doi) || !checkInventory(doi) || !checkOtherValidity(orderItem)) {
+                    if (!checkOtherValidity(orderItem)) {
                         itemsToRemove.add(orderItem);
                     }
                 }
@@ -182,25 +181,6 @@ public class MergeCartServiceImpl implements MergeCartService {
         }
         
         extensionManager.getProxy().setNewCartOwnership(cart, orderCustomer);
-    }
-
-    /**
-     * @param orderItem
-     * @return whether or not the discrete order item's sku is active
-     */
-    protected boolean checkActive(DiscreteOrderItem orderItem) {
-        return orderItem.getSku().isActive(orderItem.getProduct(), orderItem.getCategory());
-    }
-
-    /**
-     * By default, Broadleaf does not provide an inventory check. This is set up as an extension point if your
-     * application needs it.
-     * 
-     * @param orderItem
-     * @return whether or not the item is in stock
-     */
-    protected boolean checkInventory(DiscreteOrderItem orderItem) {
-        return true;
     }
 
     /**
