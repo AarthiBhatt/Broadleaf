@@ -21,6 +21,8 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.service.OrderService;
 
+import com.broadleafcommerce.order.common.dto.OrderSkuDTO;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,9 +49,7 @@ import java.util.Map;
  */
 public class OrderItemRequestDTO {
 
-    private Long skuId;
-    private Long categoryId;
-    private Long productId;
+    private OrderSkuDTO orderSkuDTO;
     private Long orderItemId;
     private Integer quantity;
     private Money overrideSalePrice;
@@ -57,53 +57,21 @@ public class OrderItemRequestDTO {
     private Map<String,String> itemAttributes = new HashMap<String,String>();
     private List<OrderItemRequestDTO> childOrderItems = new ArrayList<OrderItemRequestDTO>();
     private Long parentOrderItemId;
-    private Map<String,String> additionalAttributes = new HashMap<String,String>();
     private Boolean hasConfigurationError;
 
     public OrderItemRequestDTO() {}
     
-    public OrderItemRequestDTO(Long productId, Integer quantity) {
-        setProductId(productId);
-        setQuantity(quantity);
-    }
-    
-    public OrderItemRequestDTO(Long productId, Long skuId, Integer quantity) {
-        setProductId(productId);
-        setSkuId(skuId);
-        setQuantity(quantity);
-    }
-    
-    public OrderItemRequestDTO(Long productId, Long skuId, Long categoryId, Integer quantity) {
-        setProductId(productId);
-        setSkuId(skuId);
-        setCategoryId(categoryId);
+    public OrderItemRequestDTO(OrderSkuDTO orderSkuDTO, Integer quantity) {
+        setOrderSkuDTO(orderSkuDTO);
         setQuantity(quantity);
     }
 
-    public Long getSkuId() {
-        return skuId;
+    public OrderSkuDTO getOrderSkuDTO() {
+        return orderSkuDTO;
     }
 
-    public OrderItemRequestDTO setSkuId(Long skuId) {
-        this.skuId = skuId;
-        return this;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public OrderItemRequestDTO setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-        return this;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public OrderItemRequestDTO setProductId(Long productId) {
-        this.productId = productId;
+    public OrderItemRequestDTO setOrderSkuDTO(OrderSkuDTO orderSkuDTO) {
+        this.orderSkuDTO = orderSkuDTO;
         return this;
     }
 
@@ -154,8 +122,8 @@ public class OrderItemRequestDTO {
         Collections.sort(childOrderItems, new Comparator<OrderItemRequestDTO>() {
             @Override
             public int compare(OrderItemRequestDTO o1, OrderItemRequestDTO o2) {
-                String o1DisplayOrder = o1.getAdditionalAttributes().get("addOnDisplayOrder");
-                String o2DisplayOrder = o2.getAdditionalAttributes().get("addOnDisplayOrder");
+                String o1DisplayOrder = o1.getItemAttributes().get("addOnDisplayOrder");
+                String o2DisplayOrder = o2.getItemAttributes().get("addOnDisplayOrder");
                 return new CompareToBuilder()
                         .append(o1DisplayOrder, o2DisplayOrder)
                         .toComparison();
@@ -175,14 +143,6 @@ public class OrderItemRequestDTO {
 
     public void setParentOrderItemId(Long parentOrderItemId) {
         this.parentOrderItemId = parentOrderItemId;
-    }
-
-    public Map<String, String> getAdditionalAttributes() {
-        return additionalAttributes;
-    }
-
-    public void setAdditionalAttributes(Map<String, String> additionalAttributes) {
-        this.additionalAttributes = additionalAttributes;
     }
 
     public Boolean getHasConfigurationError() {
