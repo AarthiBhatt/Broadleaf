@@ -39,14 +39,11 @@ import com.broadleafcommerce.order.common.domain.OrderSku;
 import com.broadleafcommerce.order.common.dto.OrderSkuDTO;
 import com.broadleafcommerce.order.common.service.OrderSkuService;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -183,19 +180,19 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setSku(itemRequest.getSku());
         item.setOrder(itemRequest.getOrder());
         item.setQuantity(itemRequest.getQuantity());
-        item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
-        item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
+        item.setSalePrice(itemRequest.getSku().getSalePrice());
+        item.setRetailPrice(itemRequest.getSku().getRetailPrice());
 
         if (itemRequest.getSalePriceOverride() != null) {
             item.setSalePriceOverride(Boolean.TRUE);
             item.setSalePrice(itemRequest.getSalePriceOverride());
-            item.setBaseSalePrice(itemRequest.getSalePriceOverride());
+            item.setSalePrice(itemRequest.getSalePriceOverride());
         }
 
         if (itemRequest.getRetailPriceOverride() != null) {
             item.setRetailPriceOverride(Boolean.TRUE);
             item.setRetailPrice(itemRequest.getRetailPriceOverride());
-            item.setBaseRetailPrice(itemRequest.getRetailPriceOverride());
+            item.setRetailPrice(itemRequest.getRetailPriceOverride());
         }
 
         //item.updatePrices();

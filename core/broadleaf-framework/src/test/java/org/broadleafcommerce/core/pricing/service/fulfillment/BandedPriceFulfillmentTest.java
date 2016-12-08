@@ -19,11 +19,6 @@ package org.broadleafcommerce.core.pricing.service.fulfillment;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.SkuImpl;
-import org.broadleafcommerce.core.catalog.domain.Weight;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -31,6 +26,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOption;
 import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.fulfillment.domain.BandedWeightFulfillmentOption;
@@ -41,6 +38,9 @@ import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBand
 import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmountType;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFulfillmentPricingProvider;
+
+import com.broadleafcommerce.order.common.domain.OrderSku;
+import com.broadleafcommerce.order.common.domain.OrderSkuImpl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -193,8 +193,8 @@ public class BandedPriceFulfillmentTest extends TestCase {
 
         List<FulfillmentGroupItem> fulfillmentItems = new ArrayList<FulfillmentGroupItem>();
         for (int i = 0; i < orderItemsToCreate; i++) {
-            DiscreteOrderItem orderItem = new DiscreteOrderItemImpl();
-            Sku sku = new SkuImpl();
+            OrderItem orderItem = new OrderItemImpl();
+            OrderSku sku = new OrderSkuImpl();
             //set the sku price to some arbitrary amount - won't matter because the test is based on order item price
             sku.setRetailPrice(new Money("1"));
             orderItem.setSku(sku);
@@ -202,10 +202,8 @@ public class BandedPriceFulfillmentTest extends TestCase {
             if (option instanceof BandedPriceFulfillmentOption) {
                 orderItem.setPrice(new Money(total.divide(new BigDecimal(orderItemsToCreate))));
             } else if (option instanceof BandedWeightFulfillmentOption) {
-                Weight weight = new Weight();
-                weight.setWeight(total.divide(new BigDecimal(orderItemsToCreate)));
-                weight.setWeightUnitOfMeasure(WeightUnitOfMeasureType.POUNDS);
-                orderItem.getSku().setWeight(weight);
+                orderItem.getSku().setWeight(total.divide(new BigDecimal(orderItemsToCreate)));
+                orderItem.getSku().setWeightUnitOfMeasure(WeightUnitOfMeasureType.POUNDS);
                 orderItem.setPrice(new Money(BigDecimal.ZERO));
             }
             orderItem.setOrder(result);
