@@ -20,7 +20,8 @@ package org.broadleafcommerce.core.order.service;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.profile.core.domain.Customer;
+
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -28,11 +29,11 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 public abstract class AbstractMergeCartServiceExtensionHandler extends AbstractExtensionHandler implements
         MergeCartServiceExtensionHandler {
     
-    public ExtensionResultStatusType setNewCartOwnership(Order cart, Customer customer) {
+    public ExtensionResultStatusType setNewCartOwnership(Order cart, OrderCustomer customer) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
     
-    public ExtensionResultStatusType updateMergedOrder(Order cart, Customer customer) {
+    public ExtensionResultStatusType updateMergedOrder(Order cart, OrderCustomer customer) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 }
