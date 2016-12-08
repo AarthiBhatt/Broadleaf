@@ -20,6 +20,7 @@ package com.broadleafcommerce.order.common.domain;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
+import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -108,7 +109,7 @@ public class OrderSkuImpl implements OrderSku {
     protected BigDecimal weight;
 
     @Column(name = "WEIGHT_UNIT_OF_MEASURE")
-    protected String weightUnitOfMeasure;
+    protected WeightUnitOfMeasureType weightUnitOfMeasure;
 
     @Lob
     @Column(name = "SKU_ATTRIBUTES_JSON", length = Integer.MAX_VALUE - 1)
@@ -265,12 +266,12 @@ public class OrderSkuImpl implements OrderSku {
     }
 
     @Override
-    public String getWeightUnitOfMeasure() {
+    public WeightUnitOfMeasureType getWeightUnitOfMeasure() {
         return weightUnitOfMeasure;
     }
 
     @Override
-    public void setWeightUnitOfMeasure(String weightUnitOfMeasure) {
+    public void setWeightUnitOfMeasure(WeightUnitOfMeasureType weightUnitOfMeasure) {
         this.weightUnitOfMeasure = weightUnitOfMeasure;
     }
 
