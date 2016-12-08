@@ -18,7 +18,8 @@
 package org.broadleafcommerce.core.pricing.service.fulfillment;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.profile.core.domain.Address;
+
+import com.broadleafcommerce.order.common.domain.OrderAddress;
 
 /**
  * Default implementation of {@link FulfillmentLocationResolver} that stores a
@@ -29,18 +30,18 @@ import org.broadleafcommerce.profile.core.domain.Address;
  */
 public class SimpleFulfillmentLocationResolver implements FulfillmentLocationResolver {
 
-    protected Address address;
+    protected OrderAddress address;
 
     @Override
-    public Address resolveLocationForFulfillmentGroup(FulfillmentGroup group) {
+    public OrderAddress resolveLocationForFulfillmentGroup(FulfillmentGroup group) {
         return address;
     }
 
-    public Address getAddress() {
+    public OrderAddress getAddress() {
         return address;
     }
     
-    public void setAddress(Address address) {
+    public void setAddress(OrderAddress address) {
         this.address = address;
     }
 
