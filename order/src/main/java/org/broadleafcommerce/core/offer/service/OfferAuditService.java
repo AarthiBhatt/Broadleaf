@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.offer.service;
 
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
-import org.broadleafcommerce.profile.core.domain.Customer;
+
 import java.util.List;
 
 

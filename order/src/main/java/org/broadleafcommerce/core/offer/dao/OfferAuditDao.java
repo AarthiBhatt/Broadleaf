@@ -18,9 +18,7 @@
 package org.broadleafcommerce.core.offer.dao;
 
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
-import org.broadleafcommerce.core.offer.service.OfferService;
-import org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity;
-import org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity;
+
 import java.util.List;
 
 /**
