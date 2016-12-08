@@ -18,11 +18,10 @@
 package org.broadleafcommerce.core.order.service.call;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
+
+import com.broadleafcommerce.order.common.domain.OrderSku;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,9 +39,7 @@ import java.util.Map;
  */
 public abstract class AbstractOrderItemRequest {
 
-    protected Sku sku;
-    protected Category category;
-    protected Product product;
+    protected OrderSku sku;
     protected Order order;
     protected int quantity;
     protected Money salePriceOverride;
@@ -51,30 +48,14 @@ public abstract class AbstractOrderItemRequest {
     protected Map<String,String> itemAttributes = new HashMap<String,String>();
     protected Map<String,String> additionalAttributes = new HashMap<String,String>();
 
-    public Sku getSku() {
+    public OrderSku getSku() {
         return sku;
     }
 
-    public void setSku(Sku sku) {
+    public void setSku(OrderSku sku) {
         this.sku = sku;
     }
 
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-    
     public void setOrder(Order order) {
         this.order = order;
     }
@@ -124,11 +105,9 @@ public abstract class AbstractOrderItemRequest {
     }
 
     protected void copyProperties(AbstractOrderItemRequest newRequest) {
-        newRequest.setCategory(category);
         newRequest.setItemAttributes(itemAttributes);
         newRequest.setAdditionalAttributes(additionalAttributes);
         newRequest.setPersonalMessage(personalMessage);
-        newRequest.setProduct(product);
         newRequest.setQuantity(quantity);
         newRequest.setSku(sku);
         newRequest.setOrder(order);
@@ -145,8 +124,6 @@ public abstract class AbstractOrderItemRequest {
         AbstractOrderItemRequest that = (AbstractOrderItemRequest) o;
 
         if (quantity != that.quantity) return false;
-        if (category != null ? !category.equals(that.category) : that.category != null) return false;
-        if (product != null ? !product.equals(that.product) : that.product != null) return false;
         if (salePriceOverride != null ? !salePriceOverride.equals(that.salePriceOverride) : that.salePriceOverride != null)
             return false;
         if (sku != null ? !sku.equals(that.sku) : that.sku != null) return false;
@@ -158,8 +135,6 @@ public abstract class AbstractOrderItemRequest {
     @Override
     public int hashCode() {
         int result = sku != null ? sku.hashCode() : 0;
-        result = 31 * result + (category != null ? category.hashCode() : 0);
-        result = 31 * result + (product != null ? product.hashCode() : 0);
         result = 31 * result + (order != null ? order.hashCode() : 0);
         result = 31 * result + quantity;
         result = 31 * result + (salePriceOverride != null ? salePriceOverride.hashCode() : 0);

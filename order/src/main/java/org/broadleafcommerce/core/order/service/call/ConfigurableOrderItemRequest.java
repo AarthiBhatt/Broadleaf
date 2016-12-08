@@ -19,13 +19,11 @@ package org.broadleafcommerce.core.order.service.call;
 
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.Product;
 
 import java.util.List;
 
 public class ConfigurableOrderItemRequest extends AddToCartItem {
 
-    protected Product product;
     protected List<ConfigurableOrderItemRequest> productChoices;
 
     protected Boolean isMultiSelect;
@@ -37,15 +35,6 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
     protected Boolean hasOverridenPrice;
     protected Boolean hasConfigurationError;
     protected Boolean discountsAllowed;
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        super.setProductId(product.getId());
-        this.product = product;
-    }
 
     public List<ConfigurableOrderItemRequest> getProductChoices() {
         return productChoices;
