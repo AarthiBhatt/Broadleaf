@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -297,7 +296,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         }
         
         for (OrderMultishipOption option : multishipOptions) {
-            String key = getKey(option.getAddress(), option.getFulfillmentOption(), ((DiscreteOrderItem) option.getOrderItem()).getSku().getFulfillmentType());
+            String key = getKey(option.getAddress(), option.getFulfillmentOption(), option.getOrderItem().getSku().getFulfillmentType());
             FulfillmentGroup fg = multishipGroups.get(key);
             
             // Get or create a fulfillment group that matches this OrderMultishipOption destination
@@ -314,7 +313,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
                     fgr.setOption(option.getFulfillmentOption());
                 }
                 
-                fgr.setFulfillmentType(((DiscreteOrderItem) option.getOrderItem()).getSku().getFulfillmentType());
+                fgr.setFulfillmentType( option.getOrderItem().getSku().getFulfillmentType());
 
                 fg = addFulfillmentGroupToOrder(fgr, false);
                 fg = save(fg);

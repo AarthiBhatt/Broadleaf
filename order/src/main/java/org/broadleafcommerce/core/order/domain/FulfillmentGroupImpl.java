@@ -353,19 +353,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     public List<FulfillmentGroupItem> getFulfillmentGroupItems() {
         return fulfillmentGroupItems;
     }
-    
-    @Override
-    public List<DiscreteOrderItem> getDiscreteOrderItems() {
-        List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
-        for (FulfillmentGroupItem fgItem : fulfillmentGroupItems) {
-            OrderItem orderItem = fgItem.getOrderItem();
-            if (orderItem instanceof DiscreteOrderItem) {
-                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
-                discreteOrderItems.add(discreteOrderItem);
-            }
-        }
-        return discreteOrderItems;
-    }
 
     @Override
     public void setFulfillmentGroupItems(List<FulfillmentGroupItem> fulfillmentGroupItems) {
