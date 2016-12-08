@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.pricing.service.workflow;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.TaxService;
-import org.broadleafcommerce.core.pricing.service.module.TaxModule;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
@@ -30,8 +29,6 @@ import javax.annotation.Resource;
  */
 public class TaxActivity extends BaseActivity<ProcessContext<Order>> {
 
-    protected TaxModule taxModule;
-
     @Resource(name = "blTaxService")
     protected TaxService taxService;
 
@@ -41,16 +38,10 @@ public class TaxActivity extends BaseActivity<ProcessContext<Order>> {
 
         if (taxService != null) {
             order = taxService.calculateTaxForOrder(order);
-        } else if (taxModule != null) {
-            order = taxModule.calculateTaxForOrder(order);
         }
 
         context.setSeedData(order);
         return context;
-    }
-
-    public void setTaxModule(TaxModule taxModule) {
-        this.taxModule = taxModule;
     }
 
     public void setTaxService(TaxService taxService) {
