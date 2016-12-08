@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import org.broadleafcommerce.common.util.DimensionUnitOfMeasureType;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.core.order.dao.OrderItemDao;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
@@ -247,11 +248,15 @@ public class OrderItemServiceImpl implements OrderItemService {
         orderSkuDTO.setHeight(orderSku.getHeight());
         orderSkuDTO.setDepth(orderSku.getDepth());
         orderSkuDTO.setGirth(orderSku.getGirth());
-        orderSkuDTO.setDimensionUnitOfMeasure(orderSku.getDimensionUnitOfMeasure());
+        if (orderSku.getDimensionUnitOfMeasure() != null) {
+            orderSkuDTO.setDimensionUnitOfMeasure(orderSku.getDimensionUnitOfMeasure().getType());
+        }
 
         //weight
         orderSkuDTO.setWeight(orderSku.getWeight());
-        orderSkuDTO.setWeightUnitOfMeasure(orderSku.getWeightUnitOfMeasure().getType());
+        if (orderSku.getWeightUnitOfMeasure() != null) {
+            orderSkuDTO.setWeightUnitOfMeasure(orderSku.getWeightUnitOfMeasure().getType());
+        }
 
         return orderSkuDTO;
     }
@@ -315,7 +320,9 @@ public class OrderItemServiceImpl implements OrderItemService {
         orderSku.setHeight(orderSkuDTO.getHeight());
         orderSku.setDepth(orderSkuDTO.getDepth());
         orderSku.setGirth(orderSkuDTO.getGirth());
-        orderSku.setDimensionUnitOfMeasure(orderSkuDTO.getDimensionUnitOfMeasure());
+        if (DimensionUnitOfMeasureType.getInstance(orderSkuDTO.getDimensionUnitOfMeasure()) != null) {
+            orderSku.setDimensionUnitOfMeasure(DimensionUnitOfMeasureType.getInstance(orderSkuDTO.getDimensionUnitOfMeasure()));
+        }
 
         //weight
         orderSku.setWeight(orderSkuDTO.getWeight());

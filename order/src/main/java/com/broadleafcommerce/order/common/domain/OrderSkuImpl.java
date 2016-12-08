@@ -20,6 +20,7 @@ package com.broadleafcommerce.order.common.domain;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
+import org.broadleafcommerce.common.util.DimensionUnitOfMeasureType;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.hibernate.annotations.Cache;
@@ -248,12 +249,16 @@ public class OrderSkuImpl implements OrderSku {
     }
 
     @Override
-    public String getDimensionUnitOfMeasure() {
-        return dimensionUnitOfMeasure;
+    public DimensionUnitOfMeasureType getDimensionUnitOfMeasure() {
+        return DimensionUnitOfMeasureType.getInstance(dimensionUnitOfMeasure);
     }
 
     @Override
-    public void setDimensionUnitOfMeasure(String dimensionUnitOfMeasure) { this.dimensionUnitOfMeasure = dimensionUnitOfMeasure; }
+    public void setDimensionUnitOfMeasure(DimensionUnitOfMeasureType dimensionUnitOfMeasure) {
+        if (dimensionUnitOfMeasure != null) {
+            this.dimensionUnitOfMeasure = dimensionUnitOfMeasure.getType();
+        }
+    }
 
     @Override
     public BigDecimal getWeight() {
