@@ -831,8 +831,8 @@ public class OrderServiceImpl implements OrderService {
         for (OrderItem currentItem : order.getOrderItems()) {
             if (currentItem instanceof DiscreteOrderItem) {
                 DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
-                if (discreteItem.getSku() != null && itemToFind.getSkuId() != null) {
-                    if (discreteItem.getSku().getExternalId().equals(itemToFind.getSkuId())) {
+                if (discreteItem.getSku() != null && itemToFind.getOrderSkuDTO() != null) {
+                    if (discreteItem.getSku().getExternalId().equals(itemToFind.getOrderSkuDTO())) {
                         return discreteItem;
                     }
                 }
