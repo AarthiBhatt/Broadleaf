@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.order.service;
 
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -28,7 +27,6 @@ import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 public interface OrderItemService {
