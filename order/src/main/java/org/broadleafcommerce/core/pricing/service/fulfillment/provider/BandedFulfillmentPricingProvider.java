@@ -24,7 +24,6 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.UnitOfMeasureUtil;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -35,6 +34,8 @@ import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentBand;
 import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBand;
 import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBand;
 import org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmountType;
+
+import com.broadleafcommerce.order.common.domain.OrderSku;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -123,7 +124,7 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                     //If this item has a Sku associated with it which also has a flat rate for this fulfillment option, don't add it to the price
                     //or weight total but instead tack it onto the final rate
                     boolean addToTotal = true;
-                    Sku sku = null;
+                    OrderSku sku = null;
                     if (fulfillmentGroupItem.getOrderItem() instanceof DiscreteOrderItem) {
                         sku = ((DiscreteOrderItem)fulfillmentGroupItem.getOrderItem()).getSku();
                     }
@@ -136,8 +137,8 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                         }
                         retailTotal = retailTotal.add(price);
                         
-                        if (sku != null && sku.getWeight() != null && sku.getWeight().getWeight() != null) {
-                            BigDecimal convertedWeight = convertWeight(sku.getWeight().getWeight(), sku.getWeight().getWeightUnitOfMeasure()).multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
+                        if (sku != null && sku.getWeight() != null) {
+                            BigDecimal convertedWeight = convertWeight(sku.getWeight(), sku.getWeightUnitOfMeasure()).multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
                             weightTotal = weightTotal.add(convertedWeight);
                         }
                     }

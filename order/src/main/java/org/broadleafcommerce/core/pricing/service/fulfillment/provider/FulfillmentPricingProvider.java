@@ -21,7 +21,6 @@ import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceExc
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
-import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity;
 
 import java.util.Set;
 
