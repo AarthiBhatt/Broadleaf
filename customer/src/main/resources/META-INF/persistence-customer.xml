@@ -31,7 +31,6 @@
         <mapping-file>config/bc/jpa/domain/Role.orm.xml</mapping-file>
         <class>org.broadleafcommerce.profile.core.domain.ChallengeQuestionImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerAddressImpl</class>
-        <class>org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerPhoneImpl</class>

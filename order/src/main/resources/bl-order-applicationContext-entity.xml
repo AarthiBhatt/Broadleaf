@@ -42,6 +42,7 @@
     <bean id="org.broadleafcommerce.core.payment.domain.OrderPayment" class="org.broadleafcommerce.core.payment.domain.OrderPaymentImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.PaymentTransaction" class="org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.PaymentLog" class="org.broadleafcommerce.core.payment.domain.PaymentLogImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.payment.domain.CustomerPayment" class="org.broadleafcommerce.core.payment.domain.CustomerPaymentImpl"/>
     <bean id="org.broadleafcommerce.core.payment.domain.secure.BankAccountPayment" class="org.broadleafcommerce.core.payment.domain.secure.BankAccountPaymentImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment" class="org.broadleafcommerce.core.payment.domain.secure.CreditCardPaymentInfoImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.secure.GiftCardPayment" class="org.broadleafcommerce.core.payment.domain.secure.GiftCardPaymentImpl" scope="prototype"/>    
