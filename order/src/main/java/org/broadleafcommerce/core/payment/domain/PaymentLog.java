@@ -48,9 +48,9 @@ public interface PaymentLog extends Serializable {
 
     public void setPaymentInfoId(Long paymentInfoId);
 
-    public OrderCustomer getCustomer();
+    public OrderCustomer getOrderCustomer();
 
-    public void setCustomer(OrderCustomer customer);
+    public void setOrderCustomer(OrderCustomer customer);
 
     public String getPaymentInfoReferenceNumber();
 

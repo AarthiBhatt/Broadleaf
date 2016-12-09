@@ -90,7 +90,7 @@ public class CustomerOfferImpl implements CustomerOffer {
     }
 
     @Override
-    public void setCustomer(OrderCustomer orderCustomer) {
+    public void setOrderCustomer(OrderCustomer orderCustomer) {
         this.orderCustomer = orderCustomer;
     }
 
