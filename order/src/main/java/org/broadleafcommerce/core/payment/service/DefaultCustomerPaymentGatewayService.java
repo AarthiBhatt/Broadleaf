@@ -71,7 +71,7 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
         }
 
         Long customerId = Long.parseLong(responseDTO.getCustomer().getCustomerId());
-        OrderCustomer orderCustomer = orderCustomerService.finddOrderCustomerById(customerId);
+        OrderCustomer orderCustomer = orderCustomerService.findOrderCustomerById(customerId);
         if (orderCustomer != null) {
             CustomerPayment customerPayment = customerPaymentService.create();
             customerPayment.setOrderCustomer(orderCustomer);
