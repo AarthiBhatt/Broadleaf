@@ -1,5 +1,6 @@
 package com.broadleafcommerce.order.endpoint;
 
+import org.broadleafcommerce.common.controller.FrameworkRestController;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import com.broadleafcommerce.order.common.service.OrderCustomerService;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+@FrameworkRestController(@RequestMapping("/cart"))
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class CartEndpoint {
     
