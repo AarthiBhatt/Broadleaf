@@ -71,6 +71,7 @@
         <class>org.broadleafcommerce.core.payment.domain.OrderPaymentImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.PaymentLogImpl</class>
+        <class>org.broadleafcommerce.core.payment.domain.CustomerPaymentImpl</class>
         <class>org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl</class>
         <class>com.broadleafcommerce.order.common.domain.OrderAddressImpl</class>
