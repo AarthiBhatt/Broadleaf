@@ -26,7 +26,7 @@ public interface OrderCustomerService {
 
     public OrderCustomer saveOrderCustomer(OrderCustomer orderCustomer);
 
-    public OrderCustomer finddOrderCustomerById(Long orderCustomerId);
+    public OrderCustomer findOrderCustomerById(Long orderCustomerId);
 
     public OrderCustomer create();
 
