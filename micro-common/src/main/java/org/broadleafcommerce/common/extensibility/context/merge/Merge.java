@@ -17,16 +17,14 @@
  */
 package org.broadleafcommerce.common.extensibility.context.merge;
 
-import org.broadleafcommerce.common.extensibility.context.merge.MergeBeanStatusProvider;
-import org.broadleafcommerce.common.extensibility.context.merge.Placement;
-import org.springframework.context.ApplicationContext;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import java.lang.annotation.Documented;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Provides a convenience annotation for declaring a bean merge into an existing collection of beans (presumably a
@@ -40,6 +38,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)
+@Bean
 public @interface Merge {
 
     /**

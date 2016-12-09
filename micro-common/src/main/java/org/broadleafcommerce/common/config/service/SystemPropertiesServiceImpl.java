@@ -18,7 +18,6 @@
 package org.broadleafcommerce.common.config.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
 import org.broadleafcommerce.common.config.dao.SystemPropertiesDao;
 import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
@@ -27,6 +26,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.web.CommonRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -40,7 +40,6 @@ import net.sf.ehcache.Element;
  * the DB then returns the value from property files.
  *  
  * @author bpolster
- *
  */
 @Service("blSystemPropertiesService")
 public class SystemPropertiesServiceImpl implements SystemPropertiesService{
@@ -57,7 +56,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     protected int systemPropertyCacheTimeout;
 
     @Autowired
-    protected RuntimeEnvironmentPropertiesManager propMgr;
+    protected Environment env;
 
     @Override
     public String resolveSystemProperty(String name, String defaultValue) {
@@ -91,7 +90,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
         SystemProperty property = systemPropertiesDao.readSystemPropertyByName(name);
         if (property == null || StringUtils.isEmpty(property.getValue())) {
-            result = propMgr.getProperty(name);
+            result = env.getProperty(name);
         } else {
             if ("_blank_".equals(property.getValue())) {
                 result = "";
