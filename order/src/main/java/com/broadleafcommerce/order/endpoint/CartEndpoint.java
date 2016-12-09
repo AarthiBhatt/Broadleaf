@@ -25,18 +25,6 @@ public class CartEndpoint {
     
     @Resource(name = "blOrderCustomerService")
     protected OrderCustomerService orderCustomerService;
-
-    @RequestMapping(path = "", method = RequestMethod.GET)
-    public ResponseEntity findCartForCustomer(HttpServletRequest request, @RequestBody OrderCustomer customer) {
-        if (customer == null) {
-            return new ResponseEntity("No customer was sent", HttpStatus.BAD_REQUEST);
-        }
-        Order order = orderService.findCartForCustomer(customer);
-        if (order == null) {
-            return new ResponseEntity("No order exists for customer with id " + customer.getExternalId(), HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity(order, HttpStatus.OK);
-    }
     
     @RequestMapping(path = "/customer/{id}", method = RequestMethod.GET)
     public ResponseEntity findCartByCustomerId(HttpServletRequest request, @PathVariable Long id) {
