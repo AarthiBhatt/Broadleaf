@@ -39,7 +39,7 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
     }
 
     @Override
-    public OrderCustomer readOrderCustomerById(Long orderCustomerId) {
+    public OrderCustomer finddOrderCustomerById(Long orderCustomerId) {
         return orderCustomerDao.readOrderCustomerById(orderCustomerId);
     }
 
