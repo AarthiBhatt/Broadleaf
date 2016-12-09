@@ -31,7 +31,7 @@ import javax.persistence.PersistenceContext;
  * Created by brandon on 12/7/16.
  */
 @Repository("blOrderSkuDao")
-public class OrderSkuDaoImpl {
+public class OrderSkuDaoImpl implements OrderSkuDao {
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
