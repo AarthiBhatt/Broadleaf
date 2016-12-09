@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import com.broadleafcommerce.order.common.dto.OrderCustomerDTO;
 import com.broadleafcommerce.order.common.service.OrderCustomerService;
+import com.broadleafcommerce.order.common.service.translation.OrderCustomerTranslationService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,9 @@ public class OrderCustomerEndpoint {
 
     @Resource(name = "blOrderCustomerService")
     protected OrderCustomerService orderCustomerService;
+    
+    @Resource(name = "blOrderCustomerTranslationService")
+    protected OrderCustomerTranslationService orderCustomerTranslationService;
     
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public ResponseEntity getCustomerById(HttpServletRequest request, @PathVariable Long customerId) {
@@ -34,10 +38,7 @@ public class OrderCustomerEndpoint {
     @RequestMapping(path = "", method = RequestMethod.POST)
     public ResponseEntity createCustomer(HttpServletRequest request, @RequestBody OrderCustomerDTO dto) {
         OrderCustomer customer = orderCustomerService.create();
-        customer.setExternalId(dto.getExternalId());
-        customer.setFirstName(dto.getFirstName());
-        customer.setLastName(dto.getLastName());
-        customer.setEmailAddress(dto.getEmailAddress());
+        orderCustomerTranslationService.copyDTOToOrderCustomer(dto, customer);
         return new ResponseEntity(orderCustomerService.saveOrderCustomer(customer), HttpStatus.OK);
     }
 }
