@@ -40,7 +40,7 @@ public class CartEndpoint {
     
     @RequestMapping(path = "/customer/{id}", method = RequestMethod.GET)
     public ResponseEntity findCartByCustomerId(HttpServletRequest request, @PathVariable Long id) {
-        OrderCustomer customer = orderCustomerService.finddOrderCustomerById(id);
+        OrderCustomer customer = orderCustomerService.findOrderCustomerById(id);
         if (customer == null) {
             return new ResponseEntity("No customer with id " + id + " exists", HttpStatus.BAD_REQUEST);
         }
