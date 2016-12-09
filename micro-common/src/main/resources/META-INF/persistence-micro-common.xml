@@ -27,6 +27,7 @@
         <mapping-file>config/bc/jpa/domain/Locale.orm.xml</mapping-file>
         <class>org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration</class>
         <class>org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl</class>
+        <class>org.broadleafcommerce.common.media.domain.MediaImpl</class>
         <class>org.broadleafcommerce.common.locale.domain.LocaleImpl</class>
         <class>org.broadleafcommerce.common.site.domain.SiteImpl</class>
         <class>org.broadleafcommerce.common.site.domain.CatalogImpl</class>
