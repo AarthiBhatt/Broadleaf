@@ -26,11 +26,11 @@ import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.common.web.payment.controller.CustomerPaymentGatewayAbstractController;
 import com.broadleafcommerce.order.common.domain.OrderAddress;
 import com.broadleafcommerce.order.common.service.OrderAddressService;
-import org.broadleafcommerce.core.order.service.OrderCustomerService;
 import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.springframework.stereotype.Service;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
+import com.broadleafcommerce.order.common.service.OrderCustomerService;
 
 import javax.annotation.Resource;
 
@@ -51,7 +51,7 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
     @Resource(name = "blCustomerPaymentService")
     protected CustomerPaymentService customerPaymentService;
 
-    @Resource(name = "blCustomerService")
+    @Resource(name = "blOrderCustomerService")
     protected OrderCustomerService orderCustomerService;
 
     @Resource(name = "blPaymentResponseDTOToEntityService")
@@ -71,7 +71,7 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
         }
 
         Long customerId = Long.parseLong(responseDTO.getCustomer().getCustomerId());
-        OrderCustomer orderCustomer = orderCustomerService.findOrderCustomerByExternalId(customerId);
+        OrderCustomer orderCustomer = orderCustomerService.finddOrderCustomerById(customerId);
         if (orderCustomer != null) {
             CustomerPayment customerPayment = customerPaymentService.create();
             customerPayment.setOrderCustomer(orderCustomer);

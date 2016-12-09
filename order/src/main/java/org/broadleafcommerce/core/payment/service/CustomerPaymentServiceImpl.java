@@ -17,13 +17,13 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
-import org.broadleafcommerce.core.order.service.OrderCustomerService;
 import org.broadleafcommerce.core.payment.dao.CustomerPaymentDao;
 import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
+import com.broadleafcommerce.order.common.service.OrderCustomerService;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
     @Resource(name="blCustomerPaymentDao")
     protected CustomerPaymentDao customerPaymentDao;
 
-    @Resource(name="blCustomerService")
+    @Resource(name="blOrderCustomerService")
     protected OrderCustomerService orderCustomerService;
 
     @Override
@@ -106,7 +106,7 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
                 break;
             }
         }
-       return orderCustomerService.save(customer);
+       return orderCustomerService.saveOrderCustomer(customer);
     }
 
 }
