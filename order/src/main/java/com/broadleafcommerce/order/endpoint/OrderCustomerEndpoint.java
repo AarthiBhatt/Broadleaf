@@ -15,7 +15,7 @@ import com.broadleafcommerce.order.common.service.OrderCustomerService;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-@FrameworkRestController(@RequestMapping("/customer"))
+@FrameworkRestController(@RequestMapping(path = "/customer"))
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class OrderCustomerEndpoint {
 
