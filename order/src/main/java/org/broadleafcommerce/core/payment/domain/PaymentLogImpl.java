@@ -163,12 +163,12 @@ public class PaymentLogImpl implements PaymentLog {
     }
 
     @Override
-    public OrderCustomer getCustomer() {
+    public OrderCustomer getOrderCustomer() {
         return customer;
     }
 
     @Override
-    public void setCustomer(OrderCustomer customer) {
+    public void setOrderCustomer(OrderCustomer customer) {
         this.customer = customer;
     }
 

@@ -29,7 +29,7 @@ public interface CustomerOffer extends Serializable {
 
     public OrderCustomer getOrderCustomer() ;
 
-    public void setCustomer(OrderCustomer orderCustomer) ;
+    public void setOrderCustomer(OrderCustomer orderCustomer) ;
 
     public Offer getOffer() ;
 

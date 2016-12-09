@@ -98,9 +98,9 @@ public interface PaymentResponseItem extends Serializable {
 
     public void setUserName(String userName);
 
-    public OrderCustomer getCustomer();
+    public OrderCustomer getOrderCustomer();
 
-    public void setCustomer(OrderCustomer customer);
+    public void setOrderCustomer(OrderCustomer customer);
 
     public void setPaymentTransaction(PaymentTransaction paymentTransaction);
 
