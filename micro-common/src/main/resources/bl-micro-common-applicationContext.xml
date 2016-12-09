@@ -254,4 +254,5 @@
         </property>
     </bean>
 
+    <bean id="blServiceMonitor" class="org.broadleafcommerce.common.vendor.service.monitor.ServiceMonitor" init-method="init"/>
 </beans>
