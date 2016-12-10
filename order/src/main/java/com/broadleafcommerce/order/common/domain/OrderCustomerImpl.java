@@ -30,7 +30,9 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -52,6 +55,15 @@ import javax.persistence.Transient;
 public class OrderCustomerImpl implements OrderCustomer {
 
     @Id
+    @GeneratedValue(generator = "OrderCustomerId")
+    @GenericGenerator(
+            name = "OrderCustomerId",
+            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OrderCustomerImpl"),
+                    @Parameter(name = "entity_name", value = "com.broadleafcommerce.order.common.domain.OrderCustomerImpl")
+            }
+    )
     @Column(name = "CUSTOMER_ID")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Id", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
