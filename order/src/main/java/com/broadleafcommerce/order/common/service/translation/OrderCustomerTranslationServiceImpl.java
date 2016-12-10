@@ -10,6 +10,9 @@ public class OrderCustomerTranslationServiceImpl implements OrderCustomerTransla
 
     @Override
     public void copyOrderCustomerToDTO(OrderCustomer customer, OrderCustomerDTO dto) {
+        if (customer.getId() != null) {
+            dto.setId(customer.getId());
+        }
         if (customer.getExternalId() != null) {
             dto.setExternalId(customer.getExternalId());
         }
@@ -35,6 +38,9 @@ public class OrderCustomerTranslationServiceImpl implements OrderCustomerTransla
 
     @Override
     public void copyDTOToOrderCustomer(OrderCustomerDTO dto, OrderCustomer customer) {
+        if (dto.getId() != null) {
+            customer.setId(dto.getId());
+        }
         if (dto.getExternalId() != null) {
             customer.setExternalId(dto.getExternalId());
         }
