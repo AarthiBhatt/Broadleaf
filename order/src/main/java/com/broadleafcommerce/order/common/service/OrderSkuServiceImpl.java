@@ -17,7 +17,9 @@
  */
 package com.broadleafcommerce.order.common.service;
 
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.broadleafcommerce.order.common.dao.OrderSkuDao;
 import com.broadleafcommerce.order.common.domain.OrderSku;
@@ -34,6 +36,7 @@ public class OrderSkuServiceImpl implements OrderSkuService {
     OrderSkuDao orderSkuDao;
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public OrderSku saveOrderSku(OrderSku orderSku) {
         return orderSkuDao.save(orderSku);
     }
@@ -49,6 +52,7 @@ public class OrderSkuServiceImpl implements OrderSkuService {
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public void delete(OrderSku orderSku) {
         orderSkuDao.delete(orderSku);
     }
