@@ -22,12 +22,14 @@ import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import java.io.Serializable;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 /**
  * Created by brandon on 12/6/16.
  */
 @Data
+@NoArgsConstructor
 public class OrderCustomerDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
