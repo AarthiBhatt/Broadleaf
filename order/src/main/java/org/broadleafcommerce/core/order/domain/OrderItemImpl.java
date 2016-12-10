@@ -150,7 +150,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             fieldType = SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
-    @ManyToOne(targetEntity = OrderSkuImpl.class, optional=false)
+    @ManyToOne(targetEntity = OrderSkuImpl.class, optional=false, cascade = {CascadeType.ALL})
     @JoinColumn(name = "ORDER_SKU_ID", nullable = false)
     @Index(name="DISCRETE_SKU_INDEX", columnNames={"ORDER_SKU_ID"})
     @AdminPresentation(friendlyName = "OrderItemImpl_Sku", order= OrderItemImpl.Presentation.FieldOrder.SKU,
