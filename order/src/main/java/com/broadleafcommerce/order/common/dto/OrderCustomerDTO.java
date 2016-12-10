@@ -17,9 +17,12 @@
  */
 package com.broadleafcommerce.order.common.dto;
 
-import lombok.Data;
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 import java.io.Serializable;
+
+import lombok.Data;
+import lombok.NonNull;
 
 /**
  * Created by brandon on 12/6/16.
@@ -37,5 +40,16 @@ public class OrderCustomerDTO implements Serializable {
     protected Boolean isTaxExempt = false;
     protected String taxExemptionCode;
     protected String customerAttributesJson;
+    
+    public OrderCustomerDTO(@NonNull OrderCustomer customer) {
+        this.id = customer.getId();
+        this.externalId = customer.getExternalId();
+        this.firstName = customer.getFirstName();
+        this.lastName = customer.getLastName();
+        this.emailAddress = customer.getEmailAddress();
+        this.isTaxExempt = customer.getTaxExempt();
+        this.taxExemptionCode = customer.getTaxExemptionCode();
+        this.customerAttributesJson = customer.getCustomerAttributesJson();
+    }
 
 }

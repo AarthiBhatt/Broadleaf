@@ -32,13 +32,13 @@ public class OrderCustomerEndpoint {
         if (customer == null) {
             return new ResponseEntity("No customer exists with id " + customerId, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity(customer, HttpStatus.OK);
+        return new ResponseEntity(new OrderCustomerDTO(customer), HttpStatus.OK);
     }
     
     @RequestMapping(path = "", method = RequestMethod.POST)
     public ResponseEntity createCustomer(HttpServletRequest request, @RequestBody OrderCustomerDTO dto) {
         OrderCustomer customer = orderCustomerService.create();
         orderCustomerTranslationService.copyDTOToOrderCustomer(dto, customer);
-        return new ResponseEntity(orderCustomerService.saveOrderCustomer(customer), HttpStatus.OK);
+        return new ResponseEntity(new OrderCustomerDTO(orderCustomerService.saveOrderCustomer(customer)), HttpStatus.OK);
     }
 }
