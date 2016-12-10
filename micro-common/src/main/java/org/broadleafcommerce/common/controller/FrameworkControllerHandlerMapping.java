@@ -1,7 +1,9 @@
 package org.broadleafcommerce.common.controller;
 
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import java.lang.reflect.Method;
@@ -43,18 +45,20 @@ public class FrameworkControllerHandlerMapping extends RequestMappingHandlerMapp
 
         FrameworkController frameworkControllerAnnotation = handlerType.getAnnotation(FrameworkController.class);
         if (frameworkControllerAnnotation != null && frameworkControllerAnnotation.value().length > 0) {
-            RequestMappingInfo parentRequestMappingInfo = createRequestMappingInfo(frameworkControllerAnnotation.value()[0], null);
-            requestMappingInfo = parentRequestMappingInfo.combine(requestMappingInfo);
-            return requestMappingInfo;
+            return combineParentRequestMapping(frameworkControllerAnnotation.value()[0], requestMappingInfo);
         }
 
         FrameworkRestController frameworkRestControllerAnnotation = handlerType.getAnnotation(FrameworkRestController.class);
         if (frameworkRestControllerAnnotation != null && frameworkRestControllerAnnotation.value().length > 0) {
-            RequestMappingInfo parentRequestMappingInfo = createRequestMappingInfo(frameworkRestControllerAnnotation.value()[0], null);
-            requestMappingInfo = parentRequestMappingInfo.combine(requestMappingInfo);
-            return requestMappingInfo;
+            return combineParentRequestMapping(frameworkRestControllerAnnotation.value()[0], requestMappingInfo);
         }
 
         return requestMappingInfo;
+    }
+
+    protected RequestMappingInfo combineParentRequestMapping(RequestMapping parentRequestMapping, RequestMappingInfo requestMappingInfo) {
+        parentRequestMapping = AnnotationUtils.synthesizeAnnotation(parentRequestMapping, null);
+        RequestMappingInfo parentRequestMappingInfo = createRequestMappingInfo(parentRequestMapping, null);
+        return parentRequestMappingInfo.combine(requestMappingInfo);
     }
 }
