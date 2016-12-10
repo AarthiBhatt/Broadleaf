@@ -29,6 +29,7 @@ public class OrderCustomerDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    protected Long id;
     protected Long externalId;
     protected String firstName;
     protected String lastName;
