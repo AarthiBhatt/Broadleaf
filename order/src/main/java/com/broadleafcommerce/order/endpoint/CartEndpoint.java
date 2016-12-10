@@ -72,10 +72,11 @@ public class CartEndpoint {
         return new ResponseEntity(order, HttpStatus.OK);
     }
     
-    @RequestMapping(path = "", method = RequestMethod.POST)
-    public ResponseEntity createNewCartForCustomer(HttpServletRequest request, @RequestBody OrderCustomer customer) {
+    @RequestMapping(path = "/customer/{customerId}", method = RequestMethod.POST)
+    public ResponseEntity createNewCartForCustomer(HttpServletRequest request, @PathVariable Long customerId) {
+        OrderCustomer customer = orderCustomerService.findOrderCustomerById(customerId);
         if (customer == null) {
-            return new ResponseEntity("No customer was sent", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("No customer found with id " + customerId, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(orderService.createNewCartForCustomer(customer), HttpStatus.OK);
     }
