@@ -19,7 +19,11 @@ package com.broadleafcommerce.order.common.service;
 
 import com.broadleafcommerce.order.common.dao.OrderAddressDao;
 import com.broadleafcommerce.order.common.domain.OrderAddress;
+
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Resource;
 
 /**
@@ -32,6 +36,7 @@ public class OrderAddressServiceImpl implements OrderAddressService {
     protected OrderAddressDao orderAddressDao;
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public OrderAddress saveOrderAddress(OrderAddress orderAddress) { return orderAddressDao.save(orderAddress); }
 
     @Override
@@ -41,6 +46,7 @@ public class OrderAddressServiceImpl implements OrderAddressService {
     public OrderAddress create() { return orderAddressDao.create(); }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public void delete(OrderAddress orderAddress) { orderAddressDao.delete(orderAddress); }
 
     @Override

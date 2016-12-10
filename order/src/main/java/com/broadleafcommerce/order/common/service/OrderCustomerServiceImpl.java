@@ -17,7 +17,9 @@
  */
 package com.broadleafcommerce.order.common.service;
 
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.broadleafcommerce.order.common.dao.OrderCustomerDao;
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
@@ -34,6 +36,7 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
     OrderCustomerDao orderCustomerDao;
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public OrderCustomer saveOrderCustomer(OrderCustomer orderCustomer) {
         return orderCustomerDao.save(orderCustomer);
     }
@@ -49,6 +52,7 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public void delete(OrderCustomer orderCustomer) {
         orderCustomerDao.delete(orderCustomer);
     }
