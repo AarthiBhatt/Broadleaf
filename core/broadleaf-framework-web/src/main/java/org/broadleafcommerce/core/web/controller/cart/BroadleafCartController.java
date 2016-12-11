@@ -245,6 +245,9 @@ public class BroadleafCartController extends AbstractCartController {
         orderItemService.modifyOrderItemRequest(itemRequest);
         orderItemService.mergeOrderItemRequest(itemRequest, orderItem);
 
+        for (String key : orderItem.getOrderItemAttributes().keySet()) {
+            itemRequest.getItemAttributes().put(key, orderItem.getOrderItemAttributes().get(key).toString());
+        }
         // update quantities and product options
         itemRequest.setQuantity(orderItem.getQuantity());
 
