@@ -17,6 +17,7 @@
  */
 package com.broadleafcommerce.order.endpoint;
 
+import org.broadleafcommerce.common.api.BaseEndpoint;
 import org.broadleafcommerce.common.controller.FrameworkRestController;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
@@ -27,6 +28,8 @@ import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,13 +48,16 @@ import javax.servlet.http.HttpServletRequest;
 
 @FrameworkRestController(@RequestMapping(path = "/cart"))
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class CartEndpoint {
+public class CartEndpoint extends BaseEndpoint {
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
     
     @Resource(name = "blOrderCustomerService")
     protected OrderCustomerService orderCustomerService;
+    
+    @Resource(name = "blOrderPaymentService")
+    protected OrderPaymentService orderPaymentService;
     
     @Resource(name = "blOfferService")
     protected OfferService offerService;
@@ -170,7 +176,15 @@ public class CartEndpoint {
     
     @RequestMapping(path = "/{orderId}/add/payment", method = RequestMethod.POST)
     public ResponseEntity addPaymentToOrder(HttpServletRequest request, @PathVariable("orderId") Long orderId, @RequestBody OrderPaymentDTO orderPaymentDTO) {
-        return null;
+        Order order = orderService.findOrderById(orderId);
+        if (order == null) {
+            return new ResponseEntity("No order exists for id " + orderId, HttpStatus.BAD_REQUEST);
+        }
+        OrderPayment payment = orderPaymentDTO.unwrap(request, context);
+        payment = orderPaymentService.save(payment);
+        OrderPaymentDTO response = (OrderPaymentDTO) context.getBean(OrderPaymentDTO.class.getName());
+        response.wrapDetails(orderService.addPaymentToOrder(order, payment, null), request);
+        return new ResponseEntity(response, HttpStatus.OK);
     }
     
 }
