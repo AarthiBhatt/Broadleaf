@@ -60,6 +60,11 @@ public class FrameworkControllerHandlerMapping extends RequestMappingHandlerMapp
     protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
         RequestMappingInfo requestMappingInfo = super.getMappingForMethod(method, handlerType);
 
+        //if there is no request mapping on the method, then we will short circuit and return null
+        if (requestMappingInfo == null) {
+            return null;
+        }
+
         FrameworkController frameworkControllerAnnotation = handlerType.getAnnotation(FrameworkController.class);
         if (frameworkControllerAnnotation != null && frameworkControllerAnnotation.value().length > 0) {
             return combineParentRequestMapping(frameworkControllerAnnotation.value()[0], requestMappingInfo);
