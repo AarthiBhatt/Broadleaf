@@ -55,7 +55,8 @@ public class OrderItemDTO extends BaseWrapper implements APIWrapper<OrderItem> {
         this.salePriceOverride = item.isSalePriceOverride();
 
         if (item.getOrderItemDetail() != null) {
-            this.orderItemDetailDTO = new OrderItemDetailDTO();
+            OrderItemDetailDTO detail = (OrderItemDetailDTO) context.getBean(OrderItemDetailDTO.class.getName());
+            this.orderItemDetailDTO = detail;
             this.orderItemDetailDTO.wrapDetails(item.getOrderItemDetail(), request);
         }
     }
