@@ -27,6 +27,10 @@ public interface OrderAddress extends MultiTenantCloneable<OrderAddress> {
     public Long getId();
 
     public void setId(Long id);
+    
+    public Long getExternalId();
+    
+    public void setExternalId(Long externalId);
 
     public String getFullName();
 
