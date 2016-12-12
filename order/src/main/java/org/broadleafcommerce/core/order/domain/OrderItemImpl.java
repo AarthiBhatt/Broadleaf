@@ -151,12 +151,12 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     protected BigDecimal salePrice;
 
     @ManyToOne(targetEntity = OrderItemDetailImpl.class, optional=false, cascade = {CascadeType.ALL})
-    @JoinColumn(name = "ORDER_SKU_ID", nullable = false)
-    @Index(name="DISCRETE_SKU_INDEX", columnNames={"ORDER_SKU_ID"})
+    @JoinColumn(name = "ORDER_ITEM_DETAIL_ID", nullable = false)
+    @Index(name="ORDER_ITEM_DETAIL_INDEX", columnNames={"OORDER_ITEM_DETAIL_ID"})
     @AdminPresentation(friendlyName = "OrderItemImpl_Sku", order= OrderItemImpl.Presentation.FieldOrder.SKU,
             group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
-    protected OrderItemDetail sku;
+    protected OrderItemDetail orderItemDetail;
 
     @Column(name = "NAME")
     @AdminPresentation(friendlyName = "OrderItemImpl_Item_Name", order=Presentation.FieldOrder.NAME,
@@ -393,10 +393,10 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
-    public OrderItemDetail getSku() { return sku; }
+    public OrderItemDetail getOrderItemDetail() { return orderItemDetail; }
 
     @Override
-    public void setSku(OrderItemDetail sku) { this.sku = sku; }
+    public void setOrderItemDetail(OrderItemDetail orderItemDetail) { this.orderItemDetail = orderItemDetail; }
 
     @Override
     public List<OrderItemQualifier> getOrderItemQualifiers() {

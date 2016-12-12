@@ -296,7 +296,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         }
         
         for (OrderMultishipOption option : multishipOptions) {
-            String key = getKey(option.getAddress(), option.getFulfillmentOption(), option.getOrderItem().getSku().getFulfillmentType());
+            String key = getKey(option.getAddress(), option.getFulfillmentOption(), option.getOrderItem().getOrderItemDetail().getFulfillmentType());
             FulfillmentGroup fg = multishipGroups.get(key);
             
             // Get or create a fulfillment group that matches this OrderMultishipOption destination
@@ -313,7 +313,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
                     fgr.setOption(option.getFulfillmentOption());
                 }
                 
-                fgr.setFulfillmentType( option.getOrderItem().getSku().getFulfillmentType());
+                fgr.setFulfillmentType( option.getOrderItem().getOrderItemDetail().getFulfillmentType());
 
                 fg = addFulfillmentGroupToOrder(fgr, false);
                 fg = save(fg);

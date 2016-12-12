@@ -421,7 +421,7 @@ public class OrderServiceImpl implements OrderService {
             for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
                 OrderItem currentItem = (order.getOrderItems().get(i));
                 if (skuId != null) {
-                    if (currentItem.getSku() != null && skuId.equals(currentItem.getSku().getExternalId())) {
+                    if (currentItem.getOrderItemDetail() != null && skuId.equals(currentItem.getOrderItemDetail().getExternalId())) {
                         return currentItem;
                     }
                 }
@@ -824,8 +824,8 @@ public class OrderServiceImpl implements OrderService {
             return null;
         }
         for (OrderItem currentItem : order.getOrderItems()) {
-            if (currentItem.getSku() != null && itemToFind.getOrderSkuDTO() != null) {
-                if (currentItem.getSku().getExternalId().equals(itemToFind.getOrderSkuDTO().getExternalId())) {
+            if (currentItem.getOrderItemDetail() != null && itemToFind.getOrderSkuDTO() != null) {
+                if (currentItem.getOrderItemDetail().getExternalId().equals(itemToFind.getOrderSkuDTO().getExternalId())) {
                     return currentItem;
                 }
             }

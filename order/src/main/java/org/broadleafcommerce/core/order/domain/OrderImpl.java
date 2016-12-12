@@ -517,7 +517,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Override
     public boolean containsSku(OrderItemDetail sku) {
         for (OrderItem orderItem : getOrderItems()) {
-            if (orderItem.getSku() != null && orderItem.getSku().equals(sku)) {
+            if (orderItem.getOrderItemDetail() != null && orderItem.getOrderItemDetail().equals(sku)) {
                 return true;
             }
         }
