@@ -104,7 +104,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setName(itemRequest.getSku().getName());
         item.setQuantity(itemRequest.getQuantity());
         item.setOrder(itemRequest.getOrder());
-        item.setSku(itemRequest.getSku());
+        item.setOrderItemDetail(itemRequest.getSku());
 
         item.setSalePrice(itemRequest.getSku().getSalePrice());
         item.setRetailPrice(itemRequest.getSku().getRetailPrice());
@@ -130,7 +130,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     public OrderItem updateOrderItem(OrderItem item, final OrderItemRequest itemRequest) {
-        item.setSku(itemRequest.getSku());
+        item.setOrderItemDetail(itemRequest.getSku());
         populateProductOptionAttributes(item, itemRequest.getItemAttributes());
         applyAdditionalOrderItemProperties(item);
         return item;
@@ -142,7 +142,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 //        final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.EXTERNALLY_PRICED);
 //        populateDiscreteOrderItem(item, itemRequest);
 //
-//        SkuPriceWrapper wrapper = new SkuPriceWrapper(itemRequest.getSku());
+//        SkuPriceWrapper wrapper = new SkuPriceWrapper(itemRequest.getOrderItemDetail());
 //        DynamicSkuPrices prices = dynamicSkuPricingService.getSkuPrices(wrapper, skuPricingConsiderations);
 //        item.setBaseRetailPrice(prices.getRetailPrice());
 //        item.setBaseSalePrice(prices.getSalePrice());
@@ -177,7 +177,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public GiftWrapOrderItem createGiftWrapOrderItem(final GiftWrapOrderItemRequest itemRequest) {
         final GiftWrapOrderItem item = (GiftWrapOrderItem) orderItemDao.create(OrderItemType.GIFTWRAP);
-        item.setSku(itemRequest.getSku());
+        item.setOrderItemDetail(itemRequest.getSku());
         item.setOrder(itemRequest.getOrder());
         item.setQuantity(itemRequest.getQuantity());
         item.setSalePrice(itemRequest.getSku().getSalePrice());
@@ -212,7 +212,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     public OrderItemRequestDTO buildOrderItemRequestDTOFromOrderItem(OrderItem item) {
         OrderItemRequestDTO orderItemRequest = new OrderItemRequestDTO();
 
-        orderItemRequest.setOrderSkuDTO(buildOrderSkuDTOFromSku(item.getSku()));
+        orderItemRequest.setOrderSkuDTO(buildOrderSkuDTOFromSku(item.getOrderItemDetail()));
         orderItemRequest.setQuantity(item.getQuantity());
         if (item.getOrderItemAttributes() != null) {
             for (Entry<String, OrderItemAttribute> entry : item.getOrderItemAttributes().entrySet()) {

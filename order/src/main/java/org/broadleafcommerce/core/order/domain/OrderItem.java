@@ -340,9 +340,9 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      */
     void setName(String name);
 
-    OrderItemDetail getSku();
+    OrderItemDetail getOrderItemDetail();
 
-    void setSku(OrderItemDetail sku);
+    void setOrderItemDetail(OrderItemDetail orderItemDetail);
 
     OrderItem clone();
 

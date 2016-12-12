@@ -137,10 +137,10 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
      * @return
      */
     protected FulfillmentType resolveFulfillmentType(OrderItem orderItem) {
-        if (orderItem.getSku() == null) {
+        if (orderItem.getOrderItemDetail() == null) {
             return null;
         }
-        return orderItem.getSku().getFulfillmentType();
+        return orderItem.getOrderItemDetail().getFulfillmentType();
     }
     
     protected FulfillmentGroup addItemToFulfillmentGroup(Order order, OrderItem orderItem, FulfillmentGroup fulfillmentGroup) throws PricingException {

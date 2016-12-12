@@ -200,7 +200,7 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
     
     protected List<OrderMultishipOption> createPopulatedOrderMultishipOption(Order order, OrderItem item, Integer quantity) {
         List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
-        if (item.getSku() == null || !fulfillmentGroupService.isShippable(item.getSku().getFulfillmentType())) {
+        if (item.getOrderItemDetail() == null || !fulfillmentGroupService.isShippable(item.getOrderItemDetail().getFulfillmentType())) {
             return orderMultishipOptions;
         }
         for (int i = 0; i < quantity; i++) {
