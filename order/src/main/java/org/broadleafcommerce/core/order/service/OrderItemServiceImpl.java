@@ -36,7 +36,7 @@ import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
 
 import com.broadleafcommerce.order.common.domain.OrderItemDetail;
-import com.broadleafcommerce.order.common.dto.OrderSkuDTO;
+import com.broadleafcommerce.order.common.dto.OrderItemDetailDTO;
 import com.broadleafcommerce.order.common.service.OrderItemDetailService;
 
 import java.util.Date;
@@ -212,7 +212,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     public OrderItemRequestDTO buildOrderItemRequestDTOFromOrderItem(OrderItem item) {
         OrderItemRequestDTO orderItemRequest = new OrderItemRequestDTO();
 
-        orderItemRequest.setOrderSkuDTO(buildOrderSkuDTOFromSku(item.getOrderItemDetail()));
+        orderItemRequest.setOrderItemDetailDTO(buildOrderItemDetailDTOFromDetail(item.getOrderItemDetail()));
         orderItemRequest.setQuantity(item.getQuantity());
         if (item.getOrderItemAttributes() != null) {
             for (Entry<String, OrderItemAttribute> entry : item.getOrderItemAttributes().entrySet()) {
@@ -227,41 +227,41 @@ public class OrderItemServiceImpl implements OrderItemService {
         return orderItemRequest;
     }
 
-    protected OrderSkuDTO buildOrderSkuDTOFromSku(OrderItemDetail orderItemDetail) {
-        OrderSkuDTO orderSkuDTO = new OrderSkuDTO();
+    protected OrderItemDetailDTO buildOrderItemDetailDTOFromDetail(OrderItemDetail orderItemDetail) {
+        OrderItemDetailDTO orderItemDetailDTO = new OrderItemDetailDTO();
 
-        orderSkuDTO.setExternalId(orderItemDetail.getExternalId());
-        orderSkuDTO.setName(orderItemDetail.getName());
-        orderSkuDTO.setFulfillmentType(orderItemDetail.getFulfillmentType().getType());
+        orderItemDetailDTO.setExternalId(orderItemDetail.getExternalId());
+        orderItemDetailDTO.setName(orderItemDetail.getName());
+        orderItemDetailDTO.setFulfillmentType(orderItemDetail.getFulfillmentType().getType());
 
-        orderSkuDTO.setTaxable(orderItemDetail.getTaxable());
-        orderSkuDTO.setTaxCode(orderItemDetail.getTaxCode());
-        orderSkuDTO.setRetailPrice(orderItemDetail.getRetailPrice());
-        orderSkuDTO.setSalePrice(orderItemDetail.getSalePrice());
+        orderItemDetailDTO.setTaxable(orderItemDetail.getTaxable());
+        orderItemDetailDTO.setTaxCode(orderItemDetail.getTaxCode());
+        orderItemDetailDTO.setRetailPrice(orderItemDetail.getRetailPrice());
+        orderItemDetailDTO.setSalePrice(orderItemDetail.getSalePrice());
 
         //dimensions
-        orderSkuDTO.setContainer(orderItemDetail.getContainer());
-        orderSkuDTO.setSize(orderItemDetail.getSize());
-        orderSkuDTO.setWidth(orderItemDetail.getWidth());
-        orderSkuDTO.setHeight(orderItemDetail.getHeight());
-        orderSkuDTO.setDepth(orderItemDetail.getDepth());
-        orderSkuDTO.setGirth(orderItemDetail.getGirth());
+        orderItemDetailDTO.setContainer(orderItemDetail.getContainer());
+        orderItemDetailDTO.setSize(orderItemDetail.getSize());
+        orderItemDetailDTO.setWidth(orderItemDetail.getWidth());
+        orderItemDetailDTO.setHeight(orderItemDetail.getHeight());
+        orderItemDetailDTO.setDepth(orderItemDetail.getDepth());
+        orderItemDetailDTO.setGirth(orderItemDetail.getGirth());
         if (orderItemDetail.getDimensionUnitOfMeasure() != null) {
-            orderSkuDTO.setDimensionUnitOfMeasure(orderItemDetail.getDimensionUnitOfMeasure().getType());
+            orderItemDetailDTO.setDimensionUnitOfMeasure(orderItemDetail.getDimensionUnitOfMeasure().getType());
         }
 
         //weight
-        orderSkuDTO.setWeight(orderItemDetail.getWeight());
+        orderItemDetailDTO.setWeight(orderItemDetail.getWeight());
         if (orderItemDetail.getWeightUnitOfMeasure() != null) {
-            orderSkuDTO.setWeightUnitOfMeasure(orderItemDetail.getWeightUnitOfMeasure().getType());
+            orderItemDetailDTO.setWeightUnitOfMeasure(orderItemDetail.getWeightUnitOfMeasure().getType());
         }
 
-        return orderSkuDTO;
+        return orderItemDetailDTO;
     }
 
     @Override
     public OrderItem buildOrderItemFromDTO(Order order, OrderItemRequestDTO orderItemRequestDTO) {
-        OrderItemDetail orderItemDetail = buildOrderSkuFromDTO(orderItemRequestDTO.getOrderSkuDTO());
+        OrderItemDetail orderItemDetail = buildOrderItemDetailFromDTO(orderItemRequestDTO.getOrderItemDetailDTO());
 
         OrderItemRequest itemRequest = new OrderItemRequest();
         itemRequest.setSku(orderItemDetail);
@@ -297,35 +297,35 @@ public class OrderItemServiceImpl implements OrderItemService {
         return item;
     }
 
-    protected OrderItemDetail buildOrderSkuFromDTO(OrderSkuDTO orderSkuDTO) {
+    protected OrderItemDetail buildOrderItemDetailFromDTO(OrderItemDetailDTO orderItemDetailDTO) {
         OrderItemDetail orderItemDetail = orderItemDetailService.create();
-        orderItemDetail.setExternalId(orderSkuDTO.getExternalId());
-        orderItemDetail.setName(orderSkuDTO.getName());
+        orderItemDetail.setExternalId(orderItemDetailDTO.getExternalId());
+        orderItemDetail.setName(orderItemDetailDTO.getName());
 
-        if (FulfillmentType.getInstance(orderSkuDTO.getFulfillmentType()) != null) {
-            orderItemDetail.setFulfillmentType(FulfillmentType.getInstance(orderSkuDTO.getFulfillmentType()));
+        if (FulfillmentType.getInstance(orderItemDetailDTO.getFulfillmentType()) != null) {
+            orderItemDetail.setFulfillmentType(FulfillmentType.getInstance(orderItemDetailDTO.getFulfillmentType()));
         }
 
-        orderItemDetail.setTaxable(orderSkuDTO.getTaxable());
-        orderItemDetail.setTaxCode(orderSkuDTO.getTaxCode());
-        orderItemDetail.setRetailPrice(orderSkuDTO.getRetailPrice());
-        orderItemDetail.setSalePrice(orderSkuDTO.getSalePrice());
+        orderItemDetail.setTaxable(orderItemDetailDTO.getTaxable());
+        orderItemDetail.setTaxCode(orderItemDetailDTO.getTaxCode());
+        orderItemDetail.setRetailPrice(orderItemDetailDTO.getRetailPrice());
+        orderItemDetail.setSalePrice(orderItemDetailDTO.getSalePrice());
 
         //dimensions
-        orderItemDetail.setContainer(orderSkuDTO.getContainer());
-        orderItemDetail.setSize(orderSkuDTO.getSize());
-        orderItemDetail.setWidth(orderSkuDTO.getWidth());
-        orderItemDetail.setHeight(orderSkuDTO.getHeight());
-        orderItemDetail.setDepth(orderSkuDTO.getDepth());
-        orderItemDetail.setGirth(orderSkuDTO.getGirth());
-        if (DimensionUnitOfMeasureType.getInstance(orderSkuDTO.getDimensionUnitOfMeasure()) != null) {
-            orderItemDetail.setDimensionUnitOfMeasure(DimensionUnitOfMeasureType.getInstance(orderSkuDTO.getDimensionUnitOfMeasure()));
+        orderItemDetail.setContainer(orderItemDetailDTO.getContainer());
+        orderItemDetail.setSize(orderItemDetailDTO.getSize());
+        orderItemDetail.setWidth(orderItemDetailDTO.getWidth());
+        orderItemDetail.setHeight(orderItemDetailDTO.getHeight());
+        orderItemDetail.setDepth(orderItemDetailDTO.getDepth());
+        orderItemDetail.setGirth(orderItemDetailDTO.getGirth());
+        if (DimensionUnitOfMeasureType.getInstance(orderItemDetailDTO.getDimensionUnitOfMeasure()) != null) {
+            orderItemDetail.setDimensionUnitOfMeasure(DimensionUnitOfMeasureType.getInstance(orderItemDetailDTO.getDimensionUnitOfMeasure()));
         }
 
         //weight
-        orderItemDetail.setWeight(orderSkuDTO.getWeight());
-        if (WeightUnitOfMeasureType.getInstance(orderSkuDTO.getWeightUnitOfMeasure()) != null) {
-            orderItemDetail.setWeightUnitOfMeasure(WeightUnitOfMeasureType.getInstance(orderSkuDTO.getWeightUnitOfMeasure()));
+        orderItemDetail.setWeight(orderItemDetailDTO.getWeight());
+        if (WeightUnitOfMeasureType.getInstance(orderItemDetailDTO.getWeightUnitOfMeasure()) != null) {
+            orderItemDetail.setWeightUnitOfMeasure(WeightUnitOfMeasureType.getInstance(orderItemDetailDTO.getWeightUnitOfMeasure()));
         }
 
         return orderItemDetail;

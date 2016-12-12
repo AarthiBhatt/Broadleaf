@@ -21,7 +21,7 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.service.OrderService;
 
-import com.broadleafcommerce.order.common.dto.OrderSkuDTO;
+import com.broadleafcommerce.order.common.dto.OrderItemDetailDTO;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +49,7 @@ import java.util.Map;
  */
 public class OrderItemRequestDTO {
 
-    private OrderSkuDTO orderSkuDTO;
+    private OrderItemDetailDTO orderItemDetailDTO;
     private Long orderItemId;
     private Integer quantity;
     private Money overrideSalePrice;
@@ -61,17 +61,17 @@ public class OrderItemRequestDTO {
 
     public OrderItemRequestDTO() {}
     
-    public OrderItemRequestDTO(OrderSkuDTO orderSkuDTO, Integer quantity) {
-        setOrderSkuDTO(orderSkuDTO);
+    public OrderItemRequestDTO(OrderItemDetailDTO orderItemDetailDTO, Integer quantity) {
+        setOrderItemDetailDTO(orderItemDetailDTO);
         setQuantity(quantity);
     }
 
-    public OrderSkuDTO getOrderSkuDTO() {
-        return orderSkuDTO;
+    public OrderItemDetailDTO getOrderItemDetailDTO() {
+        return orderItemDetailDTO;
     }
 
-    public OrderItemRequestDTO setOrderSkuDTO(OrderSkuDTO orderSkuDTO) {
-        this.orderSkuDTO = orderSkuDTO;
+    public OrderItemRequestDTO setOrderItemDetailDTO(OrderItemDetailDTO orderItemDetailDTO) {
+        this.orderItemDetailDTO = orderItemDetailDTO;
         return this;
     }
 
