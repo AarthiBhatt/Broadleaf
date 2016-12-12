@@ -54,7 +54,7 @@ public class CheckoutEndpoint extends BaseEndpoint {
         
         try {
             CheckoutResponse response = checkoutService.performCheckout(order);
-            OrderDTO orderDTO = new OrderDTO();
+            OrderDTO orderDTO = (OrderDTO) context.getBean(OrderDTO.class.getName());
             orderDTO.wrapDetails(response.getOrder(), request);
             return new ResponseEntity(orderDTO, HttpStatus.OK);
         } catch (CheckoutException e) {

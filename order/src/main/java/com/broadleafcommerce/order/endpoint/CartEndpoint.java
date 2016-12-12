@@ -72,7 +72,7 @@ public class CartEndpoint extends BaseEndpoint {
         if (order == null) {
             return new ResponseEntity("No order found for customer with id " + id, HttpStatus.NOT_FOUND);
         }
-        OrderDTO response = new OrderDTO();
+        OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
         response.wrapDetails(order, request);
         return new ResponseEntity(response, HttpStatus.OK);
     }
@@ -83,7 +83,7 @@ public class CartEndpoint extends BaseEndpoint {
         if (order == null) {
             return new ResponseEntity("No order exists with id " + id, HttpStatus.NOT_FOUND);
         }
-        OrderDTO response = new OrderDTO();
+        OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
         response.wrapDetails(order, request);
         return new ResponseEntity(response, HttpStatus.OK);
     }
@@ -98,7 +98,7 @@ public class CartEndpoint extends BaseEndpoint {
         if (order == null) {
             return new ResponseEntity("An error occurred creating the cart for customer " + customerId, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        OrderDTO response = new OrderDTO();
+        OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
         response.wrapDetails(order, request);
         return new ResponseEntity(response, HttpStatus.OK);
     }
@@ -106,7 +106,7 @@ public class CartEndpoint extends BaseEndpoint {
     @RequestMapping(path = "/{id}/add", method = RequestMethod.POST)
     public ResponseEntity addItemToOrder(HttpServletRequest request, @PathVariable Long id, @RequestBody OrderItemRequestDTO dto) {
         try {
-            OrderDTO response = new OrderDTO();
+            OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
             response.wrapDetails(orderService.addItem(id, dto, true), request);
             return new ResponseEntity(response, HttpStatus.OK);
         } catch (AddToCartException e) {
@@ -117,7 +117,7 @@ public class CartEndpoint extends BaseEndpoint {
     @RequestMapping(path = "/{orderId}/remove/{itemId}", method = RequestMethod.POST)
     public ResponseEntity removeItemFromOrder(HttpServletRequest request, @PathVariable("orderId") Long orderId, @PathVariable("itemId") Long orderItemId) {
         try {
-            OrderDTO response = new OrderDTO();
+            OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
             response.wrapDetails(orderService.removeItem(orderId, orderItemId, true), request);
             return new ResponseEntity(response, HttpStatus.OK);
         } catch (RemoveFromCartException e) {
@@ -128,7 +128,7 @@ public class CartEndpoint extends BaseEndpoint {
     @RequestMapping(path = "/{orderId}/update", method = RequestMethod.POST)
     public ResponseEntity updateItemOnOrder(HttpServletRequest request, @PathVariable("orderId") Long orderId, @RequestBody OrderItemRequestDTO dto) {
         try {
-            OrderDTO response = new OrderDTO();
+            OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
             response.wrapDetails(orderService.updateItemQuantity(orderId, dto, true), request);
             return new ResponseEntity(response, HttpStatus.OK);
         } catch (UpdateCartException | RemoveFromCartException e) {
@@ -147,7 +147,7 @@ public class CartEndpoint extends BaseEndpoint {
             return new ResponseEntity("No offerCode exists for offer code " + promoCode, HttpStatus.BAD_REQUEST);
         }
         try {
-            OrderDTO response = new OrderDTO();
+            OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
             response.wrapDetails(orderService.addOfferCode(order, offerCode, true), request);
             return new ResponseEntity(response, HttpStatus.OK);
         } catch (OfferException | PricingException e) {
@@ -166,7 +166,7 @@ public class CartEndpoint extends BaseEndpoint {
             return new ResponseEntity("No offerCode exists for offer code " + promoCode, HttpStatus.BAD_REQUEST);
         }
         try {
-            OrderDTO response = new OrderDTO();
+            OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
             response.wrapDetails(orderService.removeOfferCode(order, offerCode, true), request);
             return new ResponseEntity(response, HttpStatus.OK);
         } catch (PricingException e) {
