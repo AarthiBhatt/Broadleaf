@@ -17,8 +17,21 @@
  */
 package com.broadleafcommerce.order.common;
 
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.Scope;
+
+import com.broadleafcommerce.order.common.dto.OfferCodeDTO;
+import com.broadleafcommerce.order.common.dto.OfferDTO;
+import com.broadleafcommerce.order.common.dto.OrderAddressDTO;
+import com.broadleafcommerce.order.common.dto.OrderCustomerDTO;
+import com.broadleafcommerce.order.common.dto.OrderDTO;
+import com.broadleafcommerce.order.common.dto.OrderItemDTO;
+import com.broadleafcommerce.order.common.dto.OrderItemDetailDTO;
+import com.broadleafcommerce.order.common.dto.OrderPaymentDTO;
+import com.broadleafcommerce.order.common.dto.PaymentTransactionDTO;
 
 /**
  * Created by brandon on 12/9/16.
@@ -31,4 +44,58 @@ import org.springframework.context.annotation.ImportResource;
         "classpath:/bl-order-applicationContext-workflow.xml"
 })
 public class OrderAutoConfiguration {
+    
+    @Bean(name = "com.broadleafcommerce.order.common.dto.OfferCodeDTO")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public OfferCodeDTO offerCodeDtoPrototype() {
+        return new OfferCodeDTO();
+    }
+    
+    @Bean(name = "com.broadleafcommerce.order.common.dto.OfferDTO")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public OfferDTO offerDtoPrototype() {
+        return new OfferDTO();
+    }
+    
+    @Bean(name = "com.broadleafcommerce.order.common.dto.OrderAddressDTO")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public OrderAddressDTO orderAddressDtoPrototype() {
+        return new OrderAddressDTO();
+    }
+    
+    @Bean(name = "com.broadleafcommerce.order.common.dto.OrderCustomerDTO")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public OrderCustomerDTO orderCustomerDtoPrototype() {
+        return new OrderCustomerDTO();
+    }
+    
+    @Bean(name = "com.broadleafcommerce.order.common.dto.OrderDTO")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public OrderDTO orderDtoPrototype() {
+        return new OrderDTO();
+    }
+    
+    @Bean(name = "com.broadleafcommerce.order.common.dto.OrderItemDetailDTO")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public OrderItemDetailDTO orderItemDetailDtoPrototype() {
+        return new OrderItemDetailDTO();
+    }
+    
+    @Bean(name = "com.broadleafcommerce.order.common.dto.OrderItemDTO")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public OrderItemDTO orderItemDtoPrototype() {
+        return new OrderItemDTO();
+    }
+    
+    @Bean(name = "com.broadleafcommerce.order.common.dto.OrderPaymentDTO")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public OrderPaymentDTO orderPaymentDtoPrototype() {
+        return new OrderPaymentDTO();
+    }
+    
+    @Bean(name = "com.broadleafcommerce.order.common.dto.PaymentTransactionDTO")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public PaymentTransactionDTO paymentTransactionDtoPrototype() {
+        return new PaymentTransactionDTO();
+    }
 }
