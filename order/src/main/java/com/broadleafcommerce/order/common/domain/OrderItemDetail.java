@@ -95,7 +95,7 @@ public interface OrderItemDetail {
 
     public void setWeightUnitOfMeasure(WeightUnitOfMeasureType weightUnitOfMeasure);
 
-    public String getSkuAttributesJson();
+    public String getItemDetailAttributesJson();
 
-    public void setSkuAttributesJson(String skuAttributesJson);
+    public void setItemDetailAttributesJson(String skuAttributesJson);
 }

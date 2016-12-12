@@ -123,7 +123,7 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                     //If this item has a Sku associated with it which also has a flat rate for this fulfillment option, don't add it to the price
                     //or weight total but instead tack it onto the final rate
                     boolean addToTotal = true;
-                    OrderItemDetail sku = fulfillmentGroupItem.getOrderItem().getOrderItemDetail();
+                    OrderItemDetail orderItemDetail = fulfillmentGroupItem.getOrderItem().getOrderItemDetail();
 
                     if (addToTotal) {
                         foundCandidateForBand = true;
@@ -133,8 +133,8 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                         }
                         retailTotal = retailTotal.add(price);
                         
-                        if (sku != null && sku.getWeight() != null) {
-                            BigDecimal convertedWeight = convertWeight(sku.getWeight(), sku.getWeightUnitOfMeasure()).multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
+                        if (orderItemDetail != null && orderItemDetail.getWeight() != null) {
+                            BigDecimal convertedWeight = convertWeight(orderItemDetail.getWeight(), orderItemDetail.getWeightUnitOfMeasure()).multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
                             weightTotal = weightTotal.add(convertedWeight);
                         }
                     }

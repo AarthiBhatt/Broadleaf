@@ -101,13 +101,13 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public OrderItem createOrderItem(final OrderItemRequest itemRequest) {
         final OrderItem item = orderItemDao.create(OrderItemType.BASIC);
-        item.setName(itemRequest.getSku().getName());
+        item.setName(itemRequest.getOrderItemDetail().getName());
         item.setQuantity(itemRequest.getQuantity());
         item.setOrder(itemRequest.getOrder());
-        item.setOrderItemDetail(itemRequest.getSku());
+        item.setOrderItemDetail(itemRequest.getOrderItemDetail());
 
-        item.setSalePrice(itemRequest.getSku().getSalePrice());
-        item.setRetailPrice(itemRequest.getSku().getRetailPrice());
+        item.setSalePrice(itemRequest.getOrderItemDetail().getSalePrice());
+        item.setRetailPrice(itemRequest.getOrderItemDetail().getRetailPrice());
 
         if (itemRequest.getSalePriceOverride() != null) {
             item.setSalePriceOverride(Boolean.TRUE);
@@ -130,7 +130,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     public OrderItem updateOrderItem(OrderItem item, final OrderItemRequest itemRequest) {
-        item.setOrderItemDetail(itemRequest.getSku());
+        item.setOrderItemDetail(itemRequest.getOrderItemDetail());
         populateProductOptionAttributes(item, itemRequest.getItemAttributes());
         applyAdditionalOrderItemProperties(item);
         return item;
@@ -177,11 +177,11 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public GiftWrapOrderItem createGiftWrapOrderItem(final GiftWrapOrderItemRequest itemRequest) {
         final GiftWrapOrderItem item = (GiftWrapOrderItem) orderItemDao.create(OrderItemType.GIFTWRAP);
-        item.setOrderItemDetail(itemRequest.getSku());
+        item.setOrderItemDetail(itemRequest.getOrderItemDetail());
         item.setOrder(itemRequest.getOrder());
         item.setQuantity(itemRequest.getQuantity());
-        item.setSalePrice(itemRequest.getSku().getSalePrice());
-        item.setRetailPrice(itemRequest.getSku().getRetailPrice());
+        item.setSalePrice(itemRequest.getOrderItemDetail().getSalePrice());
+        item.setRetailPrice(itemRequest.getOrderItemDetail().getRetailPrice());
 
         if (itemRequest.getSalePriceOverride() != null) {
             item.setSalePriceOverride(Boolean.TRUE);
@@ -264,7 +264,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         OrderItemDetail orderItemDetail = buildOrderItemDetailFromDTO(orderItemRequestDTO.getOrderItemDetailDTO());
 
         OrderItemRequest itemRequest = new OrderItemRequest();
-        itemRequest.setSku(orderItemDetail);
+        itemRequest.setOrderItemDetail(orderItemDetail);
         itemRequest.setQuantity(orderItemRequestDTO.getQuantity());
         itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
         itemRequest.setOrder(order);

@@ -45,7 +45,7 @@ public class OrderItemDetailDTO implements Serializable {
     protected String dimensionUnitOfMeasure;
     protected BigDecimal weight;
     protected String weightUnitOfMeasure;
-    protected String skuAttributesJson;
+    protected String itemDetailAttributesJson;
 
     public boolean hasRetailPrice() {
         return getRetailPrice() != null;

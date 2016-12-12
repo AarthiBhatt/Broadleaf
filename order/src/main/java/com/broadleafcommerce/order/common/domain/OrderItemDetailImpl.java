@@ -44,7 +44,7 @@ import javax.persistence.Table;
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ORDER_SKU")
+@Table(name = "BLC_ORDER_ITEM_DETAIL")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 public class OrderItemDetailImpl implements OrderItemDetail {
 
@@ -62,7 +62,7 @@ public class OrderItemDetailImpl implements OrderItemDetail {
     protected Long id;
 
     @Column(name = "EXTERNAL_ID")
-    @Index(name="ORDER_SKU_EXTERNAL_ID_INDEX", columnNames={"EXTERNAL_ID"})
+    @Index(name="ITEM_DETAIL_EXTERNAL_ID_INDEX", columnNames={"EXTERNAL_ID"})
     protected Long externalId;
 
     @Column(name = "NAME")
@@ -113,8 +113,8 @@ public class OrderItemDetailImpl implements OrderItemDetail {
     protected String weightUnitOfMeasure;
 
     @Lob
-    @Column(name = "SKU_ATTRIBUTES_JSON", length = Integer.MAX_VALUE - 1)
-    protected String skuAttributesJson;
+    @Column(name = "ITEM_DETAIL_ATTRIBUTES_JSON", length = Integer.MAX_VALUE - 1)
+    protected String itemDetailAttributesJson;
 
     @Override
     public Long getId() { return id; }
@@ -281,12 +281,12 @@ public class OrderItemDetailImpl implements OrderItemDetail {
     }
 
     @Override
-    public String getSkuAttributesJson() {
-        return skuAttributesJson;
+    public String getItemDetailAttributesJson() {
+        return itemDetailAttributesJson;
     }
 
     @Override
-    public void setSkuAttributesJson(String skuAttributesJson) {
-        this.skuAttributesJson = skuAttributesJson;
+    public void setItemDetailAttributesJson(String skuAttributesJson) {
+        this.itemDetailAttributesJson = skuAttributesJson;
     }
 }
