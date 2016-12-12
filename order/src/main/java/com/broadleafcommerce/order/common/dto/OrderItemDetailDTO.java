@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
-public class OrderSkuDTO implements Serializable {
+public class OrderItemDetailDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
