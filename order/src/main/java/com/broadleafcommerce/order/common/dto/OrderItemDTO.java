@@ -18,7 +18,10 @@ public class OrderItemDTO extends BaseWrapper implements APIWrapper<OrderItem> {
     
     @JsonProperty("id")
     protected Long id;
-    
+
+    @JsonProperty("itemDetail")
+    protected OrderItemDetailDTO orderItemDetailDTO;
+
     @JsonProperty("quantity")
     protected int quantity;
     
@@ -50,6 +53,11 @@ public class OrderItemDTO extends BaseWrapper implements APIWrapper<OrderItem> {
         this.itemTaxable = item.getIsDiscounted();
         this.retailPriceOverride = item.isRetailPriceOverride();
         this.salePriceOverride = item.isSalePriceOverride();
+
+        if (item.getOrderItemDetail() != null) {
+            this.orderItemDetailDTO = new OrderItemDetailDTO();
+            this.orderItemDetailDTO.wrapDetails(item.getOrderItemDetail(), request);
+        }
     }
 
     @Override
