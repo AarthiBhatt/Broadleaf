@@ -1,28 +1,47 @@
 package com.broadleafcommerce.order.common.dto;
 
+import org.broadleafcommerce.common.api.APIWrapper;
+import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.servlet.http.HttpServletRequest;
 
 import lombok.Data;
-import lombok.NonNull;
 
 @Data
-public class OrderItemDTO implements Serializable {
+public class OrderItemDTO extends BaseWrapper implements APIWrapper<OrderItem> {
 
     private static final long serialVersionUID = 1L;
     
-    public Long id;
-    public int quantity;
-    public Money retailPrice;
-    public Money salePrice;
-    public String name;
-    public Boolean itemTaxable;
-    public Boolean retailPriceOverride;
-    public Boolean salePriceOverride;
+    @JsonProperty("id")
+    protected Long id;
     
-    public OrderItemDTO(@NonNull OrderItem item) {
+    @JsonProperty("quantity")
+    protected int quantity;
+    
+    @JsonProperty("retailPrice")
+    protected Money retailPrice;
+    
+    @JsonProperty("salePrice")
+    protected Money salePrice;
+    
+    @JsonProperty("name")
+    protected String name;
+    
+    @JsonProperty("itemTaxable")
+    protected Boolean itemTaxable;
+    
+    @JsonProperty("hasRetailPriceOverride")
+    protected Boolean retailPriceOverride;
+    
+    @JsonProperty("hasSalePriceOverride")
+    protected Boolean salePriceOverride;
+
+    @Override
+    public void wrapDetails(OrderItem item, HttpServletRequest request) {
         this.id = item.getId();
         this.quantity = item.getQuantity();
         this.retailPrice = item.getRetailPrice();
@@ -31,5 +50,10 @@ public class OrderItemDTO implements Serializable {
         this.itemTaxable = item.getIsDiscounted();
         this.retailPriceOverride = item.isRetailPriceOverride();
         this.salePriceOverride = item.isSalePriceOverride();
+    }
+
+    @Override
+    public void wrapSummary(OrderItem item, HttpServletRequest request) {
+        wrapDetails(item, request);
     }
 }
