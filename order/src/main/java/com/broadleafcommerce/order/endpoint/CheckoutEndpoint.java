@@ -36,7 +36,9 @@ public class CheckoutEndpoint {
         
         try {
             CheckoutResponse response = checkoutService.performCheckout(order);
-            return new ResponseEntity(new OrderDTO(response.getOrder()), HttpStatus.OK);
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.wrapDetails(response.getOrder(), request);
+            return new ResponseEntity(orderDTO, HttpStatus.OK);
         } catch (CheckoutException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
