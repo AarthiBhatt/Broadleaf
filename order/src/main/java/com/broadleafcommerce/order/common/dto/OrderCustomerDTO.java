@@ -17,33 +17,68 @@
  */
 package com.broadleafcommerce.order.common.dto;
 
-import com.broadleafcommerce.order.common.domain.OrderCustomer;
+import org.broadleafcommerce.common.api.APIUnwrapper;
+import org.broadleafcommerce.common.api.APIWrapper;
+import org.broadleafcommerce.common.api.BaseWrapper;
+import org.springframework.context.ApplicationContext;
 
-import java.io.Serializable;
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
+import com.broadleafcommerce.order.common.service.OrderCustomerService;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.servlet.http.HttpServletRequest;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 /**
  * Created by brandon on 12/6/16.
  */
 @Data
-@NoArgsConstructor
-public class OrderCustomerDTO implements Serializable {
+public class OrderCustomerDTO extends BaseWrapper implements APIWrapper<OrderCustomer>, APIUnwrapper<OrderCustomer> {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonProperty("id")
     protected Long id;
+    
+    @JsonProperty("externalId")
     protected Long externalId;
+    
+    @JsonProperty("firstName")
     protected String firstName;
+    
+    @JsonProperty("lastName")
     protected String lastName;
+    
+    @JsonProperty("emailAddress")
     protected String emailAddress;
+    
+    @JsonProperty("taxExempt")
     protected Boolean isTaxExempt = false;
+    
+    @JsonProperty("taxExemptionCode")
     protected String taxExemptionCode;
+    
+    @JsonProperty("customerAttributesJson")
     protected String customerAttributesJson;
     
-    public OrderCustomerDTO(@NonNull OrderCustomer customer) {
+    @Override
+    public OrderCustomer unwrap(HttpServletRequest request, ApplicationContext context) {
+        OrderCustomerService customerService = (OrderCustomerService) context.getBean("blOrderCustomerService");
+        OrderCustomer customer = customerService.create();
+        customer.setId(this.getId());
+        customer.setExternalId(this.getExternalId());
+        customer.setFirstName(this.getFirstName());
+        customer.setLastName(this.getLastName());
+        customer.setEmailAddress(this.getEmailAddress());
+        customer.setCustomerAttributesJson(this.getCustomerAttributesJson());
+        customer.setTaxExempt(this.getIsTaxExempt());
+        customer.setTaxExemptionCode(this.getTaxExemptionCode());
+        return customer;
+    }
+
+    @Override
+    public void wrapDetails(OrderCustomer customer, HttpServletRequest request) {
         this.id = customer.getId();
         this.externalId = customer.getExternalId();
         this.firstName = customer.getFirstName();
@@ -52,6 +87,11 @@ public class OrderCustomerDTO implements Serializable {
         this.isTaxExempt = customer.getTaxExempt();
         this.taxExemptionCode = customer.getTaxExemptionCode();
         this.customerAttributesJson = customer.getCustomerAttributesJson();
+    }
+
+    @Override
+    public void wrapSummary(OrderCustomer customer, HttpServletRequest request) {
+        wrapDetails(customer, request);
     }
 
 }

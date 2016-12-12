@@ -1,29 +1,48 @@
 package com.broadleafcommerce.order.common.dto;
 
+import org.broadleafcommerce.common.api.APIWrapper;
+import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.core.offer.domain.Offer;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
+import javax.servlet.http.HttpServletRequest;
+
 import lombok.Data;
-import lombok.NonNull;
 
 @Data
-public class OfferDTO implements Serializable {
+public class OfferDTO  extends BaseWrapper implements APIWrapper<Offer> {
 
     private static final long serialVersionUID = 1L;
     
-    public Long id;
-    public String name;
-    public String description;
-    public String marketingMessage;
-    public BigDecimal value;
+    @JsonProperty("id")
+    protected Long id;
     
-    public OfferDTO(@NonNull Offer offer) {
-        this.id = offer.getId();
-        this.name = offer.getName();
-        this.description = offer.getDescription();
-        this.marketingMessage = offer.getMarketingMessage();
-        this.value = offer.getValue();
+    @JsonProperty("name")
+    protected String name;
+    
+    @JsonProperty("description")
+    protected String description;
+    
+    @JsonProperty("marketingMessage")
+    protected String marketingMessage;
+    
+    @JsonProperty("value")
+    protected BigDecimal value;
+    
+    @Override
+    public void wrapDetails(Offer model, HttpServletRequest request) {
+        this.id = model.getId();
+        this.name = model.getName();
+        this.description = model.getDescription();
+        this.marketingMessage = model.getMarketingMessage();
+        this.value = model.getValue();
+    }
+
+    @Override
+    public void wrapSummary(Offer model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }
