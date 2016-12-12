@@ -39,7 +39,7 @@ import java.util.Map;
  */
 public class OrderItemRequest {
 
-    protected OrderItemDetail sku;
+    protected OrderItemDetail orderItemDetail;
     protected Order order;
     protected int quantity;
     protected Money salePriceOverride;
@@ -48,12 +48,12 @@ public class OrderItemRequest {
     protected Map<String,String> itemAttributes = new HashMap<String,String>();
     protected Map<String,String> additionalAttributes = new HashMap<String,String>();
 
-    public OrderItemDetail getSku() {
-        return sku;
+    public OrderItemDetail getOrderItemDetail() {
+        return orderItemDetail;
     }
 
-    public void setSku(OrderItemDetail sku) {
-        this.sku = sku;
+    public void setOrderItemDetail(OrderItemDetail orderItemDetail) {
+        this.orderItemDetail = orderItemDetail;
     }
 
     public void setOrder(Order order) {
@@ -109,7 +109,7 @@ public class OrderItemRequest {
         newRequest.setAdditionalAttributes(additionalAttributes);
         newRequest.setPersonalMessage(personalMessage);
         newRequest.setQuantity(quantity);
-        newRequest.setSku(sku);
+        newRequest.setOrderItemDetail(orderItemDetail);
         newRequest.setOrder(order);
         newRequest.setSalePriceOverride(salePriceOverride);
         newRequest.setRetailPriceOverride(retailPriceOverride);
@@ -126,7 +126,7 @@ public class OrderItemRequest {
         if (quantity != that.quantity) return false;
         if (salePriceOverride != null ? !salePriceOverride.equals(that.salePriceOverride) : that.salePriceOverride != null)
             return false;
-        if (sku != null ? !sku.equals(that.sku) : that.sku != null) return false;
+        if (orderItemDetail != null ? !orderItemDetail.equals(that.orderItemDetail) : that.orderItemDetail != null) return false;
         if (order != null ? !order.equals(that.order) : that.order != null) return false;
 
         return true;
@@ -134,7 +134,7 @@ public class OrderItemRequest {
 
     @Override
     public int hashCode() {
-        int result = sku != null ? sku.hashCode() : 0;
+        int result = orderItemDetail != null ? orderItemDetail.hashCode() : 0;
         result = 31 * result + (order != null ? order.hashCode() : 0);
         result = 31 * result + quantity;
         result = 31 * result + (salePriceOverride != null ? salePriceOverride.hashCode() : 0);

@@ -316,10 +316,10 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      * The equality of the SKUs is based on the .equals() method in SkuImpl. This includes checking the
      * {@link DiscreteOrderItem}s from {link {@link BundleOrderItem#getDiscreteOrderItems()}
      * 
-     * @param sku The sku to check for
+     * @param orderItemDetail The detail with a sku to check for
      * @return whether or not the given SKU exists in the cart
      */
-    boolean containsSku(OrderItemDetail sku);
+    boolean containsSku(OrderItemDetail orderItemDetail);
 
     List<OfferCode> getAddedOfferCodes();
 

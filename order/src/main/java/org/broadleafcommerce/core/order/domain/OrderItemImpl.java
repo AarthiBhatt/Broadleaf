@@ -153,7 +153,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @ManyToOne(targetEntity = OrderItemDetailImpl.class, optional=false, cascade = {CascadeType.ALL})
     @JoinColumn(name = "ORDER_ITEM_DETAIL_ID", nullable = false)
     @Index(name="ORDER_ITEM_DETAIL_INDEX", columnNames={"OORDER_ITEM_DETAIL_ID"})
-    @AdminPresentation(friendlyName = "OrderItemImpl_Sku", order= OrderItemImpl.Presentation.FieldOrder.SKU,
+    @AdminPresentation(friendlyName = "OrderItemImpl_orderItemDetail", order= OrderItemImpl.Presentation.FieldOrder.ITEMDETAILS,
             group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
     protected OrderItemDetail orderItemDetail;
@@ -1039,7 +1039,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             public static final int PRICEDETAILS = 1000;
             public static final int ADJUSTMENTS = 2000;
             public static final int DISCOUNTALLOWED = 3000;
-            public static final int SKU = 3000;
+            public static final int ITEMDETAILS = 3000;
         }
     }
 

@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public interface PromotionMessageGenerator {
     
-    Map<String, List<PromotionMessageDTO>> generatePromotionMessages(OrderItemDetail sku);
+    Map<String, List<PromotionMessageDTO>> generatePromotionMessages(OrderItemDetail orderItemDetail);
 
     List<String> generatePromotionMessages(OrderItem orderItem);
 
