@@ -19,32 +19,74 @@ package com.broadleafcommerce.order.common.dto;
 
 import lombok.Data;
 
+import org.broadleafcommerce.common.api.APIWrapper;
+import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.common.money.Money;
 
-import java.io.Serializable;
+import com.broadleafcommerce.order.common.domain.OrderItemDetail;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Data
-public class OrderItemDetailDTO implements Serializable {
+public class OrderItemDetailDTO extends BaseWrapper implements APIWrapper<OrderItemDetail> {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonProperty("id")
+    protected Long id;
+
+    @JsonProperty("externalId")
     protected Long externalId;
+
+    @JsonProperty("name")
     protected String name;
+
+    @JsonProperty("salePrice")
     protected Money salePrice;
+
+    @JsonProperty("retailPrice")
     protected Money retailPrice;
+
+    @JsonProperty("taxable")
     protected Boolean taxable;
+
+    @JsonProperty("taxCode")
     protected String taxCode;
+
+    @JsonProperty("fulfillmentType")
     protected String fulfillmentType;
+
+    @JsonProperty("width")
     protected BigDecimal width;
+
+    @JsonProperty("height")
     protected BigDecimal height;
+
+    @JsonProperty("depth")
     protected BigDecimal depth;
+
+    @JsonProperty("girth")
     protected BigDecimal girth;
+
+    @JsonProperty("size")
     protected String size;
+
+    @JsonProperty("container")
     protected String container;
+
+    @JsonProperty("dimensionUnitOfMeasure")
     protected String dimensionUnitOfMeasure;
+
+    @JsonProperty("weight")
     protected BigDecimal weight;
+
+    @JsonProperty("weightUnitOfMeasure")
     protected String weightUnitOfMeasure;
+
+    @JsonProperty("itemDetailAttributes")
     protected String itemDetailAttributesJson;
 
     public boolean hasRetailPrice() {
@@ -53,5 +95,44 @@ public class OrderItemDetailDTO implements Serializable {
 
     public boolean hasSalePrice() {
         return getSalePrice() != null;
+    }
+
+    @Override
+    public void wrapDetails(OrderItemDetail orderItemDetail, HttpServletRequest request) {
+        this.id = orderItemDetail.getId();
+        this.externalId = orderItemDetail.getExternalId();
+        this.name = orderItemDetail.getName();
+        this.salePrice = orderItemDetail.getSalePrice();
+        this.retailPrice = orderItemDetail.getRetailPrice();
+        this.taxable = orderItemDetail.getTaxable();
+        this.taxCode = orderItemDetail.getTaxCode();
+
+        if (orderItemDetail.getFulfillmentType() != null) {
+            this.fulfillmentType = orderItemDetail.getFulfillmentType().getType();
+        }
+
+        this.width = orderItemDetail.getWidth();
+        this.height = orderItemDetail.getHeight();
+        this.depth = orderItemDetail.getDepth();
+        this.girth = orderItemDetail.getGirth();
+        this.size = orderItemDetail.getSize();
+        this.container = orderItemDetail.getContainer();
+
+        if (orderItemDetail.getDimensionUnitOfMeasure() != null) {
+            this.dimensionUnitOfMeasure = orderItemDetail.getDimensionUnitOfMeasure().getType();
+        }
+
+        this.weight = orderItemDetail.getWeight();
+
+        if (orderItemDetail.getWeightUnitOfMeasure() != null) {
+            this.weightUnitOfMeasure = orderItemDetail.getWeightUnitOfMeasure().getType();
+        }
+
+        this.itemDetailAttributesJson = orderItemDetail.getItemDetailAttributesJson();
+    }
+
+    @Override
+    public void wrapSummary(OrderItemDetail orderItemDetail, HttpServletRequest request) {
+        wrapDetails(orderItemDetail, request);
     }
 }
