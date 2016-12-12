@@ -212,7 +212,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     public OrderItemRequestDTO buildOrderItemRequestDTOFromOrderItem(OrderItem item) {
         OrderItemRequestDTO orderItemRequest = new OrderItemRequestDTO();
 
-        orderItemRequest.setOrderItemDetailDTO(buildOrderItemDetailDTOFromDetail(item.getOrderItemDetail()));
+        orderItemRequest.setOrderItemDetail(buildOrderItemDetailDTOFromDetail(item.getOrderItemDetail()));
         orderItemRequest.setQuantity(item.getQuantity());
         if (item.getOrderItemAttributes() != null) {
             for (Entry<String, OrderItemAttribute> entry : item.getOrderItemAttributes().entrySet()) {
@@ -261,7 +261,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     public OrderItem buildOrderItemFromDTO(Order order, OrderItemRequestDTO orderItemRequestDTO) {
-        OrderItemDetail orderItemDetail = buildOrderItemDetailFromDTO(orderItemRequestDTO.getOrderItemDetailDTO());
+        OrderItemDetail orderItemDetail = buildOrderItemDetailFromDTO(orderItemRequestDTO.getOrderItemDetail());
 
         OrderItemRequest itemRequest = new OrderItemRequest();
         itemRequest.setOrderItemDetail(orderItemDetail);

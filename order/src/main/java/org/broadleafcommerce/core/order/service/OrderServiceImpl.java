@@ -824,8 +824,8 @@ public class OrderServiceImpl implements OrderService {
             return null;
         }
         for (OrderItem currentItem : order.getOrderItems()) {
-            if (currentItem.getOrderItemDetail() != null && itemToFind.getOrderItemDetailDTO() != null) {
-                if (currentItem.getOrderItemDetail().getExternalId().equals(itemToFind.getOrderItemDetailDTO().getExternalId())) {
+            if (currentItem.getOrderItemDetail() != null && itemToFind.getOrderItemDetail() != null) {
+                if (currentItem.getOrderItemDetail().getExternalId().equals(itemToFind.getOrderItemDetail().getExternalId())) {
                     return currentItem;
                 }
             }
