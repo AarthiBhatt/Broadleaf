@@ -17,17 +17,17 @@
  */
 package com.broadleafcommerce.order.common.dao;
 
-import com.broadleafcommerce.order.common.domain.OrderSku;
+import com.broadleafcommerce.order.common.domain.OrderItemDetail;
 
 /**
  * Created by brandon on 12/7/16.
  */
 public interface OrderSkuDao {
-    public OrderSku save(OrderSku orderSku);
+    public OrderItemDetail save(OrderItemDetail orderItemDetail);
 
-    public OrderSku readOrderSkuById(Long orderSkuId);
+    public OrderItemDetail readOrderSkuById(Long orderSkuId);
 
-    public OrderSku create();
+    public OrderItemDetail create();
 
-    public void delete(OrderSku orderSku);
+    public void delete(OrderItemDetail orderItemDetail);
 }

@@ -20,8 +20,8 @@ package com.broadleafcommerce.order.common.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-import com.broadleafcommerce.order.common.domain.OrderSku;
-import com.broadleafcommerce.order.common.domain.OrderSkuImpl;
+import com.broadleafcommerce.order.common.domain.OrderItemDetail;
+import com.broadleafcommerce.order.common.domain.OrderItemDetailImpl;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -39,22 +39,22 @@ public class OrderSkuDaoImpl implements OrderSkuDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    public OrderSku save(OrderSku orderSku) {
-        return em.merge(orderSku);
+    public OrderItemDetail save(OrderItemDetail orderItemDetail) {
+        return em.merge(orderItemDetail);
     }
 
-    public OrderSku readOrderSkuById(Long orderSkuId) {
-        return (OrderSku) em.find(OrderSkuImpl.class, orderSkuId);
+    public OrderItemDetail readOrderSkuById(Long orderSkuId) {
+        return (OrderItemDetail) em.find(OrderItemDetailImpl.class, orderSkuId);
     }
 
-    public OrderSku create() {
-        return (OrderSku) entityConfiguration.createEntityInstance(OrderSku.class.getName());
+    public OrderItemDetail create() {
+        return (OrderItemDetail) entityConfiguration.createEntityInstance(OrderItemDetail.class.getName());
     }
 
-    public void delete(OrderSku orderSku) {
-        if (!em.contains(orderSku)) {
-            orderSku = readOrderSkuById(orderSku.getId());
+    public void delete(OrderItemDetail orderItemDetail) {
+        if (!em.contains(orderItemDetail)) {
+            orderItemDetail = readOrderSkuById(orderItemDetail.getId());
         }
-        em.remove(orderSku);
+        em.remove(orderItemDetail);
     }
 }
