@@ -1,5 +1,6 @@
 package com.broadleafcommerce.order.endpoint;
 
+import org.broadleafcommerce.common.api.BaseEndpoint;
 import org.broadleafcommerce.common.controller.FrameworkRestController;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
@@ -19,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @FrameworkRestController(@RequestMapping(path = "/checkout"))
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class CheckoutEndpoint {
+public class CheckoutEndpoint extends BaseEndpoint {
 
     @Resource(name = "blCheckoutService")
     protected CheckoutService checkoutService;
