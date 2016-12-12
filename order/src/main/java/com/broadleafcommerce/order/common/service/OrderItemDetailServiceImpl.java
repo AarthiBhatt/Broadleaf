@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.broadleafcommerce.order.common.dao.OrderSkuDao;
-import com.broadleafcommerce.order.common.domain.OrderSku;
+import com.broadleafcommerce.order.common.domain.OrderItemDetail;
 
 import javax.annotation.Resource;
 
@@ -37,23 +37,23 @@ public class OrderSkuServiceImpl implements OrderSkuService {
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
-    public OrderSku saveOrderSku(OrderSku orderSku) {
-        return orderSkuDao.save(orderSku);
+    public OrderItemDetail saveOrderItemDetail(OrderItemDetail orderItemDetail) {
+        return orderSkuDao.save(orderItemDetail);
     }
 
     @Override
-    public OrderSku readOrderSkuById(Long orderSkuId) {
-        return orderSkuDao.readOrderSkuById(orderSkuId);
+    public OrderItemDetail readOrderItemDetailById(Long orderItemDetailId) {
+        return orderSkuDao.readOrderSkuById(orderItemDetailId);
     }
 
     @Override
-    public OrderSku create() {
+    public OrderItemDetail create() {
         return orderSkuDao.create();
     }
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
-    public void delete(OrderSku orderSku) {
-        orderSkuDao.delete(orderSku);
+    public void delete(OrderItemDetail orderItemDetail) {
+        orderSkuDao.delete(orderItemDetail);
     }
 }

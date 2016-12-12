@@ -17,19 +17,19 @@
  */
 package com.broadleafcommerce.order.common.service;
 
-import com.broadleafcommerce.order.common.domain.OrderSku;
+import com.broadleafcommerce.order.common.domain.OrderItemDetail;
 
 /**
  * Created by brandon on 12/7/16.
  */
 public interface OrderSkuService {
 
-    public OrderSku saveOrderSku(OrderSku orderSku);
+    public OrderItemDetail saveOrderItemDetail(OrderItemDetail orderItemDetail);
 
-    public OrderSku readOrderSkuById(Long orderSkuId);
+    public OrderItemDetail readOrderItemDetailById(Long orderItemDetailId);
 
-    public OrderSku create();
+    public OrderItemDetail create();
 
-    public void delete(OrderSku orderSku);
+    public void delete(OrderItemDetail orderItemDetail);
 
 }
