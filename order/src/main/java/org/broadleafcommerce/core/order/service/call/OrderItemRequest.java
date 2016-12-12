@@ -21,7 +21,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 
-import com.broadleafcommerce.order.common.domain.OrderSku;
+import com.broadleafcommerce.order.common.domain.OrderItemDetail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +39,7 @@ import java.util.Map;
  */
 public class OrderItemRequest {
 
-    protected OrderSku sku;
+    protected OrderItemDetail sku;
     protected Order order;
     protected int quantity;
     protected Money salePriceOverride;
@@ -48,11 +48,11 @@ public class OrderItemRequest {
     protected Map<String,String> itemAttributes = new HashMap<String,String>();
     protected Map<String,String> additionalAttributes = new HashMap<String,String>();
 
-    public OrderSku getSku() {
+    public OrderItemDetail getSku() {
         return sku;
     }
 
-    public void setSku(OrderSku sku) {
+    public void setSku(OrderItemDetail sku) {
         this.sku = sku;
     }
 

@@ -30,8 +30,8 @@ import javax.persistence.PersistenceContext;
 /**
  * Created by brandon on 12/7/16.
  */
-@Repository("blOrderSkuDao")
-public class OrderSkuDaoImpl implements OrderSkuDao {
+@Repository("blOrderItemDetailDao")
+public class OrderItemDetailDaoImpl implements OrderItemDetailDao {
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
@@ -43,8 +43,8 @@ public class OrderSkuDaoImpl implements OrderSkuDao {
         return em.merge(orderItemDetail);
     }
 
-    public OrderItemDetail readOrderSkuById(Long orderSkuId) {
-        return (OrderItemDetail) em.find(OrderItemDetailImpl.class, orderSkuId);
+    public OrderItemDetail readOrderItemDetailById(Long orderItemDetailId) {
+        return (OrderItemDetail) em.find(OrderItemDetailImpl.class, orderItemDetailId);
     }
 
     public OrderItemDetail create() {
@@ -53,7 +53,7 @@ public class OrderSkuDaoImpl implements OrderSkuDao {
 
     public void delete(OrderItemDetail orderItemDetail) {
         if (!em.contains(orderItemDetail)) {
-            orderItemDetail = readOrderSkuById(orderItemDetail.getId());
+            orderItemDetail = readOrderItemDetailById(orderItemDetail.getId());
         }
         em.remove(orderItemDetail);
     }

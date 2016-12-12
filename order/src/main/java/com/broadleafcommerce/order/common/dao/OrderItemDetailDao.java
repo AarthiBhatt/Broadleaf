@@ -22,10 +22,10 @@ import com.broadleafcommerce.order.common.domain.OrderItemDetail;
 /**
  * Created by brandon on 12/7/16.
  */
-public interface OrderSkuDao {
+public interface OrderItemDetailDao {
     public OrderItemDetail save(OrderItemDetail orderItemDetail);
 
-    public OrderItemDetail readOrderSkuById(Long orderSkuId);
+    public OrderItemDetail readOrderItemDetailById(Long orderItemDetailId);
 
     public OrderItemDetail create();
 

@@ -21,7 +21,7 @@ import org.broadleafcommerce.common.util.TransactionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.broadleafcommerce.order.common.dao.OrderSkuDao;
+import com.broadleafcommerce.order.common.dao.OrderItemDetailDao;
 import com.broadleafcommerce.order.common.domain.OrderItemDetail;
 
 import javax.annotation.Resource;
@@ -29,31 +29,31 @@ import javax.annotation.Resource;
 /**
  * Created by brandon on 12/7/16.
  */
-@Service("blOrderSkuService")
-public class OrderSkuServiceImpl implements OrderSkuService {
+@Service("blOrderItemDetailService")
+public class OrderItemDetailServiceImpl implements OrderItemDetailService {
 
-    @Resource(name = "blOrderSkuDao")
-    OrderSkuDao orderSkuDao;
+    @Resource(name = "blOrderItemDetailDao")
+    OrderItemDetailDao orderItemDetailDao;
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public OrderItemDetail saveOrderItemDetail(OrderItemDetail orderItemDetail) {
-        return orderSkuDao.save(orderItemDetail);
+        return orderItemDetailDao.save(orderItemDetail);
     }
 
     @Override
     public OrderItemDetail readOrderItemDetailById(Long orderItemDetailId) {
-        return orderSkuDao.readOrderSkuById(orderItemDetailId);
+        return orderItemDetailDao.readOrderItemDetailById(orderItemDetailId);
     }
 
     @Override
     public OrderItemDetail create() {
-        return orderSkuDao.create();
+        return orderItemDetailDao.create();
     }
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public void delete(OrderItemDetail orderItemDetail) {
-        orderSkuDao.delete(orderItemDetail);
+        orderItemDetailDao.delete(orderItemDetail);
     }
 }

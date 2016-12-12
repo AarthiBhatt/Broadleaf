@@ -68,7 +68,7 @@ import org.hibernate.annotations.Parameter;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import com.broadleafcommerce.order.common.domain.OrderCustomerImpl;
-import com.broadleafcommerce.order.common.domain.OrderSku;
+import com.broadleafcommerce.order.common.domain.OrderItemDetail;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -515,7 +515,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
 
     @Override
-    public boolean containsSku(OrderSku sku) {
+    public boolean containsSku(OrderItemDetail sku) {
         for (OrderItem orderItem : getOrderItems()) {
             if (orderItem.getSku() != null && orderItem.getSku().equals(sku)) {
                 return true;

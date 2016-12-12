@@ -71,5 +71,5 @@
 
     <bean id="com.broadleafcommerce.order.common.domain.OrderAddress" class="com.broadleafcommerce.order.common.domain.OrderAddressImpl"/>
     <bean id="com.broadleafcommerce.order.common.domain.OrderCustomer" class="com.broadleafcommerce.order.common.domain.OrderCustomerImpl"/>
-    <bean id="com.broadleafcommerce.order.common.domain.OrderSku" class="com.broadleafcommerce.order.common.domain.OrderSkuImpl"/>
+    <bean id="com.broadleafcommerce.order.common.domain.OrderItemDetail" class="com.broadleafcommerce.order.common.domain.OrderItemDetailImpl"/>
 </beans>
