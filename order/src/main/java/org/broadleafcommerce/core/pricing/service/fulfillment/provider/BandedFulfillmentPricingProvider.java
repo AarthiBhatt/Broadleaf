@@ -34,7 +34,7 @@ import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBand;
 import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBand;
 import org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmountType;
 
-import com.broadleafcommerce.order.common.domain.OrderSku;
+import com.broadleafcommerce.order.common.domain.OrderItemDetail;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -123,7 +123,7 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                     //If this item has a Sku associated with it which also has a flat rate for this fulfillment option, don't add it to the price
                     //or weight total but instead tack it onto the final rate
                     boolean addToTotal = true;
-                    OrderSku sku = fulfillmentGroupItem.getOrderItem().getSku();
+                    OrderItemDetail sku = fulfillmentGroupItem.getOrderItem().getSku();
 
                     if (addToTotal) {
                         foundCandidateForBand = true;

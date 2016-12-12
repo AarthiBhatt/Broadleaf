@@ -25,7 +25,7 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 
 import java.math.BigDecimal;
 
-public interface OrderSku {
+public interface OrderItemDetail {
 
     public Long getId();
 

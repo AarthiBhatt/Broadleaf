@@ -32,7 +32,7 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
-import com.broadleafcommerce.order.common.domain.OrderSku;
+import com.broadleafcommerce.order.common.domain.OrderItemDetail;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -319,7 +319,7 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      * @param sku The sku to check for
      * @return whether or not the given SKU exists in the cart
      */
-    boolean containsSku(OrderSku sku);
+    boolean containsSku(OrderItemDetail sku);
 
     List<OfferCode> getAddedOfferCodes();
 

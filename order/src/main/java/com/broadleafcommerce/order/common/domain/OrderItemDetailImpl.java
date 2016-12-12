@@ -46,19 +46,19 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_SKU")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-public class OrderSkuImpl implements OrderSku {
+public class OrderItemDetailImpl implements OrderItemDetail {
 
     @Id
-    @GeneratedValue(generator = "OrderSkuId")
+    @GeneratedValue(generator = "OrderItemDetailId")
     @GenericGenerator(
-            name = "OrderSkuId",
+            name = "OrderItemDetailId",
             strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
-                    @Parameter(name = "segment_value", value = "OrderSkuImpl"),
-                    @Parameter(name = "entity_name", value = "com.broadleafcommerce.order.common.domain.OrderSkuImpl")
+                    @Parameter(name = "segment_value", value = "OrderItemDetailImpl"),
+                    @Parameter(name = "entity_name", value = "com.broadleafcommerce.order.common.domain.OrderItemDetailImpl")
             }
     )
-    @Column(name = "ORDER_SKU_ID")
+    @Column(name = "ORDER_ITEM_DETAIL_ID")
     protected Long id;
 
     @Column(name = "EXTERNAL_ID")

@@ -22,7 +22,7 @@ import com.broadleafcommerce.order.common.domain.OrderItemDetail;
 /**
  * Created by brandon on 12/7/16.
  */
-public interface OrderSkuService {
+public interface OrderItemDetailService {
 
     public OrderItemDetail saveOrderItemDetail(OrderItemDetail orderItemDetail);
 

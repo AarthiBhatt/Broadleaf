@@ -76,7 +76,7 @@
         <class>org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl</class>
         <class>com.broadleafcommerce.order.common.domain.OrderAddressImpl</class>
         <class>com.broadleafcommerce.order.common.domain.OrderCustomerImpl</class>
-        <class>com.broadleafcommerce.order.common.domain.OrderSkuImpl</class>
+        <class>com.broadleafcommerce.order.common.domain.OrderItemDetailImpl</class>
         <exclude-unlisted-classes/>
         <!-- JPA properties are inherited from persistence-common.xml -->
     </persistence-unit>

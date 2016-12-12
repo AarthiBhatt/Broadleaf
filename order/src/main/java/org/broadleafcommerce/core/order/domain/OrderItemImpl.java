@@ -58,8 +58,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import com.broadleafcommerce.order.common.domain.OrderSku;
-import com.broadleafcommerce.order.common.domain.OrderSkuImpl;
+import com.broadleafcommerce.order.common.domain.OrderItemDetail;
+import com.broadleafcommerce.order.common.domain.OrderItemDetailImpl;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -150,13 +150,13 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             fieldType = SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
-    @ManyToOne(targetEntity = OrderSkuImpl.class, optional=false, cascade = {CascadeType.ALL})
+    @ManyToOne(targetEntity = OrderItemDetailImpl.class, optional=false, cascade = {CascadeType.ALL})
     @JoinColumn(name = "ORDER_SKU_ID", nullable = false)
     @Index(name="DISCRETE_SKU_INDEX", columnNames={"ORDER_SKU_ID"})
     @AdminPresentation(friendlyName = "OrderItemImpl_Sku", order= OrderItemImpl.Presentation.FieldOrder.SKU,
             group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
-    protected OrderSku sku;
+    protected OrderItemDetail sku;
 
     @Column(name = "NAME")
     @AdminPresentation(friendlyName = "OrderItemImpl_Item_Name", order=Presentation.FieldOrder.NAME,
@@ -393,10 +393,10 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
-    public OrderSku getSku() { return sku; }
+    public OrderItemDetail getSku() { return sku; }
 
     @Override
-    public void setSku(OrderSku sku) { this.sku = sku; }
+    public void setSku(OrderItemDetail sku) { this.sku = sku; }
 
     @Override
     public List<OrderItemQualifier> getOrderItemQualifiers() {
