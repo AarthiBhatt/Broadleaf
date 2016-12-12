@@ -24,6 +24,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -55,6 +56,9 @@ public class OrderAddressImpl implements OrderAddress {
     )
     @Column(name = "ORDER_ADDRESS_ID")
     protected Long id;
+    
+    @Column(name = "EXTERNAL_ID")
+    protected Long externalId;
 
     @Column(name = "FULL_NAME")
     protected String fullName;
@@ -100,6 +104,16 @@ public class OrderAddressImpl implements OrderAddress {
 
     @Override
     public void setId(Long id) { this.id = id; }
+    
+    @Override
+    public Long getExternalId() {
+        return externalId;
+    }
+    
+    @Override
+    public void setExternalId(Long externalId) {
+        this.externalId = externalId;
+    }
 
     @Override
     public String getFullName() {
