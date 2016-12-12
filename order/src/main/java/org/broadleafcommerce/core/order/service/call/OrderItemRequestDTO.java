@@ -49,7 +49,7 @@ import java.util.Map;
  */
 public class OrderItemRequestDTO {
 
-    private OrderItemDetailDTO orderItemDetailDTO;
+    private OrderItemDetailDTO orderItemDetail;
     private Long orderItemId;
     private Integer quantity;
     private Money overrideSalePrice;
@@ -62,16 +62,16 @@ public class OrderItemRequestDTO {
     public OrderItemRequestDTO() {}
     
     public OrderItemRequestDTO(OrderItemDetailDTO orderItemDetailDTO, Integer quantity) {
-        setOrderItemDetailDTO(orderItemDetailDTO);
+        setOrderItemDetail(orderItemDetailDTO);
         setQuantity(quantity);
     }
 
-    public OrderItemDetailDTO getOrderItemDetailDTO() {
-        return orderItemDetailDTO;
+    public OrderItemDetailDTO getOrderItemDetail() {
+        return orderItemDetail;
     }
 
-    public OrderItemRequestDTO setOrderItemDetailDTO(OrderItemDetailDTO orderItemDetailDTO) {
-        this.orderItemDetailDTO = orderItemDetailDTO;
+    public OrderItemRequestDTO setOrderItemDetail(OrderItemDetailDTO orderItemDetailDTO) {
+        this.orderItemDetail = orderItemDetailDTO;
         return this;
     }
 
