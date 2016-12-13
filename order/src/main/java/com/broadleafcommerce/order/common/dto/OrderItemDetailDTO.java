@@ -25,7 +25,11 @@ import org.broadleafcommerce.common.money.Money;
 
 import com.broadleafcommerce.order.common.domain.OrderItemDetail;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
@@ -87,7 +91,16 @@ public class OrderItemDetailDTO extends BaseWrapper implements APIWrapper<OrderI
     protected String weightUnitOfMeasure;
 
     @JsonProperty("itemDetailAttributes")
-    protected String itemDetailAttributesJson;
+    protected JsonNode itemDetailAttributesJson;
+
+    @JsonRawValue
+    public String getItemDetailAttributesJson() {
+        return itemDetailAttributesJson == null ? null :itemDetailAttributesJson.toString();
+    }
+
+    public void setItemDetailAttributesJson(JsonNode node) {
+        this.itemDetailAttributesJson = node;
+    }
 
     public boolean hasRetailPrice() {
         return getRetailPrice() != null;
@@ -128,7 +141,17 @@ public class OrderItemDetailDTO extends BaseWrapper implements APIWrapper<OrderI
             this.weightUnitOfMeasure = orderItemDetail.getWeightUnitOfMeasure().getType();
         }
 
-        this.itemDetailAttributesJson = orderItemDetail.getItemDetailAttributesJson();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            if (orderItemDetail.getItemDetailAttributesJson() != null) {
+                JsonNode jsonNode = mapper.readTree(orderItemDetail.getItemDetailAttributesJson());
+                this.itemDetailAttributesJson = jsonNode;
+            }
+        } catch (IOException e) {
+            //this is fine
+        }
+
     }
 
     @Override

@@ -23,7 +23,9 @@ import org.broadleafcommerce.common.util.DimensionUnitOfMeasureType;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Map;
 
 public interface OrderItemDetail {
 
@@ -98,4 +100,7 @@ public interface OrderItemDetail {
     public String getItemDetailAttributesJson();
 
     public void setItemDetailAttributesJson(String skuAttributesJson);
+
+    Map<String, Object> getItemDetailAttributesMap() throws IOException;
+
 }
