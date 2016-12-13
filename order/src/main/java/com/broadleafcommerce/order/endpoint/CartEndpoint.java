@@ -43,6 +43,8 @@ import com.broadleafcommerce.order.common.dto.OrderDTO;
 import com.broadleafcommerce.order.common.dto.OrderPaymentDTO;
 import com.broadleafcommerce.order.common.service.OrderCustomerService;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -126,6 +128,21 @@ public class CartEndpoint extends BaseEndpoint {
             response.wrapDetails(orderService.removeItem(orderId, orderItemId, true), request);
             return new ResponseEntity(response, HttpStatus.OK);
         } catch (RemoveFromCartException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @RequestMapping(path = "/{orderId}/udpate/{itemId}/options", method = RequestMethod.POST)
+    public ResponseEntity updateItemOptions(HttpServletRequest request,
+                                            @PathVariable("orderId") Long orderId,
+                                            @PathVariable("itemId") Long itemId,
+                                            @RequestBody Map<String, String> attributes) {
+        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setItemAttributes(attributes);
+        orderItemRequestDTO.setOrderItemId(itemId);
+        try {
+            return new ResponseEntity(orderService.updateProductOptionsForItem(orderId, orderItemRequestDTO, true), HttpStatus.OK);
+        } catch (UpdateCartException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
