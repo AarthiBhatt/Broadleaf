@@ -70,7 +70,13 @@ public interface OrderService {
      * @return the newly created order
      */
     public Order createNewCartForCustomer(OrderCustomer orderCustomer);
-
+    
+    /**
+     * Creates a new cart with no customer
+     * 
+     * @return newly created order
+     */
+    public Order createCart();
     /**
      * Creates a new Order for the given customer with the given name. Typically, this represents
      * a "wishlist" order that the customer can save but not check out with.

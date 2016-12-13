@@ -155,6 +155,18 @@ public class OrderServiceImpl implements OrderService {
     public Order createNewCartForCustomer(OrderCustomer orderCustomer) {
         return orderDao.createNewCartForCustomer(orderCustomer);
     }
+    
+    @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
+    public Order createCart() {
+        Order order = orderDao.create();
+        order.setStatus(OrderStatus.IN_PROCESS);
+        if (CommonRequestContext.getCommonRequestContext() != null) {
+            order.setCurrency(CommonRequestContext.getCommonRequestContext().getBroadleafCurrency());
+            order.setLocale(CommonRequestContext.getCommonRequestContext().getLocale());
+        }
+        return persist(order); // No pricing needed here since it's a new cart
+    }
 
     @Override
     @Transactional("blTransactionManager")
