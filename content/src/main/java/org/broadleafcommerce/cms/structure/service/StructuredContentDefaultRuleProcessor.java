@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.structure.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.rule.AbstractRuleProcessor;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ import java.util.Map;
  *
  */
 @Service("blContentDefaultRuleProcessor")
-public class StructuredContentDefaultRuleProcessor { //TODO microservices - deal with rule processing extends AbstractRuleProcessor<StructuredContentDTO> {
+public class StructuredContentDefaultRuleProcessor extends AbstractRuleProcessor<StructuredContentDTO> {
     private static final Log LOG = LogFactory.getLog(StructuredContentDefaultRuleProcessor.class);
 
     /**
@@ -53,8 +54,7 @@ public class StructuredContentDefaultRuleProcessor { //TODO microservices - deal
             if (LOG.isTraceEnabled())  {
                 LOG.trace("Processing content rule for StructuredContent with id " + sc.getId() +".   Value = " + ruleExpression);
             }
-            // TODO microservices - deal with rule processing
-            boolean result = false; //executeExpression(ruleExpression, vars);
+            boolean result = executeExpression(ruleExpression, vars);
             if (! result) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Content failed to pass rule and will not be included for StructuredContent with id " + sc.getId() +".   Value = " + ruleExpression);
