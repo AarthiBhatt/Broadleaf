@@ -125,11 +125,17 @@ public class CartEndpoint extends BaseEndpoint {
         }
     }
     
-    @RequestMapping(path = "/{orderId}/update", method = RequestMethod.POST)
-    public ResponseEntity updateItemOnOrder(HttpServletRequest request, @PathVariable("orderId") Long orderId, @RequestBody OrderItemRequestDTO dto) {
+    @RequestMapping(path = "/{orderId}/update/{itemId}/{quantity}", method = RequestMethod.POST)
+    public ResponseEntity updateItemQuantity(HttpServletRequest request,
+                                             @PathVariable("orderId")  Long orderId,
+                                             @PathVariable("itemId")   Long itemId,
+                                             @PathVariable("quantity") Integer quantity) {
         try {
+            OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+            orderItemRequestDTO.setOrderItemId(itemId);
+            orderItemRequestDTO.setQuantity(quantity);
             OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
-            response.wrapDetails(orderService.updateItemQuantity(orderId, dto, true), request);
+            response.wrapDetails(orderService.updateItemQuantity(orderId, orderItemRequestDTO, true), request);
             return new ResponseEntity(response, HttpStatus.OK);
         } catch (UpdateCartException | RemoveFromCartException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
