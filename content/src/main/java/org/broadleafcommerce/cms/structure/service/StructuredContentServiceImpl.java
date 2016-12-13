@@ -43,8 +43,7 @@ import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.rule.RuleProcessor;
 import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.util.FormatUtil;
@@ -91,9 +90,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     @Resource(name = "blLocaleService")
     protected LocaleService localeService;
 
-// TODO microservices - deal with rule processing
-//    @Resource(name = "blContentRuleProcessors")
-//    protected List<RuleProcessor<StructuredContentDTO>> contentRuleProcessors;
+    @Resource(name = "blContentRuleProcessors")
+    protected List<RuleProcessor<StructuredContentDTO>> contentRuleProcessors;
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
@@ -240,16 +238,15 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     }
 
     protected boolean processContentRules(StructuredContentDTO sc, Map<String, Object> ruleDTOs) {
-// TODO microservices - deal with rule processing
-//        if (contentRuleProcessors != null) {
-//            for (RuleProcessor<StructuredContentDTO> processor : contentRuleProcessors) {
-//                boolean matchFound = processor.checkForMatch(sc, ruleDTOs);
-//
-//                if (!matchFound) {
-//                    return false;
-//                }
-//            }
-//        }
+        if (contentRuleProcessors != null) {
+            for (RuleProcessor<StructuredContentDTO> processor : contentRuleProcessors) {
+                boolean matchFound = processor.checkForMatch(sc, ruleDTOs);
+
+                if (!matchFound) {
+                    return false;
+                }
+            }
+        }
 
         return true;
     }
@@ -354,14 +351,13 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         return evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs);
     }
 
-// TODO microservices - deal with rule processing
-//    public List<RuleProcessor<StructuredContentDTO>> getContentRuleProcessors() {
-//        return contentRuleProcessors;
-//    }
-//
-//    public void setContentRuleProcessors(List<RuleProcessor<StructuredContentDTO>> contentRuleProcessors) {
-//        this.contentRuleProcessors = contentRuleProcessors;
-//    }
+    public List<RuleProcessor<StructuredContentDTO>> getContentRuleProcessors() {
+        return contentRuleProcessors;
+    }
+
+    public void setContentRuleProcessors(List<RuleProcessor<StructuredContentDTO>> contentRuleProcessors) {
+        this.contentRuleProcessors = contentRuleProcessors;
+    }
 
     @Override
     public void removeStructuredContentFromCache(SandBox sandBox, StructuredContent sc) {
