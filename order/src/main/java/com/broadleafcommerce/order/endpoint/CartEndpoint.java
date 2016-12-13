@@ -187,4 +187,18 @@ public class CartEndpoint extends BaseEndpoint {
         return new ResponseEntity(response, HttpStatus.OK);
     }
     
+    @RequestMapping(path = "/{orderId}/remove/payment/{paymentId}", method = RequestMethod.POST)
+    public ResponseEntity removePaymentFromOrder(HttpServletRequest request, @PathVariable("orderId") Long orderId, @PathVariable("paymentId") Long paymentId) {
+        Order order = orderService.findOrderById(orderId);
+        if (order == null) {
+            return new ResponseEntity("No order exists for id " + orderId, HttpStatus.BAD_REQUEST);
+        }
+        OrderPayment payment = orderPaymentService.readPaymentById(paymentId);
+        if (payment == null) {
+            return new ResponseEntity("No payment exists for id " + paymentId, HttpStatus.NOT_FOUND);
+        }
+        orderService.removePaymentFromOrder(order, payment);
+        return new ResponseEntity(order, HttpStatus.OK);
+    }
+    
 }
