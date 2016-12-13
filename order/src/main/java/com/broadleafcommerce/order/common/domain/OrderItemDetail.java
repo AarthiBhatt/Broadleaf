@@ -101,6 +101,6 @@ public interface OrderItemDetail {
 
     public void setItemDetailAttributesJson(String skuAttributesJson);
 
-    Map<String, Object> getItemDetailAttributesMap() throws IOException;
+    public Map<String, Object> getItemDetailAttributesMap() throws IOException;
 
 }

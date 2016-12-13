@@ -34,8 +34,13 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -112,6 +117,9 @@ public class OrderCustomerImpl implements OrderCustomer {
     @Lob
     @Column(name = "CUSTOMER_ATTRIBUTES_JSON", length = Integer.MAX_VALUE - 1)
     protected String customerAttributesJson;
+
+    @Transient
+    protected Map<String, Object> customerAttributesMap;
 
     @Transient
     protected boolean anonymous;
@@ -195,7 +203,20 @@ public class OrderCustomerImpl implements OrderCustomer {
     public String getCustomerAttributesJson() { return customerAttributesJson; }
 
     @Override
-    public void setCustomerAttributesJson(String customerAttributesJson) { this.customerAttributesJson = customerAttributesJson; }
+    public void setCustomerAttributesJson(String customerAttributesJson) {
+        this.customerAttributesJson = customerAttributesJson;
+        this.customerAttributesMap = null;
+    }
+
+    @Override
+    public Map<String, Object> getCustomerAttributesMap() throws IOException {
+        if (customerAttributesMap == null) {
+            ObjectMapper mapper = new ObjectMapper();
+            customerAttributesMap = mapper.readValue(customerAttributesJson, new TypeReference<Map<String, Object>>() {});
+        }
+
+        return customerAttributesMap;
+    }
 
     @Override
     public void setAnonymous(boolean anonymous) {
