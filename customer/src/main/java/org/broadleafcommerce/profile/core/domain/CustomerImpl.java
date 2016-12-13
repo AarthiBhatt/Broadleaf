@@ -20,6 +20,7 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -51,6 +52,7 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Id;
@@ -94,9 +96,8 @@ public class CustomerImpl implements Customer, CustomerAdminPresentation { //TOD
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Id", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-//TODO: microservices - deal with auditable
-//    @Embedded
-//    protected Auditable auditable = new Auditable();
+    @Embedded
+    protected Auditable auditable = new Auditable();
 
 //TODO: microservices - deal with sandbox previewable
 //    @Embedded
@@ -366,16 +367,15 @@ public class CustomerImpl implements Customer, CustomerAdminPresentation { //TOD
         this.unencodedChallengeAnswer = unencodedChallengeAnswer;
     }
 
-//TODO: microservices - deal with auditable
-//    @Override
-//    public Auditable getAuditable() {
-//        return auditable;
-//    }
-//
-//    @Override
-//    public void setAuditable(Auditable auditable) {
-//        this.auditable = auditable;
-//    }
+    @Override
+    public Auditable getAuditable() {
+        return auditable;
+    }
+
+    @Override
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
+    }
 
     @Override
     public boolean isAnonymous() {

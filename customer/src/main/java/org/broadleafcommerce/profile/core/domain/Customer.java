@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.locale.domain.Locale;
 
@@ -78,10 +79,9 @@ public interface Customer extends Serializable, MultiTenantCloneable<Customer>  
 
     public void setUnencodedChallengeAnswer(String unencodedChallengeAnswer);
 
-//TODO: microservices - deal with auditable
-//    public Auditable getAuditable();
-//
-//    public void setAuditable(Auditable auditable);
+    public Auditable getAuditable();
+
+    public void setAuditable(Auditable auditable);
     
     public void setCookied(boolean cookied);
     
