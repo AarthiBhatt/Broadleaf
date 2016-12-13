@@ -21,6 +21,8 @@ import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.core.order.domain.Order;
 
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
+
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +43,7 @@ public class StructuredContentCartRuleProcessor extends AbstractCartRuleProcesso
         List<ItemCriteriaDTO> itemCriterias = sc.getItemCriteriaDTOList();
 
         if (itemCriterias != null && itemCriterias.size() > 0) {
-            Order order = null; // TODO microservices - deal with rules processing lookupOrderForCustomer((Customer) valueMap.get("customer"));
+            Order order = lookupOrderForCustomer((OrderCustomer) valueMap.get("customer"));
 
             if (order == null || order.getOrderItems() == null || order.getOrderItems().size() < 1) {
                 return false;

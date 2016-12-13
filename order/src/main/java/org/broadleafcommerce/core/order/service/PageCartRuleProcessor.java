@@ -21,6 +21,8 @@ import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.core.order.domain.Order;
 
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
+
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +43,7 @@ public class PageCartRuleProcessor extends AbstractCartRuleProcessor<PageDTO> {
         List<ItemCriteriaDTO> itemCriterias = page.getItemCriteriaDTOList();
 
         if (itemCriterias != null && itemCriterias.size() > 0) {
-            Order order = null; //TODO microservices - deal with rules processing lookupOrderForCustomer((Customer) valueMap.get("customer"));
+            Order order = lookupOrderForCustomer((OrderCustomer) valueMap.get("customer"));
 
             if (order == null || order.getOrderItems() == null || order.getOrderItems().size() < 1) {
                 return false;
