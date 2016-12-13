@@ -29,7 +29,12 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,6 +45,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
@@ -116,6 +122,9 @@ public class OrderItemDetailImpl implements OrderItemDetail {
     @Column(name = "ITEM_DETAIL_ATTRIBUTES_JSON", length = Integer.MAX_VALUE - 1)
     protected String itemDetailAttributesJson;
 
+    @Transient
+    protected Map<String, Object> itemDetailAttributesMap;
+
     @Override
     public Long getId() { return id; }
 
@@ -136,7 +145,7 @@ public class OrderItemDetailImpl implements OrderItemDetail {
     public String getName() { return name; }
 
     @Override
-    public void setName(String name) { name = name; }
+    public void setName(String name) { this.name = name; }
 
     @Override
     public Money getRetailPrice() {
@@ -288,5 +297,16 @@ public class OrderItemDetailImpl implements OrderItemDetail {
     @Override
     public void setItemDetailAttributesJson(String skuAttributesJson) {
         this.itemDetailAttributesJson = skuAttributesJson;
+        this.itemDetailAttributesMap = null;
+    }
+
+    @Override
+    public Map<String, Object> getItemDetailAttributesMap() throws IOException {
+        if (itemDetailAttributesMap == null) {
+            ObjectMapper mapper = new ObjectMapper();
+            itemDetailAttributesMap = mapper.readValue(itemDetailAttributesJson, new TypeReference<Map<String, Object>>() {});
+        }
+
+        return itemDetailAttributesMap;
     }
 }

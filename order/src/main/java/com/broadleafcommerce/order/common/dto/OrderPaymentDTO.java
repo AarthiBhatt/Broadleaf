@@ -65,7 +65,7 @@ public class OrderPaymentDTO extends BaseWrapper implements APIWrapper<OrderPaym
     @JsonProperty("paymentGatewayType")
     protected String paymentGatewayType;
 
-    @JsonProperty("transaction")
+    @JsonProperty("transactions")
     protected List<PaymentTransactionDTO> transactions;
     
     @Override
@@ -91,7 +91,9 @@ public class OrderPaymentDTO extends BaseWrapper implements APIWrapper<OrderPaym
         }
         List<PaymentTransaction> transactions = new ArrayList<>();
         for (PaymentTransactionDTO trans : ListUtils.emptyIfNull(this.transactions)) {
-            transactions.add(trans.unwrap(request, context));
+            PaymentTransaction newPaymentTransaction = trans.unwrap(request, context);
+            newPaymentTransaction.setOrderPayment(payment);
+            transactions.add(newPaymentTransaction);
         }
         payment.setTransactions(transactions);
         return payment;

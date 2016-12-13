@@ -85,7 +85,7 @@ public class OrderAddressDTO extends BaseWrapper implements APIWrapper<OrderAddr
     
     @Override
     public OrderAddress unwrap(HttpServletRequest request, ApplicationContext context) {
-        OrderAddressService addressService = (OrderAddressService) context.getBean("blAddressService");
+        OrderAddressService addressService = (OrderAddressService) context.getBean("blOrderAddressService");
         OrderAddress address = addressService.create();
         address.setId(this.getId());
         address.setExternalId(this.getExternalId());

@@ -21,6 +21,8 @@ import org.broadleafcommerce.common.api.APIUnwrapper;
 import org.broadleafcommerce.common.api.APIWrapper;
 import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.springframework.context.ApplicationContext;
@@ -50,6 +52,9 @@ public class PaymentTransactionDTO extends BaseWrapper implements APIWrapper<Pay
     @JsonProperty("date")
     protected Date date;
 
+    @JsonProperty("transactionType")
+    protected String transactionType;
+
     @JsonProperty("successful")
     protected Boolean successful;
 
@@ -69,6 +74,11 @@ public class PaymentTransactionDTO extends BaseWrapper implements APIWrapper<Pay
         }
         transaction.setAmount(this.amount);
         transaction.setDate(this.date);
+
+        if (this.transactionType != null && PaymentTransactionType.getInstance(this.transactionType) != null) {
+            transaction.setType(PaymentTransactionType.getInstance(this.transactionType));
+        }
+
         transaction.setSuccess(this.successful);
         transaction.setAdditionalFields(this.additionalFields);
         transaction.setSaveToken(this.isSaveToken);

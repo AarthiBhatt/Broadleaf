@@ -328,6 +328,8 @@ public class OrderItemServiceImpl implements OrderItemService {
             orderItemDetail.setWeightUnitOfMeasure(WeightUnitOfMeasureType.getInstance(orderItemDetailDTO.getWeightUnitOfMeasure()));
         }
 
+        orderItemDetail.setItemDetailAttributesJson(orderItemDetailDTO.getItemDetailAttributesJson());
+
         return orderItemDetail;
     }
 
