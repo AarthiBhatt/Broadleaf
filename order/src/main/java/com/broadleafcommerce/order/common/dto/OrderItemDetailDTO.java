@@ -18,6 +18,7 @@
 package com.broadleafcommerce.order.common.dto;
 
 import lombok.Data;
+import lombok.extern.apachecommons.CommonsLog;
 
 import org.broadleafcommerce.common.api.APIWrapper;
 import org.broadleafcommerce.common.api.BaseWrapper;
@@ -35,6 +36,7 @@ import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
 
 @Data
+@CommonsLog
 public class OrderItemDetailDTO extends BaseWrapper implements APIWrapper<OrderItemDetail> {
 
     private static final long serialVersionUID = 1L;
@@ -149,7 +151,7 @@ public class OrderItemDetailDTO extends BaseWrapper implements APIWrapper<OrderI
                 this.itemDetailAttributesJson = jsonNode;
             }
         } catch (IOException e) {
-            //this is fine
+            log.error("Error deserializing itemDetailAttributes on item detail", e);
         }
 
     }
