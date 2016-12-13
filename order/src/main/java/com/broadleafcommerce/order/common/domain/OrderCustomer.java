@@ -19,7 +19,9 @@ package com.broadleafcommerce.order.common.domain;
 
 import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface OrderCustomer {
 
@@ -60,6 +62,8 @@ public interface OrderCustomer {
     String getCustomerAttributesJson();
 
     void setCustomerAttributesJson(String customerAttributesJson);
+
+    public Map<String, Object> getCustomerAttributesMap() throws IOException;
 
     public void setAnonymous(boolean anonymous);
 

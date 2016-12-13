@@ -17,6 +17,7 @@
  */
 package com.broadleafcommerce.order.common.dto;
 
+import org.apache.commons.io.IOExceptionWithCause;
 import org.broadleafcommerce.common.api.APIUnwrapper;
 import org.broadleafcommerce.common.api.APIWrapper;
 import org.broadleafcommerce.common.api.BaseWrapper;
@@ -25,15 +26,22 @@ import org.springframework.context.ApplicationContext;
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import com.broadleafcommerce.order.common.service.OrderCustomerService;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.http.HttpServletRequest;
 
 import lombok.Data;
+import lombok.extern.apachecommons.CommonsLog;
+
+import java.io.IOException;
 
 /**
  * Created by brandon on 12/6/16.
  */
 @Data
+@CommonsLog
 public class OrderCustomerDTO extends BaseWrapper implements APIWrapper<OrderCustomer>, APIUnwrapper<OrderCustomer> {
 
     private static final long serialVersionUID = 1L;
@@ -59,8 +67,17 @@ public class OrderCustomerDTO extends BaseWrapper implements APIWrapper<OrderCus
     @JsonProperty("taxExemptionCode")
     protected String taxExemptionCode;
     
-    @JsonProperty("customerAttributesJson")
-    protected String customerAttributesJson;
+    @JsonProperty("customerAttributes")
+    protected JsonNode customerAttributesJson;
+
+    @JsonRawValue
+    public String getCustomerAttributesJson() {
+        return customerAttributesJson == null ? null : customerAttributesJson.toString();
+    }
+
+    public void setCustomerAttributesJson(JsonNode node) {
+        this.customerAttributesJson = node;
+    }
     
     @Override
     public OrderCustomer unwrap(HttpServletRequest request, ApplicationContext context) {
@@ -71,9 +88,10 @@ public class OrderCustomerDTO extends BaseWrapper implements APIWrapper<OrderCus
         customer.setFirstName(this.getFirstName());
         customer.setLastName(this.getLastName());
         customer.setEmailAddress(this.getEmailAddress());
-        customer.setCustomerAttributesJson(this.getCustomerAttributesJson());
         customer.setTaxExempt(this.getIsTaxExempt());
         customer.setTaxExemptionCode(this.getTaxExemptionCode());
+        customer.setCustomerAttributesJson(getCustomerAttributesJson());
+
         return customer;
     }
 
@@ -86,7 +104,17 @@ public class OrderCustomerDTO extends BaseWrapper implements APIWrapper<OrderCus
         this.emailAddress = customer.getEmailAddress();
         this.isTaxExempt = customer.getTaxExempt();
         this.taxExemptionCode = customer.getTaxExemptionCode();
-        this.customerAttributesJson = customer.getCustomerAttributesJson();
+
+        try {
+            if (customer.getCustomerAttributesJson() != null) {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode jsonNode = mapper.readTree(customer.getCustomerAttributesJson());
+                this.customerAttributesJson = jsonNode;
+            }
+        } catch (IOException e) {
+            log.error("Error deserializing customerAttributes on customer", e);
+        }
+
     }
 
     @Override

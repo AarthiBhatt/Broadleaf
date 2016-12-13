@@ -97,7 +97,7 @@ public class OrderItemDetailDTO extends BaseWrapper implements APIWrapper<OrderI
 
     @JsonRawValue
     public String getItemDetailAttributesJson() {
-        return itemDetailAttributesJson == null ? null :itemDetailAttributesJson.toString();
+        return itemDetailAttributesJson == null ? null : itemDetailAttributesJson.toString();
     }
 
     public void setItemDetailAttributesJson(JsonNode node) {
@@ -144,9 +144,8 @@ public class OrderItemDetailDTO extends BaseWrapper implements APIWrapper<OrderI
         }
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-
             if (orderItemDetail.getItemDetailAttributesJson() != null) {
+                ObjectMapper mapper = new ObjectMapper();
                 JsonNode jsonNode = mapper.readTree(orderItemDetail.getItemDetailAttributesJson());
                 this.itemDetailAttributesJson = jsonNode;
             }
