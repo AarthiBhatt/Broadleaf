@@ -70,7 +70,7 @@ public class CartEndpoint extends BaseEndpoint {
         }
         Order order = orderService.findCartForCustomer(customer);
         if (order == null) {
-            return new ResponseEntity("No order found for customer with id " + id, HttpStatus.NOT_FOUND);
+            order = orderService.createNewCartForCustomer(customer);
         }
         OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
         response.wrapDetails(order, request);
