@@ -79,8 +79,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         return orderItemDao.createPersonalMessage();
     }
 
-    @Override
-    public void populateProductOptionAttributes(OrderItem item, Map<String, String> attributes) {
+    protected void populateProductOptionAttributes(OrderItem item, Map<String, String> attributes) {
         if (attributes != null && attributes.size() > 0) {
             Map<String, OrderItemAttribute> orderItemAttributes = item.getOrderItemAttributes();
             if (item.getOrderItemAttributes() == null) {
