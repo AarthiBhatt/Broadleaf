@@ -143,8 +143,8 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             order=FieldOrder.NAME)
     protected String name;
 
-    @ManyToOne(targetEntity = OrderCustomerImpl.class, optional=false, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
+    @ManyToOne(targetEntity = OrderCustomerImpl.class, cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "CUSTOMER_ID")
     @Index(name="ORDER_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     @AdminPresentation(friendlyName = "OrderImpl_Customer", group = GroupName.Customer,
             order=FieldOrder.CUSTOMER)
@@ -692,7 +692,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public String getMainEntityName() {
         String customerName = null;
         String orderNumber = getOrderNumber();
-        if (!StringUtils.isEmpty(getOrderCustomer().getFirstName()) && !StringUtils.isEmpty(getOrderCustomer().getLastName())) {
+        if (getOrderCustomer() != null && !StringUtils.isEmpty(getOrderCustomer().getFirstName()) && !StringUtils.isEmpty(getOrderCustomer().getLastName())) {
             customerName = getOrderCustomer().getFirstName() + " " + getOrderCustomer().getLastName();
         }
         if (!StringUtils.isEmpty(orderNumber) && !StringUtils.isEmpty(customerName)) {

@@ -178,10 +178,12 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public List<Offer> buildOfferListForOrder(Order order) {
         List<Offer> offers = new ArrayList<Offer>();
-        List<CustomerOffer> customerOffers = lookupOfferCustomerByCustomer(order.getOrderCustomer());
-        for (CustomerOffer customerOffer : customerOffers) {
-            if (!offers.contains(customerOffer.getOffer())) {
-                offers.add(customerOffer.getOffer());
+        if (order.getOrderCustomer() != null) {
+            List<CustomerOffer> customerOffers = lookupOfferCustomerByCustomer(order.getOrderCustomer());
+            for (CustomerOffer customerOffer : customerOffers) {
+                if (!offers.contains(customerOffer.getOffer())) {
+                    offers.add(customerOffer.getOffer());
+                }
             }
         }
         List<OfferCode> orderOfferCodes = refreshOfferCodesIfApplicable(order);
