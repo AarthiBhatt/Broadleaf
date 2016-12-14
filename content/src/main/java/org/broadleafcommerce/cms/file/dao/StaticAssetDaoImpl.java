@@ -20,6 +20,8 @@ package org.broadleafcommerce.cms.file.dao;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -43,11 +45,10 @@ import javax.persistence.criteria.Root;
 @Repository("blStaticAssetDao")
 public class StaticAssetDaoImpl implements StaticAssetDao {
 
-// TODO microservices - deal with sandboxing (this also might be able to be deleted)
-//    private static SandBox DUMMY_SANDBOX = new SandBoxImpl();
-//    {
-//        DUMMY_SANDBOX.setId(-1l);
-//    }
+    private static SandBox DUMMY_SANDBOX = new SandBoxImpl();
+    {
+        DUMMY_SANDBOX.setId(-1l);
+    }
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;

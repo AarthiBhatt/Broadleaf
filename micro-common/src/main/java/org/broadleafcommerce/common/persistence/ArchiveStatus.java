@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.persistence;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
 
 import java.io.Serializable;
 
@@ -29,7 +30,7 @@ import javax.persistence.Embeddable;
  * @author Jeff Fischer
  */
 @Embeddable
-public class ArchiveStatus implements Serializable { //TODO: microservices - , SandBoxNonProductionSkip {
+public class ArchiveStatus implements Serializable, SandBoxNonProductionSkip {
 
     @Column(name = "ARCHIVED")
     @AdminPresentation(friendlyName = "archived", visibility = VisibilityEnum.HIDDEN_ALL, group = "ArchiveStatus")

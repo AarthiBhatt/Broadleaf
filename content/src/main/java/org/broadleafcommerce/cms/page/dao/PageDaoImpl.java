@@ -25,6 +25,8 @@ import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.hibernate.ejb.QueryHints;
@@ -52,12 +54,11 @@ import javax.persistence.criteria.Root;
 @Repository("blPageDao")
 public class PageDaoImpl implements PageDao {
 
-// TODO microservices - deal with sandbox object (this probably can be deleted though)
-//    private static SandBox DUMMY_SANDBOX = new SandBoxImpl();
-//
-//    {
-//        DUMMY_SANDBOX.setId(-1l);
-//    }
+    private static SandBox DUMMY_SANDBOX = new SandBoxImpl();
+
+    {
+        DUMMY_SANDBOX.setId(-1l);
+    }
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
