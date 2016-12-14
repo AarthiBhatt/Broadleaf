@@ -17,12 +17,17 @@
  */
 package com.broadleafcommerce.order.endpoint;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.api.BaseEndpoint;
 import org.broadleafcommerce.common.controller.FrameworkRestController;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferException;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
+import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
+import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
@@ -38,11 +43,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.broadleafcommerce.order.common.domain.OrderAddress;
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
+import com.broadleafcommerce.order.common.dto.OrderAddressDTO;
 import com.broadleafcommerce.order.common.dto.OrderDTO;
 import com.broadleafcommerce.order.common.dto.OrderPaymentDTO;
+import com.broadleafcommerce.order.common.dto.SplitFulfillmentGroupDTO;
 import com.broadleafcommerce.order.common.service.OrderCustomerService;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -63,6 +73,12 @@ public class CartEndpoint extends BaseEndpoint {
     
     @Resource(name = "blOfferService")
     protected OfferService offerService;
+    
+    @Resource(name = "blFulfillmentGroupService")
+    protected FulfillmentGroupService fulfillmentGroupService;
+    
+    @Resource(name = "blOrderMultishipOptionService")
+    protected OrderMultishipOptionService orderMultishipOptionService;
 
     @RequestMapping(path = "/customer/{id}", method = RequestMethod.GET)
     public ResponseEntity findCartByCustomerId(HttpServletRequest request, @PathVariable Long id) {
@@ -227,6 +243,103 @@ public class CartEndpoint extends BaseEndpoint {
         }
         orderService.removePaymentFromOrder(order, payment);
         return new ResponseEntity(order, HttpStatus.OK);
+    }
+    
+    @RequestMapping(path = "/{orderId}/add/address", method = RequestMethod.POST)
+    public ResponseEntity addAddressToOrder(HttpServletRequest request, @PathVariable("orderId") Long orderId, @RequestBody OrderAddressDTO orderAddressDto) {
+        Order order = orderService.findOrderById(orderId);
+        if (order == null) {
+            return new ResponseEntity("No order exists for id " + orderId, HttpStatus.BAD_REQUEST);
+        }
+        FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(order);
+        if (shippableFulfillmentGroup != null) {
+            shippableFulfillmentGroup.setAddress(orderAddressDto.unwrap(request, context));
+            try {
+                order = orderService.save(order, true);
+                return new ResponseEntity(order, HttpStatus.OK);
+            } catch (PricingException e) {
+                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        List<OrderMultishipOption> options = orderMultishipOptionService.findOrderMultishipOptions(orderId);
+        if (CollectionUtils.isNotEmpty(options)) {
+            for (OrderMultishipOption option : options) {
+                option.setAddress(orderAddressDto.unwrap(request, context));
+                option = orderMultishipOptionService.save(option);
+            }
+            try {
+                order = fulfillmentGroupService.matchFulfillmentGroupsToMultishipOptions(order, true);
+                return new ResponseEntity(order, HttpStatus.OK);
+            } catch (PricingException e) {
+                return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity("No shippable items are in cart with id " + orderId, HttpStatus.PRECONDITION_FAILED);
+    }
+    
+    @RequestMapping(path = "/{orderId}/remove/address/{addressId}", method = RequestMethod.POST)
+    public ResponseEntity removeAddressFromOrder(HttpServletRequest request, @PathVariable("orderId") Long orderId, @PathVariable("addressId") Long addressId) {
+        Order order = orderService.findOrderById(orderId);
+        if (order == null) {
+            return new ResponseEntity("No order exists for id " + orderId, HttpStatus.BAD_REQUEST);
+        }
+        List<OrderMultishipOption> options = orderMultishipOptionService.findOrderMultishipOptions(orderId);
+        if (CollectionUtils.isEmpty(options)) {
+            FulfillmentGroup fg = fulfillmentGroupService.getFirstShippableFulfillmentGroup(order);
+            if (fg != null) {
+                if (fg.getAddress() != null && fg.getAddress().equals(addressId)) {
+                    fg.setAddress(null);
+                    fulfillmentGroupService.save(fg);
+                    return new ResponseEntity("Fulfillment group with id " + fg.getId() + " had address with id " + addressId + " removed", HttpStatus.OK);
+                } else {
+                    return new ResponseEntity("No shippable fulfillment group on order with id " + orderId + " has address with id " + addressId, HttpStatus.PRECONDITION_FAILED);
+                }
+            } else  {
+                return new ResponseEntity("No shippable fulfillment group on order with id " + orderId, HttpStatus.PRECONDITION_FAILED);
+            }
+        }
+        int count = 0;
+        for (OrderMultishipOption option : options) {
+            if (option.getAddress() != null && option.getAddress().getId() != null && option.getAddress().getId().equals(addressId)) {
+                option.setAddress(null);
+                count++;
+                option = orderMultishipOptionService.save(option);
+            }
+        }
+        return new ResponseEntity(count + " items had the address with id " + addressId + " removed", HttpStatus.OK);
+    }
+    
+    @RequestMapping(path = "/{orderId}/split/address", method = RequestMethod.POST)
+    public ResponseEntity splitOrderFulfillmentGroups(HttpServletRequest request, @PathVariable("orderId") Long orderId, @RequestBody SplitFulfillmentGroupDTO splitFulfillmentGroupDTO) {
+        Order order = orderService.findOrderById(orderId);
+        if (order == null) {
+            return new ResponseEntity("No order exists for id " + orderId, HttpStatus.BAD_REQUEST);
+        }
+        List<Long> orderItemIds = splitFulfillmentGroupDTO.getOrderItemIds();
+        if (splitFulfillmentGroupDTO.getOrderAddress() == null) {
+            return new ResponseEntity("No address was sent to specify where the order items are suppose to be shipped to", HttpStatus.BAD_REQUEST);
+        }
+        OrderAddress address = splitFulfillmentGroupDTO.getOrderAddress().unwrap(request, context);
+        List<OrderMultishipOption> options = orderMultishipOptionService.getOrGenerateOrderMultishipOptions(order);
+        Map<Long, OrderMultishipOption> optionMap = new HashMap<>();
+        for (OrderMultishipOption option : options) {
+            optionMap.put(option.getOrderItem().getId(), option);
+        }
+        for (Long orderItemId : orderItemIds) {
+            OrderMultishipOption option = optionMap.get(orderItemId);
+            if (option == null) {
+                return new ResponseEntity("Order item id " + orderItemId + " either doesn't exists on order with id " + orderId + " or it's no shippable", HttpStatus.BAD_REQUEST);
+            }
+            option.setAddress(address);
+            option = orderMultishipOptionService.save(option);
+        }
+        try {
+            order = fulfillmentGroupService.matchFulfillmentGroupsToMultishipOptions(order, true);
+            return new ResponseEntity(order, HttpStatus.OK);
+        } catch (PricingException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        
     }
     
 }
