@@ -123,7 +123,9 @@ public class CartEndpoint extends BaseEndpoint {
     
     @RequestMapping(path = "/create", method = RequestMethod.POST)
     public ResponseEntity createCart(HttpServletRequest request) {
-        return new ResponseEntity(orderService.createCart(), HttpStatus.OK);
+        Order order = orderService.createCart();
+        OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
+        return new ResponseEntity(response, HttpStatus.OK);
     }
     
     @RequestMapping(path = "/{id}/add", method = RequestMethod.POST)
