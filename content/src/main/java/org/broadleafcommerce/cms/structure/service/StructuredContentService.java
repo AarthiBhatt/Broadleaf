@@ -21,6 +21,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.hibernate.Criteria;
 
@@ -216,9 +217,9 @@ public interface StructuredContentService {
      * @param secure
      * @return cache key for DTOList
      */
-    //TODO microservices - deal with sandboxing
-    //public String buildTypeKeyWithSecure(SandBox currentSandbox, Long site, Locale locale, String contentType, Boolean secure);
+    public String buildTypeKeyWithSecure(SandBox currentSandbox, Long site, Locale locale, String contentType, Boolean secure);
 
+    public String buildTypeKey(SandBox currentSandbox, Long site, Locale locale, String contentType);
 
     public List<StructuredContentDTO> getStructuredContentListFromCache(String key);
 
@@ -228,8 +229,7 @@ public interface StructuredContentService {
      * @param sandBox
      * @param sc
      */
-    //TODO microservices - deal with sandboxing
-    //void removeStructuredContentFromCache(SandBox sandBox, StructuredContent sc);
+    void removeStructuredContentFromCache(SandBox sandBox, StructuredContent sc);
 
     /**
      * Call to evict both secure and non-secure SC items matching

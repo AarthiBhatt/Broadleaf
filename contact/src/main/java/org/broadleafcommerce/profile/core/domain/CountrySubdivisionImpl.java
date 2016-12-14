@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -46,7 +47,7 @@ import javax.persistence.Table;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
-public class CountrySubdivisionImpl implements CountrySubdivision { //TODO: microservices - deal with admin basic entity, AdminMainEntity {
+public class CountrySubdivisionImpl implements CountrySubdivision, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -124,9 +125,8 @@ public class CountrySubdivisionImpl implements CountrySubdivision { //TODO: micr
         this.category = category;
     }
 
-//TODO: microservices - deal with admin basic entity
-//    @Override
-//    public String getMainEntityName() {
-//        return getName();
-//    }
+    @Override
+    public String getMainEntityName() {
+        return getName();
+    }
 }

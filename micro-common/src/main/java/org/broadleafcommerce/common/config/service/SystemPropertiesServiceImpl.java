@@ -79,10 +79,9 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
         String result = null;
         // We don't want to utilize this cache for sandboxes
-        // TODO microservices - deal with sandbox
-//        if (BroadleafRequestContext.getBroadleafRequestContext().getSandBox() == null) {
-//            result = getPropertyFromCache(name);
-//        }
+        if (BroadleafRequestContext.getBroadleafRequestContext().getSandBox() == null) {
+            result = getPropertyFromCache(name);
+        }
 
         if (result != null) {
             return result;

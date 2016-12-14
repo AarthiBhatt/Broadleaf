@@ -43,6 +43,8 @@ import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.util.FormatUtil;
@@ -270,22 +272,19 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         Long site = (context.getNonPersistentSite() != null) ? context.getNonPersistentSite().getId() : null;
-        // TODO microservices - deal with sandboxing
-        String cacheKey = null; //buildTypeKeyWithSecure(context.getSandBox(), site, languageOnlyLocale, contentType.getName(), secure);
+        String cacheKey = buildTypeKeyWithSecure(context.getSandBox(), site, languageOnlyLocale, contentType.getName(), secure);
         
-        //TODO microservices - deal with sandboxing
-        //if (context.isProductionSandBox()) {
-        //    contentDTOList = getStructuredContentListFromCache(cacheKey);
-        //}
+        if (context.isProductionSandBox()) {
+            contentDTOList = getStructuredContentListFromCache(cacheKey);
+        }
 
         if (contentDTOList == null) {
             List<StructuredContent> contentList = structuredContentDao.findActiveStructuredContentByType(contentType,
                     locale, languageOnlyLocale);
             contentDTOList = buildStructuredContentDTOList(contentList, secure);
-            // TODO microservices - deal with sandboxing
-            //if (context.isProductionSandBox()) {
-            //    addStructuredContentListToCache(cacheKey, contentDTOList);
-            //}
+            if (context.isProductionSandBox()) {
+                addStructuredContentListToCache(cacheKey, contentDTOList);
+            }
         }
 
         return evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs);
@@ -299,23 +298,20 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         Long site = (context.getNonPersistentSite() != null) ? context.getNonPersistentSite().getId() : null;
-        // TODO microservices - deal with sandboxing
-        String cacheKey = null;//buildNameKey(context.getSandBox(), site, languageOnlyLocale, contentType.getName(), contentName, secure);
+        String cacheKey = buildNameKey(context.getSandBox(), site, languageOnlyLocale, contentType.getName(), contentName, secure);
 
-        // TODO microservices - deal with sandboxing
-        //if (context.isProductionSandBox()) {
-        //    contentDTOList = getStructuredContentListFromCache(cacheKey);
-        //}
+        if (context.isProductionSandBox()) {
+            contentDTOList = getStructuredContentListFromCache(cacheKey);
+        }
 
         if (contentDTOList == null) {
             List<StructuredContent> productionContentList = structuredContentDao.findActiveStructuredContentByNameAndType(
                     contentType, contentName, locale, languageOnlyLocale);
             contentDTOList = buildStructuredContentDTOList(productionContentList, secure);
 
-            // TODO microservices - deal with sandboxing
-            //if (context.isProductionSandBox()) {
-            //    addStructuredContentListToCache(cacheKey, contentDTOList);
-            //}
+            if (context.isProductionSandBox()) {
+                addStructuredContentListToCache(cacheKey, contentDTOList);
+            }
         }
 
         return evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs);
@@ -325,28 +321,27 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     public List<StructuredContentDTO> convertToDtos(List<StructuredContent> scs, boolean isSecure) {
         List<StructuredContentDTO> contentDTOList = new ArrayList<>();
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-// TODO microservices - deal with sandboxing
-//        SandBox sandbox = context.getSandBox();
-//        boolean isProductionSandbox = context.isProductionSandBox();
-//        StructuredContentDTO dto;
-//
-//        for (StructuredContent sc : scs) {
-//            String cacheKey = buildNameKey(sandbox, sc, isSecure);
-//            dto = null;
-//
-//            if (isProductionSandbox) {
-//                dto = getSingleStructuredContentFromCache(cacheKey);
-//            }
-//
-//            if (dto == null) {
-//                dto = buildStructuredContentDTO(sc, isSecure);
-//                if (isProductionSandbox) {
-//                    addSingleStructuredContentToCache(cacheKey, dto);
-//                }
-//            }
-//
-//            contentDTOList.add(dto);
-//        }
+        SandBox sandbox = context.getSandBox();
+        boolean isProductionSandbox = context.isProductionSandBox();
+        StructuredContentDTO dto;
+
+        for (StructuredContent sc : scs) {
+            String cacheKey = buildNameKey(sandbox, sc, isSecure);
+            dto = null;
+
+            if (isProductionSandbox) {
+                dto = getSingleStructuredContentFromCache(cacheKey);
+            }
+
+            if (dto == null) {
+                dto = buildStructuredContentDTO(sc, isSecure);
+                if (isProductionSandbox) {
+                    addSingleStructuredContentToCache(cacheKey, dto);
+                }
+            }
+
+            contentDTOList.add(dto);
+        }
 
         return contentDTOList;
     }
@@ -368,32 +363,31 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 //        this.contentRuleProcessors = contentRuleProcessors;
 //    }
 
-// TODO microservices - deal with sandboxing
-//    @Override
-//    public void removeStructuredContentFromCache(SandBox sandBox, StructuredContent sc) {
-//        // Remove secure and non-secure instances of the page.
-//        // Typically the page will be in one or the other if at all.
-//        boolean successRemoveByName;
-//        boolean successRemoveByType;
-//        String nameKey = buildNameKey(sandBox, sc);
-//        String typeKey = buildTypeKey(sandBox, sc);
-//
-//        successRemoveByName = removeItemFromCacheByKey(nameKey);
-//
-//        if (!successRemoveByName) {
-//            // this might be because the sandBox was null when the item was added to the cache
-//            nameKey = buildNameKey(null, sc);
-//            removeItemFromCacheByKey(nameKey);
-//        }
-//
-//        successRemoveByType = removeItemFromCacheByKey(typeKey);
-//
-//        if (!successRemoveByType) {
-//            // this might be because the sandBox was null when the item was added to the cache
-//            typeKey = buildTypeKey(null, sc);
-//            removeItemFromCacheByKey(typeKey);
-//        }
-//    }
+    @Override
+    public void removeStructuredContentFromCache(SandBox sandBox, StructuredContent sc) {
+        // Remove secure and non-secure instances of the page.
+        // Typically the page will be in one or the other if at all.
+        boolean successRemoveByName;
+        boolean successRemoveByType;
+        String nameKey = buildNameKey(sandBox, sc);
+        String typeKey = buildTypeKey(sandBox, sc);
+
+        successRemoveByName = removeItemFromCacheByKey(nameKey);
+
+        if (!successRemoveByName) {
+            // this might be because the sandBox was null when the item was added to the cache
+            nameKey = buildNameKey(null, sc);
+            removeItemFromCacheByKey(nameKey);
+        }
+
+        successRemoveByType = removeItemFromCacheByKey(typeKey);
+
+        if (!successRemoveByType) {
+            // this might be because the sandBox was null when the item was added to the cache
+            typeKey = buildTypeKey(null, sc);
+            removeItemFromCacheByKey(typeKey);
+        }
+    }
 
     @Override
     public boolean removeItemFromCacheByKey(String key) {
@@ -614,25 +608,24 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         return scDTO;
     }
 
-// TODO microservices - deal with sandboxing
-//    protected String buildNameKey(SandBox sandBox, StructuredContent sc) {
-//        return buildNameKey(sandBox, sc, null);
-//    }
-//
-//    protected String buildNameKey(SandBox sandBox, StructuredContent sc, Boolean secure) {
-//        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-//        Site site = (context != null) ? context.getNonPersistentSite() : null;
-//        Long siteId = (site != null) ? site.getId() : null;
-//        Locale locale = findLanguageOnlyLocale(sc.getLocale());
-//        String contentType = sc.getStructuredContentType().getName();
-//        String contentName = sc.getContentName() + "-" + sc.getId();
-//
-//        return buildNameKey(sandBox, siteId, locale, contentType, contentName, secure);
-//    }
-//
-//    protected String buildNameKey(SandBox currentSandbox, Long site, Locale locale, String contentType, String contentName) {
-//        return buildNameKey(currentSandbox, site, locale, contentType, contentName, null);
-//    }
+    protected String buildNameKey(SandBox sandBox, StructuredContent sc) {
+        return buildNameKey(sandBox, sc, null);
+    }
+
+    protected String buildNameKey(SandBox sandBox, StructuredContent sc, Boolean secure) {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        Site site = (context != null) ? context.getNonPersistentSite() : null;
+        Long siteId = (site != null) ? site.getId() : null;
+        Locale locale = findLanguageOnlyLocale(sc.getLocale());
+        String contentType = sc.getStructuredContentType().getName();
+        String contentName = sc.getContentName() + "-" + sc.getId();
+
+        return buildNameKey(sandBox, siteId, locale, contentType, contentName, secure);
+    }
+
+    protected String buildNameKey(SandBox currentSandbox, Long site, Locale locale, String contentType, String contentName) {
+        return buildNameKey(currentSandbox, site, locale, contentType, contentName, null);
+    }
 
     /**
      * Builds the DTO cache key based on the single SC item name.
@@ -645,66 +638,65 @@ public class StructuredContentServiceImpl implements StructuredContentService {
      * @param secure
      * @return cache key for single SC item DTO
      */
-// TODO microservices - deal with sandboxing
-//    protected String buildNameKey(SandBox currentSandbox, Long site, Locale locale, String contentType, String contentName, Boolean secure) {
-//        StringBuffer key = new StringBuffer(contentType).append("-").append(contentName);
-//
-//        if (locale != null) {
-//            key.append("-").append(locale.getLocaleCode());
-//        }
-//
-//        if (currentSandbox != null) {
-//            key.append("-").append(currentSandbox.getId());
-//        }
-//
-//        if (site != null) {
-//            key.append("-").append(site);
-//        }
-//
-//        if (secure != null) {
-//            key.append("-").append(secure);
-//        }
-//
-//        return key.toString();
-//    }
-//
-//    protected String buildTypeKey(SandBox sandBox, StructuredContent sc) {
-//        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-//        Site site = (context != null) ? context.getNonPersistentSite() : null;
-//        Long siteId = (site != null) ? site.getId() : null;
-//        Locale locale = findLanguageOnlyLocale(sc.getLocale());
-//        String contentType = sc.getStructuredContentType().getName();
-//
-//        return buildTypeKey(sandBox, siteId, locale, contentType);
-//    }
-//
-//    @Override
-//    public String buildTypeKey(SandBox currentSandbox, Long site, Locale locale, String contentType) {
-//        return buildTypeKeyWithSecure(currentSandbox, site, locale, contentType, null);
-//    }
-//
-//    @Override
-//    public String buildTypeKeyWithSecure(SandBox currentSandbox, Long site, Locale locale, String contentType, Boolean secure) {
-//        StringBuilder key = new StringBuilder(contentType);
-//
-//        if (locale != null) {
-//            key.append("-").append(locale.getLocaleCode());
-//        }
-//
-//        if (currentSandbox != null) {
-//            key.append("-").append(currentSandbox.getId());
-//        }
-//
-//        if (site != null) {
-//            key.append("-").append(site);
-//        }
-//
-//        if (secure != null) {
-//            key.append("-").append(secure);
-//        }
-//
-//        return key.toString();
-//    }
+    protected String buildNameKey(SandBox currentSandbox, Long site, Locale locale, String contentType, String contentName, Boolean secure) {
+        StringBuffer key = new StringBuffer(contentType).append("-").append(contentName);
+
+        if (locale != null) {
+            key.append("-").append(locale.getLocaleCode());
+        }
+
+        if (currentSandbox != null) {
+            key.append("-").append(currentSandbox.getId());
+        }
+
+        if (site != null) {
+            key.append("-").append(site);
+        }
+
+        if (secure != null) {
+            key.append("-").append(secure);
+        }
+
+        return key.toString();
+    }
+
+    protected String buildTypeKey(SandBox sandBox, StructuredContent sc) {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        Site site = (context != null) ? context.getNonPersistentSite() : null;
+        Long siteId = (site != null) ? site.getId() : null;
+        Locale locale = findLanguageOnlyLocale(sc.getLocale());
+        String contentType = sc.getStructuredContentType().getName();
+
+        return buildTypeKey(sandBox, siteId, locale, contentType);
+    }
+
+    @Override
+    public String buildTypeKey(SandBox currentSandbox, Long site, Locale locale, String contentType) {
+        return buildTypeKeyWithSecure(currentSandbox, site, locale, contentType, null);
+    }
+
+    @Override
+    public String buildTypeKeyWithSecure(SandBox currentSandbox, Long site, Locale locale, String contentType, Boolean secure) {
+        StringBuilder key = new StringBuilder(contentType);
+
+        if (locale != null) {
+            key.append("-").append(locale.getLocaleCode());
+        }
+
+        if (currentSandbox != null) {
+            key.append("-").append(currentSandbox.getId());
+        }
+
+        if (site != null) {
+            key.append("-").append(site);
+        }
+
+        if (secure != null) {
+            key.append("-").append(secure);
+        }
+
+        return key.toString();
+    }
 
     @Override
     public void addStructuredContentListToCache(String key, List<StructuredContentDTO> scDTOList) {
@@ -749,21 +741,20 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         Long site = (context.getNonPersistentSite() != null) ? context.getNonPersistentSite().getId() : null;
-// TODO microservices - deal with sandboxing
-//        String cacheKey = buildNameKey(context.getSandBox(), site, languageOnlyLocale, "any", contentName, secure);
-//        cacheKey = cacheKey + "-" + secure;
-//
-//        if (context.isProductionSandBox()) {
-//            contentDTOList = getStructuredContentListFromCache(cacheKey);
-//        }
-//
-//        if (contentDTOList == null) {
-//            List<StructuredContent> productionContentList = structuredContentDao.findActiveStructuredContentByName(contentName, locale, languageOnlyLocale);
-//            contentDTOList = buildStructuredContentDTOList(productionContentList, secure);
-//            if (context.isProductionSandBox()) {
-//                addStructuredContentListToCache(cacheKey, contentDTOList);
-//            }
-//        }
+        String cacheKey = buildNameKey(context.getSandBox(), site, languageOnlyLocale, "any", contentName, secure);
+        cacheKey = cacheKey + "-" + secure;
+
+        if (context.isProductionSandBox()) {
+            contentDTOList = getStructuredContentListFromCache(cacheKey);
+        }
+
+        if (contentDTOList == null) {
+            List<StructuredContent> productionContentList = structuredContentDao.findActiveStructuredContentByName(contentName, locale, languageOnlyLocale);
+            contentDTOList = buildStructuredContentDTOList(productionContentList, secure);
+            if (context.isProductionSandBox()) {
+                addStructuredContentListToCache(cacheKey, contentDTOList);
+            }
+        }
 
         return contentDTOList;
     }

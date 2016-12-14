@@ -158,12 +158,11 @@ public class PageServiceImpl implements PageService {
     public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure, String identifier, Locale locale) {
         List<PageDTO> dtoList = new ArrayList<>();
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-// TODO microservices - deal with sandboxing
-//        if (context.isProductionSandBox()) {
-//            dtoList = buildPageDTOListUsingCache(pageList, identifier, locale, secure);
-//        } else {
-//            // no caching actions needed if not production sandbox
-//        }
+        if (context.isProductionSandBox()) {
+            dtoList = buildPageDTOListUsingCache(pageList, identifier, locale, secure);
+        } else {
+            // no caching actions needed if not production sandbox
+        }
         addPageListToPageDTOList(pageList, secure, dtoList);
 
         return copyDTOList(dtoList);
@@ -231,9 +230,7 @@ public class PageServiceImpl implements PageService {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         Site site = context.getNonPersistentSite();
         Long siteId = (site != null) ? site.getId() : null;
-        // TODO microservices - deal with sandboxing
-        //Long sandBoxId = context.getSandBoxId();
-        Long sandBoxId = null;
+        Long sandBoxId = context.getSandBoxId();
         String mapKey = getPageMapCacheKey(identifier, sandBoxId, siteId);
 
         if (mapKey != null) {
@@ -257,9 +254,7 @@ public class PageServiceImpl implements PageService {
 
     protected String buildKey(String identifier, Locale locale, Boolean secure) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        // TODO microservices - deal with sandboxing
-        //Long sandBoxId = context.getSandBoxId();
-        Long sandBoxId = null;
+        Long sandBoxId = context.getSandBoxId();
         Site site = context.getNonPersistentSite();
         Long siteId = (site != null) ? site.getId() : null;
         locale = findLanguageOnlyLocale(locale);
