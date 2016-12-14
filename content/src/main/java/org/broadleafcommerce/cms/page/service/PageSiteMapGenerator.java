@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.page.service;
 
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.openadmin.audit.AdminAudit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -94,13 +95,11 @@ public class PageSiteMapGenerator  { //TODO microservices - deal with sitemap ge
 //    }
 
     protected Date generateDate(Page page) {
-//        TODO microservices - deal with AdminAudit
-//        if (page instanceof AdminAudit) {
-//            return ((AdminAudit) page).getDateUpdated();
-//        } else {
-//            return new Date();
-//        }
-        return new Date();
+        if (page instanceof AdminAudit) {
+            return ((AdminAudit) page).getDateUpdated();
+        } else {
+            return new Date();
+        }
     }
 
     public PageDao getPageDao() {

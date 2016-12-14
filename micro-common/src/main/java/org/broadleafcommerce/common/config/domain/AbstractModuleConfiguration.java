@@ -18,6 +18,7 @@
 package org.broadleafcommerce.common.config.domain;
 
 import org.broadleafcommerce.common.audit.Auditable;
+import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -56,7 +57,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "BLC_MODULE_CONFIGURATION")
-//@EntityListeners(value = {AuditableListener.class})  TODO: microservices - deal with auditable listener
+@EntityListeners(value = {AuditableListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blConfigurationModuleElements")
 @DirectCopyTransform({
