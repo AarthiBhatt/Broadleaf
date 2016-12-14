@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.api.APIWrapper;
 import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
@@ -83,6 +84,9 @@ public class OrderDTO extends BaseWrapper implements APIWrapper<Order> {
     @JsonProperty("orderPayments")
     protected List<OrderPaymentDTO> orderPayments;
     
+    @JsonProperty("fulfillmentGroups")
+    protected List<FulfillmentGroupDTO> fulfillmentGroups;
+    
     @Override
     public void wrapDetails(Order order, HttpServletRequest request) {
         this.id = order.getId();
@@ -123,6 +127,13 @@ public class OrderDTO extends BaseWrapper implements APIWrapper<Order> {
             ops.add(orderPayment);
         }
         this.orderPayments = ops;
+        List<FulfillmentGroupDTO> fgs = new ArrayList<>();
+        for (FulfillmentGroup fg : ListUtils.emptyIfNull(order.getFulfillmentGroups())) {
+            FulfillmentGroupDTO fgDto = (FulfillmentGroupDTO) context.getBean(FulfillmentGroupDTO.class.getName());
+            fgDto.wrapDetails(fg, request);
+            fgs.add(fgDto);
+        }
+        this.fulfillmentGroups = fgs;
     }
 
     @Override
