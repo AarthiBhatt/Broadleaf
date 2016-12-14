@@ -17,30 +17,31 @@
  */
 package org.broadleafcommerce.openadmin.audit;
 
-import org.broadleafcommerce.common.audit.AbstractAuditableListener;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import java.lang.reflect.Field;
+import java.util.Calendar;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
-public class AdminAuditableListener extends AbstractAuditableListener {
+public class AdminAuditableListener {
 
     @PrePersist
-    @Override
     public void setAuditCreationAndUpdateData(Object entity) throws Exception {
         setAuditCreationData(entity, new AdminAuditable());
         setAuditUpdateData(entity, new AdminAuditable());
     }
 
     @PreUpdate
-    @Override
     public void setAuditUpdateData(Object entity) throws Exception {
         setAuditUpdateData(entity, new AdminAuditable());
     }
 
-    @Override
     protected void setAuditValueAgent(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
         try {
             BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
@@ -55,4 +56,39 @@ public class AdminAuditableListener extends AbstractAuditableListener {
         }
     }
 
+    protected void setAuditCreationData(Object entity, AdminAudit adminAudit) throws Exception {
+        setAuditData(entity, adminAudit, "dateCreated", "createdBy");
+    }
+
+    protected void setAuditUpdateData(Object entity, AdminAudit adminAudit) throws Exception {
+        setAuditData(entity, adminAudit, "dateUpdated", "updatedBy");
+    }
+
+    protected void setAuditData(Object entity, AdminAudit auditableObject, String dateField, String userField) throws Exception {
+        if (entity.getClass().isAnnotationPresent(Entity.class)) {
+            Field field = BLCFieldUtils.getSingleField(entity.getClass(), getAuditableFieldName());
+            field.setAccessible(true);
+            if (field.isAnnotationPresent(Embedded.class)) {
+                Object auditable = field.get(entity);
+                if (auditable == null) {
+                    field.set(entity, auditableObject);
+                    auditable = field.get(entity);
+                }
+                Field temporalField = auditable.getClass().getDeclaredField(dateField);
+                Field agentField = auditable.getClass().getDeclaredField(userField);
+                setAuditValueTemporal(temporalField, auditable);
+                setAuditValueAgent(agentField, auditable);
+            }
+        }
+    }
+
+    protected void setAuditValueTemporal(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
+        Calendar cal = SystemTime.asCalendar();
+        field.setAccessible(true);
+        field.set(entity, cal.getTime());
+    }
+
+    protected String getAuditableFieldName() {
+        return "auditable";
+    }
 }
