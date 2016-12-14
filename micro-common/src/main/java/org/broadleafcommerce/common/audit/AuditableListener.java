@@ -25,64 +25,64 @@ import java.util.Calendar;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 
 /**
  * Implements behavior shared by auditable listener implementations
  *
  * @author Chris Kittrell (ckittrell)
  */
-public abstract class AbstractAuditableListener {
+public class AuditableListener {
 
     /**
      * Method that will be invoked in a registered listener to set the entity's creation data.
-     *  In most cases, calling {@link AbstractAuditableListener#setAuditCreationData(Object, Object)} should suffice.
+     *  In most cases, calling {@link AuditableListener#setAuditCreationData(Object, Auditable)} should suffice.
      *
      * @param entity
      * @return
      */
-    public abstract void setAuditCreationAndUpdateData(Object entity) throws Exception;
+    @PrePersist
+    public void setAuditCreationAndUpdateData(Object entity) throws Exception {
+        setAuditCreationData(entity, new Auditable());
+        setAuditUpdateData(entity, new Auditable());
+    }
 
     /**
      * Method that will be invoked in a registered listener to set the entity's update data.
-     *  In most cases, calling {@link AbstractAuditableListener#setAuditUpdateData(Object, Object)} should suffice.
+     *  In most cases, calling {@link AuditableListener#setAuditUpdateData(Object, Auditable)} should suffice.
      *
      * @param entity
      * @return
      */
-    public abstract void setAuditUpdateData(Object entity) throws Exception;
-
-    /**
-     * Method that sets the user-related data.
-     *
-     * @param field
-     * @param entity
-     * @return
-     */
-    protected abstract void setAuditValueAgent(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException;
+    @PreUpdate
+    public void setAuditUpdateData(Object entity) throws Exception {
+        setAuditUpdateData(entity, new Auditable());
+    }
 
     /**
      * Sets the value of the dateCreated, createdBy, and dateUpdated fields.
      *
      * @param entity
-     * @param auditableObject
+     * @param auditable
      * @return
      */
-    protected void setAuditCreationData(Object entity, Object auditableObject) throws Exception {
-        setAuditData(entity, auditableObject, "dateCreated", "createdBy");
+    protected void setAuditCreationData(Object entity, Auditable auditable) throws Exception {
+        setAuditData(entity, auditable, "dateCreated");
     }
 
     /**
      * Sets the value of the dateUpdated and updatedBy fields.
      *
      * @param entity
-     * @param auditableObject
+     * @param auditable
      * @return
      */
-    protected void setAuditUpdateData(Object entity, Object auditableObject) throws Exception {
-        setAuditData(entity, auditableObject, "dateUpdated", "updatedBy");
+    protected void setAuditUpdateData(Object entity, Auditable auditable) throws Exception {
+        setAuditData(entity, auditable, "dateUpdated");
     }
 
-    protected void setAuditData(Object entity, Object auditableObject, String dateField, String userField) throws Exception {
+    protected void setAuditData(Object entity, Auditable auditableObject, String dateField) throws Exception {
         if (entity.getClass().isAnnotationPresent(Entity.class)) {
             Field field = BLCFieldUtils.getSingleField(entity.getClass(), getAuditableFieldName());
             field.setAccessible(true);
@@ -93,9 +93,7 @@ public abstract class AbstractAuditableListener {
                     auditable = field.get(entity);
                 }
                 Field temporalField = auditable.getClass().getDeclaredField(dateField);
-                Field agentField = auditable.getClass().getDeclaredField(userField);
                 setAuditValueTemporal(temporalField, auditable);
-                setAuditValueAgent(agentField, auditable);
             }
         }
     }
