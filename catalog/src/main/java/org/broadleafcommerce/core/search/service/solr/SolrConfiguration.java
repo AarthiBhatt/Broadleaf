@@ -32,7 +32,7 @@ import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.site.domain.Site;
-import org.broadleafcommerce.common.web.CommonRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceImpl;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -757,7 +757,7 @@ public class SolrConfiguration implements InitializingBean {
     
     
     public SolrClient getSiteServer() {
-        CommonRequestContext ctx = CommonRequestContext.getCommonRequestContext();
+        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
         Site site = ctx.getNonPersistentSite();
 
         CloudSolrClient client = (CloudSolrClient) primaryServer;
@@ -775,7 +775,7 @@ public class SolrConfiguration implements InitializingBean {
     }
     
     public SolrClient getSiteReindexServer() {
-        CommonRequestContext ctx = CommonRequestContext.getCommonRequestContext();
+        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
         Site site = ctx.getNonPersistentSite();
 
         CloudSolrClient client = (CloudSolrClient) primaryServer;

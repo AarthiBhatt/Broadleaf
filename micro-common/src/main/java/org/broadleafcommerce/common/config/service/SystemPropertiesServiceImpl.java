@@ -23,7 +23,7 @@ import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
 import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.web.CommonRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -80,7 +80,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
         String result = null;
         // We don't want to utilize this cache for sandboxes
         // TODO microservices - deal with sandbox
-//        if (CommonRequestContext.getCommonRequestContext().getSandBox() == null) {
+//        if (BroadleafRequestContext.getBroadleafRequestContext().getSandBox() == null) {
 //            result = getPropertyFromCache(name);
 //        }
 
@@ -133,7 +133,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
      */
     protected String buildKey(String propertyName) {
         String key = propertyName;
-        CommonRequestContext brc = CommonRequestContext.getCommonRequestContext();
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null) {
             if (brc.getSite() != null) {
                 key = brc.getSite().getId() + "-" + key;
