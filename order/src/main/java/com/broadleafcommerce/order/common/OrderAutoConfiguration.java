@@ -23,6 +23,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Scope;
 
+import com.broadleafcommerce.order.common.dto.FulfillmentGroupDTO;
+import com.broadleafcommerce.order.common.dto.FulfillmentOptionDTO;
 import com.broadleafcommerce.order.common.dto.OfferCodeDTO;
 import com.broadleafcommerce.order.common.dto.OfferDTO;
 import com.broadleafcommerce.order.common.dto.OrderAddressDTO;
@@ -32,6 +34,7 @@ import com.broadleafcommerce.order.common.dto.OrderItemDTO;
 import com.broadleafcommerce.order.common.dto.OrderItemDetailDTO;
 import com.broadleafcommerce.order.common.dto.OrderPaymentDTO;
 import com.broadleafcommerce.order.common.dto.PaymentTransactionDTO;
+import com.broadleafcommerce.order.common.dto.SplitFulfillmentGroupDTO;
 
 /**
  * Created by brandon on 12/9/16.
@@ -97,5 +100,23 @@ public class OrderAutoConfiguration {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public PaymentTransactionDTO paymentTransactionDtoPrototype() {
         return new PaymentTransactionDTO();
+    }
+    
+    @Bean(name = "com.broadleafcommerce.order.common.dto.FulfillmentGroupDTO")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public FulfillmentGroupDTO fulfillmentGroupDtoPrototype() {
+        return new FulfillmentGroupDTO();
+    }
+    
+    @Bean(name = "com.broadleafcommerce.order.common.dto.FulfillmentOptionDTO")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public FulfillmentOptionDTO fulfillmentOptionDtoPrototype() {
+        return new FulfillmentOptionDTO();
+    }
+    
+    @Bean(name = "com.broadleafcommerce.order.common.dto.SplitFulfillmentGroupDTO")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public SplitFulfillmentGroupDTO splitFulfillmentGroupDtoPrototype() {
+        return new SplitFulfillmentGroupDTO();
     }
 }
