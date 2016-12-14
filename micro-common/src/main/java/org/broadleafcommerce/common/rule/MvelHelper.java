@@ -27,7 +27,7 @@ import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.util.StringUtil;
-import org.broadleafcommerce.common.web.CommonRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
@@ -248,7 +248,7 @@ public class MvelHelper {
      */
     public static Map<String, Object> buildMvelParameters() {
         Map<String, Object> mvelParameters = new HashMap<String, Object>();
-        CommonRequestContext crc = CommonRequestContext.getCommonRequestContext();
+        BroadleafRequestContext crc = BroadleafRequestContext.getBroadleafRequestContext();
         if (crc != null && crc.getRequest() != null) {
            TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar());
             HttpServletRequest request = crc.getRequest();

@@ -46,7 +46,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.util.FormatUtil;
-import org.broadleafcommerce.common.web.CommonRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Service;
@@ -268,7 +268,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                                                                          Integer count, Map<String, Object> ruleDTOs, boolean secure) {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
-        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         Long site = (context.getNonPersistentSite() != null) ? context.getNonPersistentSite().getId() : null;
         // TODO microservices - deal with sandboxing
         String cacheKey = null; //buildTypeKeyWithSecure(context.getSandBox(), site, languageOnlyLocale, contentType.getName(), secure);
@@ -297,7 +297,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                                                                          boolean secure) {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
-        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         Long site = (context.getNonPersistentSite() != null) ? context.getNonPersistentSite().getId() : null;
         // TODO microservices - deal with sandboxing
         String cacheKey = null;//buildNameKey(context.getSandBox(), site, languageOnlyLocale, contentType.getName(), contentName, secure);
@@ -324,7 +324,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     @Override
     public List<StructuredContentDTO> convertToDtos(List<StructuredContent> scs, boolean isSecure) {
         List<StructuredContentDTO> contentDTOList = new ArrayList<>();
-        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
 // TODO microservices - deal with sandboxing
 //        SandBox sandbox = context.getSandBox();
 //        boolean isProductionSandbox = context.isProductionSandBox();
@@ -747,7 +747,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     public List<StructuredContentDTO> getStructuredContentItemsByContentName(String contentName, Locale locale, boolean secure) {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
-        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         Long site = (context.getNonPersistentSite() != null) ? context.getNonPersistentSite().getId() : null;
 // TODO microservices - deal with sandboxing
 //        String cacheKey = buildNameKey(context.getSandBox(), site, languageOnlyLocale, "any", contentName, secure);

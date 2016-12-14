@@ -50,7 +50,7 @@ import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TypedClosure;
-import org.broadleafcommerce.common.web.CommonRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
@@ -376,8 +376,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public String getLocalePrefix() {
-        if (CommonRequestContext.getCommonRequestContext() != null) {
-            Locale locale = CommonRequestContext.getCommonRequestContext().getLocale();
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
             if (locale != null) {
                 return locale.getLocaleCode() + "_";
             }
@@ -446,7 +446,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Override
     public List<SearchFacetDTO> buildSearchFacetDTOs(List<SearchFacet> searchFacets) {
         List<SearchFacetDTO> facets = new ArrayList<SearchFacetDTO>();
-        Map<String, String[]> requestParameters = CommonRequestContext.getRequestParameterMap();
+        Map<String, String[]> requestParameters = BroadleafRequestContext.getRequestParameterMap();
 
         for (SearchFacet facet : searchFacets) {
             if (isFacetAvailable(facet, requestParameters)) {

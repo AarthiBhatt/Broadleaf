@@ -29,7 +29,7 @@ import org.broadleafcommerce.common.file.FileServiceException;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.type.FileApplicationType;
 import org.broadleafcommerce.common.site.domain.Site;
-import org.broadleafcommerce.common.web.CommonRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -219,7 +219,7 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
      * @param The starting directory for local files which must end with a '/';
      */
     protected String getSiteDirectory(String baseDirectory) {
-        CommonRequestContext brc = CommonRequestContext.getCommonRequestContext();
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null) {
             Site site = brc.getSite();
             if (site != null) {

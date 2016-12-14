@@ -49,7 +49,7 @@ import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.common.web.CommonRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.pricing.SkuPriceWrapper;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
@@ -576,7 +576,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
             if (currency != null) {
                 tmpCurrency = currency;
             } else {
-                tmpCurrency = CommonRequestContext.getCurrency();
+                tmpCurrency = BroadleafRequestContext.getCurrency();
             }
             if (retailPrice != null) {
                 dsp.setRetailPrice(new Money(retailPrice, tmpCurrency));

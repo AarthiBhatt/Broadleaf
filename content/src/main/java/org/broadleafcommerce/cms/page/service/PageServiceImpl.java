@@ -34,7 +34,7 @@ import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.page.dto.NullPageDTO;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.site.domain.Site;
-import org.broadleafcommerce.common.web.CommonRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -157,7 +157,7 @@ public class PageServiceImpl implements PageService {
     @Override
     public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure, String identifier, Locale locale) {
         List<PageDTO> dtoList = new ArrayList<>();
-        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
 // TODO microservices - deal with sandboxing
 //        if (context.isProductionSandBox()) {
 //            dtoList = buildPageDTOListUsingCache(pageList, identifier, locale, secure);
@@ -228,7 +228,7 @@ public class PageServiceImpl implements PageService {
 
     @SuppressWarnings("unchecked")
     protected void addPageMapCacheEntry(String identifier, String key) {
-        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         Site site = context.getNonPersistentSite();
         Long siteId = (site != null) ? site.getId() : null;
         // TODO microservices - deal with sandboxing
@@ -256,7 +256,7 @@ public class PageServiceImpl implements PageService {
     }
 
     protected String buildKey(String identifier, Locale locale, Boolean secure) {
-        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         // TODO microservices - deal with sandboxing
         //Long sandBoxId = context.getSandBoxId();
         Long sandBoxId = null;

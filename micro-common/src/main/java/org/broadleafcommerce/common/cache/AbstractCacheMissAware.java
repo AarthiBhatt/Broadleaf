@@ -20,7 +20,7 @@ package org.broadleafcommerce.common.cache;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
-import org.broadleafcommerce.common.web.CommonRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.util.ClassUtils;
 
 import java.io.Serializable;
@@ -169,7 +169,7 @@ public abstract class AbstractCacheMissAware {
      */
     protected <T> T getCachedObject(Class<T> responseClass, String cacheName, String statisticsName, PersistentRetrieval<T> retrieval, String... params) {
         T nullResponse = getNullObject(responseClass);
-        CommonRequestContext context = CommonRequestContext.getCommonRequestContext();
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         String key = buildKey(params);
         T response = null;
         // TODO microservices - deal with sandboxing

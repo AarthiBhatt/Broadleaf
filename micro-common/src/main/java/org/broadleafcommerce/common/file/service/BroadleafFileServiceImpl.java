@@ -28,7 +28,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.FileServiceException;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.type.FileApplicationType;
-import org.broadleafcommerce.common.web.CommonRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -355,7 +355,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
 
         if (!skipSite) {
             // Create site specific directory if Multi-site (all site files will be located in the same directory)
-            CommonRequestContext brc = CommonRequestContext.getCommonRequestContext();
+            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
             if (brc != null && brc.getSite() != null) {
                 String siteDirectory = "site-" + brc.getSite().getId();
                 String siteHash = DigestUtils.md5Hex(siteDirectory);
