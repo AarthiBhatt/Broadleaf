@@ -17,14 +17,19 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.core.order.dao.OrderMultishipOptionDao;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl;
 import org.broadleafcommerce.core.order.service.call.OrderMultishipOptionDTO;
+import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.broadleafcommerce.order.common.domain.OrderAddress;
 import com.broadleafcommerce.order.common.service.OrderAddressService;
 
 import java.util.ArrayList;
@@ -196,6 +201,55 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
         }
         
         return orderMultishipOptions;
+    }
+    
+    @Override
+    public List<OrderMultishipOption> createMultishipOptionsToShipItemsToAddress(Order order, List<Long> orderItemIds, OrderAddress address, Long fulfillmentOptionId) throws ItemNotFoundException {
+        List<OrderMultishipOption> options = findOrderMultishipOptions(order.getId());
+        OrderAddress defaultAddress = null;
+        FulfillmentOption defaultFulfillmentOption = null;
+        Boolean shouldSaveMultishipOption = false;
+        if (CollectionUtils.isEmpty(options)) {
+            // There isn't any multiship options for an order so we need to get the address that was being
+            // used on the shippable fulfillment group so that the fulfillment group items that aren't
+            // explicitly sent can have the same address saved on them
+            FulfillmentGroup fg = fulfillmentGroupService.getFirstShippableFulfillmentGroup(order);
+            defaultAddress = fg.getAddress();
+            defaultFulfillmentOption = fg.getFulfillmentOption();
+            options = generateOrderMultishipOptions(order);
+            // Only save if new options were made
+            shouldSaveMultishipOption = true;
+        }
+        Map<Long, OrderMultishipOption> optionMap = new HashMap<>();
+        for (OrderMultishipOption option : options) {
+            if (defaultAddress != null) {
+                option.setAddress(defaultAddress);
+            }
+            if (defaultFulfillmentOption != null) {
+                option.setFulfillmentOption(defaultFulfillmentOption);
+            }
+            if (shouldSaveMultishipOption) {
+                option = save(option);
+            }
+            optionMap.put(option.getOrderItem().getId(), option);
+        }
+        FulfillmentOption newFulfillmentOption = defaultFulfillmentOption;
+        if (fulfillmentOptionId != null) {
+            newFulfillmentOption = fulfillmentOptionService.readFulfillmentOptionById(fulfillmentOptionId);
+            if (newFulfillmentOption == null) {
+                newFulfillmentOption = defaultFulfillmentOption;
+            }
+        }
+        for (Long orderItemId : orderItemIds) {
+            OrderMultishipOption option = optionMap.get(orderItemId);
+            if (option == null) {
+                throw new ItemNotFoundException("Order item id " + orderItemId + " either doesn't exists on order with id " + order.getId() + " or it's no shippable");
+            }
+            option.setFulfillmentOption(newFulfillmentOption);
+            option.setAddress(address);
+            option = save(option);
+        }
+        return options;
     }
     
     protected List<OrderMultishipOption> createPopulatedOrderMultishipOption(Order order, OrderItem item, Integer quantity) {
