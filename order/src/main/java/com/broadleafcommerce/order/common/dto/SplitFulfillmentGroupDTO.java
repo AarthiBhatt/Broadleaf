@@ -31,4 +31,7 @@ public class SplitFulfillmentGroupDTO {
     
     @JsonProperty("address")
     protected OrderAddressDTO orderAddress;
+    
+    @JsonProperty("fulfillmentOption")
+    protected Long fulfillmentOptionId;
 }
