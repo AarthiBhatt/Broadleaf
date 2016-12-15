@@ -17,25 +17,24 @@
  */
 package com.broadleafcommerce.order.common.dto;
 
-import org.broadleafcommerce.common.api.APIUnwrapper;
+import org.apache.commons.collections4.ListUtils;
 import org.broadleafcommerce.common.api.APIWrapper;
 import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
-import org.broadleafcommerce.core.order.service.FulfillmentOptionService;
-import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.springframework.context.ApplicationContext;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 
-import com.broadleafcommerce.order.common.domain.OrderAddress;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import lombok.Data;
 
 @Data
-public class FulfillmentGroupDTO extends BaseWrapper implements APIWrapper<FulfillmentGroup>, APIUnwrapper<FulfillmentGroup> {
+public class FulfillmentGroupDTO extends BaseWrapper implements APIWrapper<FulfillmentGroup> {
     private static final long serialVersionUID = 1L;
     
     @JsonProperty("id")
@@ -71,31 +70,9 @@ public class FulfillmentGroupDTO extends BaseWrapper implements APIWrapper<Fulfi
     @JsonProperty("address")
     protected OrderAddressDTO orderAddressDto;
     
-    @Override
-    public FulfillmentGroup unwrap(HttpServletRequest request, ApplicationContext context) {
-        FulfillmentGroupService fulfillmentGroupService = (FulfillmentGroupService) context.getBean("blFulfillmentGroupService");
-        FulfillmentOptionService fulfillmentOptionService = (FulfillmentOptionService) context.getBean("blFulfillmentOptionService");
-        FulfillmentGroup fg = fulfillmentGroupService.createEmptyFulfillmentGroup();
-        fg.setId(getId());
-        fg.setReferenceNumber(getReferenceNumber());
-        fg.setRetailFulfillmentPrice(getRetailFulfillmentPrice());
-        fg.setSaleFulfillmentPrice(getSaleFulfillmentPrice());
-        fg.setFulfillmentPrice(getFulfillmentPrice());
-        if (getFulfillmentType() != null) {
-            fg.setType(FulfillmentType.getInstance(getFulfillmentType()));
-        }
-        fg.setTotalTax(getTotalTax());
-        fg.setTotalItemTax(getTotalItemTax());
-        fg.setTotal(getTotal());
-        if (getFulfillmentOptionDto() != null) {
-            fg.setFulfillmentOption(fulfillmentOptionService.readFulfillmentOptionById(getFulfillmentOptionDto().getId()));
-        }
-        if (getOrderAddressDto() != null) {
-            fg.setAddress(getOrderAddressDto().unwrap(request, context));
-        }
-        return fg;
-    }
-
+    @JsonProperty("fulfillmentGroupItems")
+    protected List<FulfillmentGroupItemDTO> fulfillmentGroupItems;
+    
     @Override
     public void wrapDetails(FulfillmentGroup fg, HttpServletRequest request) {
         setId(fg.getId());
@@ -115,10 +92,17 @@ public class FulfillmentGroupDTO extends BaseWrapper implements APIWrapper<Fulfi
             setFulfillmentOptionDto(fo);
         }
         if (fg.getAddress() != null) {
-            OrderAddressDTO oa = (OrderAddressDTO) context.getBean(OrderAddress.class.getName());
+            OrderAddressDTO oa = (OrderAddressDTO) context.getBean(OrderAddressDTO.class.getName());
             oa.wrapDetails(fg.getAddress(), request);
             setOrderAddressDto(oa);
         }
+        List<FulfillmentGroupItemDTO> fulfillmentGroupItemDtos = new ArrayList<>();
+        for (FulfillmentGroupItem fgi : ListUtils.emptyIfNull(fg.getFulfillmentGroupItems())) {
+            FulfillmentGroupItemDTO fgiDto = (FulfillmentGroupItemDTO) context.getBean(FulfillmentGroupItemDTO.class.getName());
+            fgiDto.wrapDetails(fgi, request);
+            fulfillmentGroupItemDtos.add(fgiDto);
+        }
+        setFulfillmentGroupItems(fulfillmentGroupItemDtos);
     }
 
     @Override
