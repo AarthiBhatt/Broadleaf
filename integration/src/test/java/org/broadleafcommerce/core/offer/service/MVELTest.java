@@ -31,7 +31,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.testng.annotations.Test;
@@ -43,7 +43,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MVELTest extends BaseTest {
+public class MVELTest extends TestNGSiteIntegrationSetup {
 
     private StringBuffer functions = new StringBuffer();
 
@@ -78,7 +78,7 @@ public class MVELTest extends BaseTest {
         category.setName("t-shirt");
         DiscreteOrderItemImpl orderItem = new DiscreteOrderItemImpl();
         ProductImpl product = new ProductImpl();
-        ArrayList<CategoryProductXref> categories = new ArrayList<CategoryProductXref>();
+        ArrayList<CategoryProductXref> categories = new ArrayList<>();
         CategoryProductXref categoryXref = new CategoryProductXrefImpl();
         categoryXref.setProduct(product);
         categoryXref.setCategory(category);
@@ -97,7 +97,7 @@ public class MVELTest extends BaseTest {
         Serializable domainExp1 = MVEL.compileExpression("result = false; for (cat : currentItem.product.allParentCategories) {if (cat.name == 't-shirt') {result = true;}}; return result and order.subTotal.amount >= 50", context);
 
         //Add variables to a HashMap that should be passed in to execute the expression
-        HashMap<String, Object> domainVars = new HashMap<String, Object>();
+        HashMap<String, Object> domainVars = new HashMap<>();
         domainVars.put("order", order);
         domainVars.put("currentItem", orderItem);
 
@@ -114,11 +114,11 @@ public class MVELTest extends BaseTest {
     @Test
     public void testBasicMVELFunctions() {
         //First, set up out functions
-        HashMap<String, Object> functionMap = new HashMap<String, Object>();
+        HashMap<String, Object> functionMap = new HashMap<>();
         StringBuffer functions = new StringBuffer("def any(x, y) { return x or y } def all(x, y) { return x and y } ");
         MVEL.eval(functions.toString(), functionMap); //This stores that functions in the map we pass in.
 
-        HashMap<String, Object> vars = new HashMap<String, Object>(functionMap); //Now, we need to pass the functions in to our variable map
+        HashMap<String, Object> vars = new HashMap<>(functionMap); //Now, we need to pass the functions in to our variable map
         vars.put("fg", "Hello");
 
         StringBuffer expression = new StringBuffer();
@@ -154,7 +154,7 @@ public class MVELTest extends BaseTest {
         Serializable domainExp1 = MVEL.compileExpression("offer.type == OfferType.ORDER_ITEM and (currentItem.sku.id in [1234, 2345, 5678])", context);
 
         //Add variables to a HashMap that should be passed in to execute the expression
-        HashMap<String, Object> domainVars = new HashMap<String, Object>();
+        HashMap<String, Object> domainVars = new HashMap<>();
         domainVars.put("currentItem", orderItem);
         domainVars.put("offer", offer);
 
@@ -168,7 +168,7 @@ public class MVELTest extends BaseTest {
     //TODO fix this test
     public void testOfferAppliesToHatsWhenOneLawnmowerIsPurchased() {
         OrderImpl order = new OrderImpl();
-        ArrayList<OrderItem> items = new ArrayList<OrderItem>();
+        ArrayList<OrderItem> items = new ArrayList<>();
         order.setOrderItems(items);
         DiscreteOrderItemImpl item = new DiscreteOrderItemImpl();
         Money amount = new Money(10D);
@@ -192,7 +192,7 @@ public class MVELTest extends BaseTest {
         item2.setProduct(product2);
         item2.setQuantity(1);
 
-        HashMap<String, Object> vars = new HashMap<String, Object>();
+        HashMap<String, Object> vars = new HashMap<>();
         vars.put("currentItem", item);
         vars.put("order", order);
         vars.put("doMark", false);
@@ -277,7 +277,7 @@ public class MVELTest extends BaseTest {
         Serializable domainExp1 = MVEL.compileExpression("offer.type.equals(OfferType.FULFILLMENT_GROUP) and (($ in order.fulfillmentGroups if $.type.equals(FulfillmentType.PHYSICAL)) != empty)", context);
 
         //Add variables to a HashMap that should be passed in to execute the expression
-        HashMap<String, Object> domainVars = new HashMap<String, Object>();
+        HashMap<String, Object> domainVars = new HashMap<>();
         domainVars.put("order", order);
         domainVars.put("offer", offer);
 
