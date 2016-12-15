@@ -145,6 +145,23 @@ public interface OrderMultishipOptionService {
      */
     public void saveOrderMultishipOptions(Order order, List<OrderMultishipOptionDTO> optionDTOs);
 
+    /**
+     * This method sets up the OrderMultishipOptions that will be used to reorganize the fulfillment groups.
+     * The OrderMultishipOptions will be set up so that the order items that match the ids sent in will have their
+     * address and fulfillment options changed to the address and fulfillment option given
+     * 
+     * NOTE: This method does not allow for putting the same order item in multiple fulfillment groups. This is
+     * to be used only if all quantity of the order item need to have their addresses and fulfillment options
+     * updated.
+     * 
+     * 
+     * @param order that we should be dealing with
+     * @param orderItemIds that need their address updated
+     * @param address that the orderItemIds need to be shipped to
+     * @param fulfillmentOptionId that should be used for determining the fulfillment group
+     * @return List of all OrderMultishipOptions for the order that was sent in
+     * @throws ItemNotFoundException
+     */
     public List<OrderMultishipOption> createMultishipOptionsToShipItemsToAddress(Order order, List<Long> orderItemIds, OrderAddress address, Long fulfillmentOptionId) throws ItemNotFoundException;
 
 
