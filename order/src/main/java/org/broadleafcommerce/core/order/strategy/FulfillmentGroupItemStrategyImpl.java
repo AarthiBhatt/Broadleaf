@@ -101,8 +101,8 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                 type = FulfillmentType.PHYSICAL_SHIP;
                 
                 //Use the fulfillment group with the specified type
-                fulfillmentGroup = fulfillmentGroups.get(type);
             }
+            fulfillmentGroup = fulfillmentGroups.get(type);
             
             //If the null type or specified type, above were null, then we need to create a new fulfillment group
             if (fulfillmentGroup == null) {
