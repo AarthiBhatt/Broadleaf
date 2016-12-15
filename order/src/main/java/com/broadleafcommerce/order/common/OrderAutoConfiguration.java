@@ -24,6 +24,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Scope;
 
 import com.broadleafcommerce.order.common.dto.FulfillmentGroupDTO;
+import com.broadleafcommerce.order.common.dto.FulfillmentGroupItemDTO;
 import com.broadleafcommerce.order.common.dto.FulfillmentOptionDTO;
 import com.broadleafcommerce.order.common.dto.OfferCodeDTO;
 import com.broadleafcommerce.order.common.dto.OfferDTO;
@@ -118,5 +119,11 @@ public class OrderAutoConfiguration {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public SplitFulfillmentGroupDTO splitFulfillmentGroupDtoPrototype() {
         return new SplitFulfillmentGroupDTO();
+    }
+    
+    @Bean(name = "com.broadleafcommerce.order.common.dto.FulfillmentGroupItemDTO")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public FulfillmentGroupItemDTO fulfillmentGroupItemDtoPrototype() {
+        return new FulfillmentGroupItemDTO();
     }
 }
