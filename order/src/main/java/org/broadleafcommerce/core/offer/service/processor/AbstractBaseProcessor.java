@@ -27,7 +27,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.TypedPredicate;
-import org.broadleafcommerce.common.web.CommonRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
@@ -328,8 +328,8 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
     protected List<Offer> removeInvalidRequestOffers(List<Offer> offers) {
         RequestDTO requestDTO = null;
-        if (CommonRequestContext.getCommonRequestContext() != null) {
-            requestDTO = CommonRequestContext.getCommonRequestContext().getRequestDTO();
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            requestDTO = BroadleafRequestContext.getBroadleafRequestContext().getRequestDTO();
         }
 
         List<Offer> offersToRemove = new ArrayList<Offer>();
