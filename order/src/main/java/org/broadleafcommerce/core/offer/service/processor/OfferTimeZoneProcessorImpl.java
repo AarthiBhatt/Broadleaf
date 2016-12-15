@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.offer.service.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.web.CommonRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +33,7 @@ public class OfferTimeZoneProcessorImpl implements OfferTimeZoneProcessor {
     private static final Log LOG = LogFactory.getLog(OfferTimeZoneProcessorImpl.class);
 
     public TimeZone getTimeZone(Offer offer) {
-        CommonRequestContext brc = CommonRequestContext.getCommonRequestContext();
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         return (brc != null) ? brc.getTimeZone() : TimeZone.getDefault();
     }
 }

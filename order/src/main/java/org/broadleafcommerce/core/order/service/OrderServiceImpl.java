@@ -24,7 +24,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
-import org.broadleafcommerce.common.web.CommonRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -162,9 +162,9 @@ public class OrderServiceImpl implements OrderService {
     public Order createCart() {
         Order order = orderDao.create();
         order.setStatus(OrderStatus.IN_PROCESS);
-        if (CommonRequestContext.getCommonRequestContext() != null) {
-            order.setCurrency(CommonRequestContext.getCommonRequestContext().getBroadleafCurrency());
-            order.setLocale(CommonRequestContext.getCommonRequestContext().getLocale());
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency());
+            order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
         }
         return persist(order); // No pricing needed here since it's a new cart
     }
@@ -181,8 +181,8 @@ public class OrderServiceImpl implements OrderService {
             extensionManager.getProxy().attachAdditionalDataToNewNamedCart(orderCustomer, namedOrder);
         }
         
-        if (CommonRequestContext.getCommonRequestContext() != null) {
-            namedOrder.setLocale(CommonRequestContext.getCommonRequestContext().getLocale());
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            namedOrder.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
         }
         
         return persist(namedOrder); // No need to price here
