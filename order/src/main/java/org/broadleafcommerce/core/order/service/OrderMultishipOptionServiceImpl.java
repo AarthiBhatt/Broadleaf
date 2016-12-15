@@ -214,13 +214,15 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
             // used on the shippable fulfillment group so that the fulfillment group items that aren't
             // explicitly sent can have the same address saved on them
             FulfillmentGroup fg = fulfillmentGroupService.getFirstShippableFulfillmentGroup(order);
-            defaultAddress = fg.getAddress();
-            defaultFulfillmentOption = fg.getFulfillmentOption();
+            if (fg != null) {
+                defaultAddress = fg.getAddress();
+                defaultFulfillmentOption = fg.getFulfillmentOption();
+            }
             options = generateOrderMultishipOptions(order);
             // Only save if new options were made
             shouldSaveMultishipOption = true;
         }
-        Map<Long, OrderMultishipOption> optionMap = new HashMap<>();
+        Map<Long, List<OrderMultishipOption>> optionMap = new HashMap<>();
         for (OrderMultishipOption option : options) {
             if (defaultAddress != null) {
                 option.setAddress(defaultAddress);
@@ -231,7 +233,10 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
             if (shouldSaveMultishipOption) {
                 option = save(option);
             }
-            optionMap.put(option.getOrderItem().getId(), option);
+            List<OrderMultishipOption> itemOptions = optionMap.get(option.getOrderItem().getId());
+            itemOptions = itemOptions == null ? new ArrayList<OrderMultishipOption>() : itemOptions;
+            itemOptions.add(option);
+            optionMap.put(option.getOrderItem().getId(), itemOptions);
         }
         FulfillmentOption newFulfillmentOption = defaultFulfillmentOption;
         if (fulfillmentOptionId != null) {
@@ -241,13 +246,15 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
             }
         }
         for (Long orderItemId : orderItemIds) {
-            OrderMultishipOption option = optionMap.get(orderItemId);
-            if (option == null) {
+            List<OrderMultishipOption> itemOptions = optionMap.get(orderItemId);
+            if (itemOptions == null) {
                 throw new ItemNotFoundException("Order item id " + orderItemId + " either doesn't exists on order with id " + order.getId() + " or it's no shippable");
             }
-            option.setFulfillmentOption(newFulfillmentOption);
-            option.setAddress(address);
-            option = save(option);
+            for (OrderMultishipOption option : itemOptions) {
+                option.setFulfillmentOption(newFulfillmentOption);
+                option.setAddress(address);
+                option = save(option);
+            }
         }
         return options;
     }
