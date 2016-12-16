@@ -73,6 +73,10 @@ public interface StructuredContentFieldTemplate extends Serializable, MultiTenan
      */
     @Nullable
     List<FieldGroup> getFieldGroups();
+    
+    List<StructuredContentFieldGroupXref> getFieldGroupXrefs();
+    
+    void setFieldGroupXrefs(List<StructuredContentFieldGroupXref> fieldGroupXrefs);
 
     /**
      * Sets the list of field groups for this template.

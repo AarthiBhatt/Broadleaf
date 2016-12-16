@@ -20,9 +20,9 @@ package org.broadleafcommerce.core.order.domain;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
-import org.broadleafcommerce.common.dao.GenericEntityDaoImpl;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -119,19 +119,18 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Override
     public Sku getSku() {
         if (deproxiedSku == null) {
-            if (sku instanceof HibernateProxy) {
-                GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
-                if (genericEntityDao != null) {
-                    Long id = sku.getId();
-                    genericEntityDao.getEntityManager().detach(sku);
-                    deproxiedSku = genericEntityDao.getEntityManager().find(SkuImpl.class, id);
-                } else {
-                    deproxiedSku = HibernateUtils.deproxy(sku);
-                }
+            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
+
+            if (postLoaderDao != null) {
+                Long id = sku.getId();
+                deproxiedSku = postLoaderDao.find(SkuImpl.class, id);
+            } else if (sku instanceof HibernateProxy) {
+                deproxiedSku = HibernateUtils.deproxy(sku);
             } else {
                 deproxiedSku = sku;
             }
         }
+
         return deproxiedSku;
     }
 
@@ -156,19 +155,18 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Override
     public Product getProduct() {
         if (deproxiedProduct == null) {
-            if (product instanceof HibernateProxy) {
-                GenericEntityDao genericEntityDao = GenericEntityDaoImpl.getGenericEntityDao();
-                if (genericEntityDao != null) {
-                    Long id = product.getId();
-                    genericEntityDao.getEntityManager().detach(product);
-                    deproxiedProduct = genericEntityDao.getEntityManager().find(ProductImpl.class, id);
-                } else {
-                    deproxiedProduct = HibernateUtils.deproxy(product);
-                }
+            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
+
+            if (product != null && postLoaderDao != null) {
+                Long id = product.getId();
+                deproxiedProduct = postLoaderDao.find(ProductImpl.class, id);
+            } else if (product instanceof HibernateProxy) {
+                deproxiedProduct = HibernateUtils.deproxy(product);
             } else {
                 deproxiedProduct = product;
             }
         }
+
         return deproxiedProduct;
     }
 
