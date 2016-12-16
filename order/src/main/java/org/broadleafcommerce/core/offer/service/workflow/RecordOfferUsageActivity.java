@@ -85,7 +85,9 @@ public class RecordOfferUsageActivity extends BaseActivity<ProcessContext<Checko
         List<OfferAudit> audits = new ArrayList<OfferAudit>(offers.size());
         for (Offer offer : offers) {
             OfferAudit audit = offerAuditService.create();
-            audit.setCustomerId(order.getOrderCustomer().getExternalId());
+            if (order.getOrderCustomer() != null) {
+                audit.setCustomerId(order.getOrderCustomer().getExternalId());
+            }
             audit.setOfferId(offer.getId());
             audit.setOrderId(order.getId());
             
