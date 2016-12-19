@@ -31,7 +31,7 @@ import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectio
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.extensibility.jpa.copy.IgnoreEnterpriseBehavior;
+import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
