@@ -29,8 +29,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
-import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -182,31 +180,31 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderItemImpl_Adjustments", order = Presentation.FieldOrder.ADJUSTMENTS,
                     tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
-    protected List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<OrderItemAdjustment>();
+    protected List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<>();
 
     @OneToMany(mappedBy = "orderItem", targetEntity = ProratedOrderItemAdjustmentImpl.class, cascade = { CascadeType.ALL },
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderItemImpl_ProratedAdjustments", order = Presentation.FieldOrder.ADJUSTMENTS,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
-    protected List<ProratedOrderItemAdjustment> proratedOrderItemAdjustments = new ArrayList<ProratedOrderItemAdjustment>();
+    protected List<ProratedOrderItemAdjustment> proratedOrderItemAdjustments = new ArrayList<>();
 
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemQualifierImpl.class, cascade = { CascadeType.ALL },
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
-    protected List<OrderItemQualifier> orderItemQualifiers = new ArrayList<OrderItemQualifier>();
+    protected List<OrderItemQualifier> orderItemQualifiers = new ArrayList<>();
 
     @OneToMany(mappedBy = "orderItem", targetEntity = CandidateItemOfferImpl.class, cascade = { CascadeType.ALL },
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
-    protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<CandidateItemOffer>();
+    protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<>();
 
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemPriceDetailImpl.class, cascade = { CascadeType.ALL },
             orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderItemImpl_Price_Details", order = Presentation.FieldOrder.PRICEDETAILS,
                     tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
-    protected List<OrderItemPriceDetail> orderItemPriceDetails = new ArrayList<OrderItemPriceDetail>();
+    protected List<OrderItemPriceDetail> orderItemPriceDetails = new ArrayList<>();
     
     @Column(name = "ORDER_ITEM_TYPE")
     @Index(name="ORDERITEM_TYPE_INDEX", columnNames={"ORDER_ITEM_TYPE"})
@@ -233,7 +231,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "OrderItemAttributeImpl_Attribute_Name"
     )
-    protected Map<String, OrderItemAttribute> orderItemAttributeMap = new HashMap<String, OrderItemAttribute>();
+    protected Map<String, OrderItemAttribute> orderItemAttributeMap = new HashMap<>();
 
     /**
      * @deprecated use {@link FulfillmentGroupItem#getTaxes()} or {@link FulfillmentGroupItem#getTotalTax()} instead
@@ -244,7 +242,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     
     @OneToMany(mappedBy = "parentOrderItem", targetEntity = OrderItemImpl.class, cascade = CascadeType.REFRESH)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
-    protected List<OrderItem> childOrderItems = new ArrayList<OrderItem>();
+    protected List<OrderItem> childOrderItems = new ArrayList<>();
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "PARENT_ORDER_ITEM_ID")
@@ -330,16 +328,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Override
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    @Override
-    public OrderCategory getCategory() {
-       return category;
-    }
-
-    @Override
-    public void setCategory(OrderCategory category) {
-        this.category = category;
     }
 
     @Override
@@ -978,7 +966,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         // dont clone
         cloned.setParentOrderItem(parentOrderItem == null ? null : parentOrderItem.createOrRetrieveCopyInstance(context).getClone());
         for(OrderItem entry : childOrderItems){
-            OrderItem clonedEntry = ((OrderItem)entry).createOrRetrieveCopyInstance(context).getClone();
+            OrderItem clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setParentOrderItem(cloned);
             cloned.getChildOrderItems().add(clonedEntry);
         }
