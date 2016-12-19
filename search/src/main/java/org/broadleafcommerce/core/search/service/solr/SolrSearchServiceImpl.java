@@ -33,9 +33,6 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
-import org.broadleafcommerce.core.catalog.dao.SkuDao;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
@@ -52,6 +49,7 @@ import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexService;
+import org.restlet.data.Product;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -90,9 +88,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
 
-    @Resource(name = "blSkuDao")
-    protected SkuDao skuDao;
-
     @Resource(name = "blFieldDao")
     protected FieldDao fieldDao;
 
@@ -120,35 +115,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     @Override
-    public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
-        searchCriteria.setSearchExplicitCategory(true);
-        searchCriteria.setCategory(category);
-        return findSearchResults(searchCriteria);
-    }
-
-    @Override
-    @Deprecated
-    public SearchResult findSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
-        searchCriteria.setCategory(category);
-        return findSearchResults(searchCriteria);
-    }
-
-    @Override
-    @Deprecated
-    public SearchResult findSearchResultsByQuery(String query, SearchCriteria searchCriteria) throws ServiceException {
-        searchCriteria.setQuery(query);
-        return findSearchResults(searchCriteria);
-    }
-
-    @Override
-    @Deprecated
-    public SearchResult findSearchResultsByCategoryAndQuery(Category category, String query, SearchCriteria searchCriteria) throws ServiceException {
-        searchCriteria.setCategory(category);
-        searchCriteria.setQuery(query);
-        return findSearchResults(searchCriteria);
-    }
-
-    @Override
     public SearchResult findSearchResults(SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getSearchFacets(searchCriteria.getCategory());
         if (searchCriteria.getQuery() != null) {
@@ -160,15 +126,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         return findSearchResults(searchCriteria.getQuery(), facets, searchCriteria, getDefaultSort(searchCriteria));
     }
 
-    /**
-     * @deprecated in favor of the other findSearchResults() method
-     */
-    @Deprecated
-    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
-            SearchCriteria searchCriteria, String defaultSort) throws ServiceException {
-        return findSearchResults(searchCriteria.getQuery(), facets, searchCriteria, defaultSort, (String[]) null);
-    }
-    
     /**
      * Given a qualified solr query string (such as "category:2002"), actually performs a solr search. It will
      * take into considering the search criteria to build out facets / pagination / sorting.
@@ -549,34 +506,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         return products;
     }
 
-    /**
-     * Given a list of Sku IDs from solr, this method will look up the IDs via the skuDao and build out
-     * actual Sku instances. It will return a Sku list that is sorted by the order of the IDs in the passed
-     * in list.
-     * 
-     * @param response
-     * @return the actual Sku instances as a result of the search
-     */
-    protected List<Sku> getSkus(List<SolrDocument> responseDocuments) {
-        final List<Long> skuIds = new ArrayList<>();
-        for (SolrDocument doc : responseDocuments) {
-            skuIds.add((Long) doc.getFieldValue(shs.getIndexableIdFieldName()));
-        }
-
-        List<Sku> skus = skuDao.readSkusByIds(skuIds);
-
-        // We have to sort the skus list by the order of the skuIds list to maintain sortability in the UI
-        if (skus != null) {
-            Collections.sort(skus, new Comparator<Sku>() {
-                @Override
-                public int compare(Sku o1, Sku o2) {
-                    return new Integer(skuIds.indexOf(o1.getId())).compareTo(skuIds.indexOf(o2.getId()));
-                }
-            });
-        }
-
-        return skus;
-    }
 
     /**
      * Create the wrapper DTO around the SearchFacet

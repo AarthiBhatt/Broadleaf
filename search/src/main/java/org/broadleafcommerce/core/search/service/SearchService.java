@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.search.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
@@ -45,25 +44,6 @@ public interface SearchService {
     /**
      * Performs a search for search results in the given category, taking into consideration the SearchCriteria
      * 
-     * This method will return search results that are in any sub-level of a given category. For example, if you had a 
-     * "Routers" category and a "Enterprise Routers" sub-category, asking for search results in "Routers", would return
-     * search results that are in the "Enterprise Routers" category. 
-     * 
-     * @see #findExplicitSearchResultsByCategory(Category, SearchCriteria)
-     *
-     * @param category
-     * @param searchCriteria
-     * @return the result of the search
-     * @throws ServiceException
-     * @deprecated use #findSearchResults(SearchCriteria)
-     */
-    @Deprecated
-    public SearchResult findSearchResultsByCategory(Category category, SearchCriteria searchCriteria)
-            throws ServiceException;
-    
-    /**
-     * Performs a search for search results in the given category, taking into consideration the SearchCriteria
-     * 
      * This method will NOT return search results that are in a sub-level of a given category. For example, if you had a 
      * "Routers" category and a "Enterprise Routers" sub-category, asking for search results in "Routers", would NOT return
      * search results that are in the "Enterprise Routers" category. 
@@ -78,33 +58,6 @@ public interface SearchService {
     public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria)
             throws ServiceException;
     
-    /**
-     * Performs a search for search results across all categories for the given query, taking into consideration
-     * the SearchCriteria
-     * 
-     * @param query
-     * @param searchCriteria
-     * @return the result of the search
-     * @throws ServiceException
-     * @deprecated use #findSearchResults(SearchCriteria)
-     */
-    @Deprecated
-    public SearchResult findSearchResultsByQuery(String query, SearchCriteria searchCriteria)
-            throws ServiceException;
-    
-    /**
-     * Performs a search for search results in the given category for the given query, taking into consideration 
-     * the SearchCriteria
-     * 
-     * @param category
-     * @param query
-     * @param searchCriteria
-     * @throws ServiceException
-     * @deprecated use #findSearchResults(SearchCriteria)
-     */
-    @Deprecated
-    public SearchResult findSearchResultsByCategoryAndQuery(Category category, String query, SearchCriteria searchCriteria) throws ServiceException;
-
     /**
      * Performs a search for search results based on the given SearchCriteria, if SearchCriteria has a category, the category
      * is considering for the search.

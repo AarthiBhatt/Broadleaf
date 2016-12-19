@@ -39,8 +39,6 @@ import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
-import org.broadleafcommerce.core.catalog.domain.Indexable;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
@@ -55,6 +53,7 @@ import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
+import org.broadleafcommerce.core.search.domain.Indexable;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.SolrConfiguration;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
@@ -442,37 +441,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     protected List<? extends Indexable> readAllActiveIndexables(int pageSize, Long lastId) {
-        if (useSku) {
-            List<Sku> skus = skuDao.readAllActiveSkus(pageSize, lastId);
-            return filterIndexableSkus(skus);
-        } else {
-            return productDao.readAllActiveProducts(pageSize, lastId);
-        }
-    }
-
-    @Override
-    public List<Sku> filterIndexableSkus(List<Sku> skus) {
-        ArrayList<Sku> skusToIndex = new ArrayList<>();
-
-        if (CollectionUtils.isNotEmpty(skus)) {
-            for (Sku sku : skus) {
-                //If the sku is not active, don't index it...
-                if (!sku.isActive()) {
-                    continue;
-                }
-
-                //If this is the default sku and the product has product options
-                //and is not allowed to be sold without product options
-                if (sku.getDefaultProduct() != null
-                        && !sku.getProduct().getCanSellWithoutOptions()
-                        && !sku.getProduct().getAdditionalSkus().isEmpty()) {
-                    continue;
-                }
-                
-                skusToIndex.add(sku);
-            }
-        }
-        return skusToIndex;
+        return productDao.readAllActiveProducts(pageSize, lastId);
     }
 
     @Override

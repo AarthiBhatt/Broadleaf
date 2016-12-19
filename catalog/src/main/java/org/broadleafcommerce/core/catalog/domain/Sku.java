@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsideratio
 import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+import org.broadleafcommerce.core.search.domain.Indexable;
 
 import java.io.Serializable;
 import java.util.Date;

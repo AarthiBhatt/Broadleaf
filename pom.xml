@@ -323,6 +323,7 @@
     </build>
     <modules>
         <module>catalog</module>
+        <module>search</module>
         <module>payment</module>
         <module>contact</module>
         <module>rating</module>
