@@ -7,9 +7,7 @@
     </parent>
     
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.broadleafcommerce</groupId>
     <artifactId>broadleaf-catalog</artifactId>
-    <version>6.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>BroadleafCommerce Catalog</name>
     <description>BroadleafCommerce Catalog Module</description>
@@ -60,7 +58,7 @@
     </profiles>
     <dependencies>
         <dependency>
-            <groupId>com.broadleafcommerce</groupId>
+            <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-micro-common</artifactId>
             <version>${project.version}</version>
         </dependency>

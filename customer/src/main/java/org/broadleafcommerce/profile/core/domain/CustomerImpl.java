@@ -228,7 +228,7 @@ public class CustomerImpl implements Customer, CustomerAdminPresentation, AdminM
     protected boolean loggedIn;
 
     @Transient
-    protected Map<String, Object> transientProperties = new HashMap<String, Object>();
+    protected Map<String, Object> transientProperties = new HashMap<>();
 
     @Override
     public Long getId() {
@@ -462,34 +462,32 @@ public class CustomerImpl implements Customer, CustomerAdminPresentation, AdminM
         this.customerPhones = customerPhones;
     }
 
-//TODO: microservices - deal with AdminBasicEntity
-//    @Override
-//    public String getMainEntityName() {
-//        if (!StringUtils.isEmpty(getFirstName()) && !StringUtils.isEmpty(getLastName())) {
-//            return getFirstName() + " " + getLastName();
-//        }
-//        if (!StringUtils.isEmpty(getUsername())) {
-//            return getUsername();
-//        }
-//        return String.valueOf(getId());
-//    }
+    @Override
+    public String getMainEntityName() {
+        if (!StringUtils.isEmpty(getFirstName()) && !StringUtils.isEmpty(getLastName())) {
+            return getFirstName() + " " + getLastName();
+        }
+        if (!StringUtils.isEmpty(getUsername())) {
+            return getUsername();
+        }
+        return String.valueOf(getId());
+    }
 
-//TODO: microservices - deal with sandbox preview
-//    @Override
-//    public Boolean getPreview() {
-//        if (previewable == null) {
-//            previewable = new PreviewStatus();
-//        }
-//        return previewable.getPreview();
-//    }
-//
-//    @Override
-//    public void setPreview(Boolean preview) {
-//        if (previewable == null) {
-//            previewable = new PreviewStatus();
-//        }
-//        previewable.setPreview(preview);
-//    }
+    @Override
+    public Boolean getPreview() {
+        if (previewable == null) {
+            previewable = new PreviewStatus();
+        }
+        return previewable.getPreview();
+    }
+
+    @Override
+    public void setPreview(Boolean preview) {
+        if (previewable == null) {
+            previewable = new PreviewStatus();
+        }
+        previewable.setPreview(preview);
+    }
 
     @Override
     public Map<String, Object> getTransientProperties() {
