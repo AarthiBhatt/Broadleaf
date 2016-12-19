@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Framework
+  %%
+  Copyright (C) 2009 - 2016 Broadleaf Commerce
+  %%
+  Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+  (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+  unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+  the Broadleaf End User License Agreement (EULA), Version 1.1
+  (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+  shall apply.
+  
+  Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+  between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+  #L%
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+
+    <context:component-scan base-package="com.broadleafcommerce.order"/>
+    <context:component-scan base-package="org.broadleafcommerce.common"/>
+    <context:component-scan base-package="org.broadleafcommerce.core">
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.core.web.*"/> 
+    </context:component-scan>
+    
+    <!-- Bean for encrypting PCI data -->
+    <bean id="blEncryptionModule" class="org.broadleafcommerce.common.encryption.PassthroughEncryptionModule"/>
+    
+    <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
+        <property name="autodetect" value="true"/>
+        <property name="assembler" ref="blAssembler"/>
+        <property name="namingStrategy" ref="blNamingStrategy"/>
+    </bean>
+    
+    <bean id="blAttributeSource" class="org.broadleafcommerce.common.jmx.AnnotationJmxAttributeSource">
+        <constructor-arg ref="blJmxNamingBean"/>
+    </bean>
+    
+    <bean id="blAssembler" class="org.broadleafcommerce.common.jmx.MetadataMBeanInfoAssembler">
+        <property name="attributeSource" ref="blAttributeSource"/>
+    </bean>
+    
+    <bean id="blNamingStrategy" class="org.broadleafcommerce.common.jmx.MetadataNamingStrategy">
+        <property name="attributeSource" ref="blAttributeSource"/>
+    </bean>
+
+    <bean id="blJmxNamingBean" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>java:comp/env/appName</value>
+        </property>
+        <property name="defaultObject" value="broadleaf"/>
+    </bean>
+
+    <bean id="blAccountNumberMask" class="org.broadleafcommerce.common.payment.AccountNumberMask">
+        <constructor-arg>
+            <list>
+                <bean class="org.broadleafcommerce.common.payment.UnmaskRange">
+                    <constructor-arg value="0"/>
+                    <constructor-arg value="0"/>
+                </bean>
+                <bean class="org.broadleafcommerce.common.payment.UnmaskRange">
+                    <constructor-arg value="1"/>
+                    <constructor-arg value="4"/>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg value="X"/>
+    </bean>
+
+    <bean id="blContentCartRuleProcessor" class="org.broadleafcommerce.core.order.service.StructuredContentCartRuleProcessor">
+        <property name="orderDao" ref="blOrderDao"/>
+        <property name="contextClassNames">
+            <map>
+                <entry key="orderItem" value="org.broadleafcommerce.core.order.domain.OrderItem" />
+            </map>
+        </property>
+    </bean>
+
+    <!-- Append the content rule processor that checks for cart contents -->
+    <bean id="blContentRuleProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blContentCartRuleProcessor"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blPageCartRuleProcessor" class="org.broadleafcommerce.core.order.service.PageCartRuleProcessor">
+        <property name="orderDao" ref="blOrderDao"/>
+        <property name="contextClassNames">
+            <map>
+                <entry key="orderItem" value="org.broadleafcommerce.core.order.domain.OrderItem" />
+            </map>
+        </property>
+    </bean>
+
+    <!-- Append the content rule processor that checks for cart contents -->
+    <bean id="blPageRuleProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blPageCartRuleProcessor"/>
+            </list>
+        </property>
+    </bean>    
+
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="org.broadleafcommerce.common.locale.util.LocaleConverter" />
+            </set>
+        </property>
+    </bean>
+
+    <!-- Add a default implementation for payments of type PaymentGatewayType.PASSTHROUGH -->
+    <bean id="blPassthroughPaymentConfigurationServiceList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blPassthroughPaymentConfigurationService"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blPassthroughPaymentConfigurationServiceList"/>
+        <property name="targetRef" value="blPaymentGatewayConfigurationServices"/>
+    </bean>
+
+    <bean id="blPromotionMessageGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+</beans>

@@ -53,6 +53,7 @@
         <spock.spring.version>1.0-groovy-2.3</spock.spring.version>
         <selenium.version>2.43.1</selenium.version>
         <groovy.version>2.3.11</groovy.version>
+        <lombok.version>1.16.10</lombok.version>
         <project.uri>${project.baseUri}</project.uri>
         <broadleaf-presentation.version>1.0.0-SNAPSHOT</broadleaf-presentation.version>
     </properties>
@@ -320,6 +321,7 @@
     </build>
     <modules>
         <module>catalog</module>
+        <module>payment</module>
         <module>contact</module>
         <module>rating</module>
         <module>content</module>
@@ -327,7 +329,7 @@
         <module>order</module>
         <module>micro-common</module>
         <module>common</module>
-        <module>core</module>
+        <!-- <module>core</module> -->
         <module>admin</module>
     </modules>
     <dependencies>
@@ -534,6 +536,13 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-catalog</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.broadleafcommerce</groupId>
+                <artifactId>broadleaf-payment</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
@@ -1486,6 +1495,11 @@
                 <groupId>com.yahoo.platform.yui</groupId>
                 <artifactId>yuicompressor</artifactId>
                 <version>2.4.7</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

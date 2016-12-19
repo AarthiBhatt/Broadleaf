@@ -59,9 +59,10 @@ import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
+
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -439,7 +440,7 @@ public class OfferServiceTest extends TestCase {
     }
 
     public void testBuildOfferListForOrder() throws Exception {
-        EasyMock.expect(customerOfferDaoMock.readCustomerOffersByCustomer(EasyMock.isA(Customer.class))).andReturn(new ArrayList<CustomerOffer>());
+        EasyMock.expect(customerOfferDaoMock.readCustomerOffersByCustomer(EasyMock.isA(OrderCustomer.class))).andReturn(new ArrayList<CustomerOffer>());
         EasyMock.expect(offerDaoMock.readOffersByAutomaticDeliveryType()).andReturn(dataProvider.createCustomerBasedOffer(null, dataProvider.yesterday(), dataProvider.tomorrow(), OfferDiscountType.PERCENT_OFF));
 
         replay();

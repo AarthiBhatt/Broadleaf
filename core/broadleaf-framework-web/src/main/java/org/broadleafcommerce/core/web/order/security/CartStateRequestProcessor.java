@@ -31,6 +31,7 @@ import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.web.order.translation.OrderCustomerFacadeService;
 import org.broadleafcommerce.core.web.service.UpdateCartService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -78,6 +79,9 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
+    
+    @Resource(name = "blOrderCustomerFacadeService")
+    protected OrderCustomerFacadeService orderCustomerFacadeService;
 
     @Resource(name = "blUpdateCartService")
     protected UpdateCartService updateCartService;
@@ -123,12 +127,10 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
                 }
                 cart = mergeCart(customer, request);
             } else if (cart == null) {
-                cart = orderService.findCartForCustomer(customer);
+                cart = orderCustomerFacadeService.findCartForCustomer(customer);
             }
 
-            if (cart == null) {
-                cart = orderService.getNullOrder();
-            } else {
+            if (cart != null) {
                 updateCartService.updateAndValidateCart(cart);
             }
         }
@@ -191,8 +193,8 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
         Customer anonymousCustomer = customerStateRequestProcessor.getAnonymousCustomer(request);
         MergeCartResponse mergeCartResponse;
         try {
-            Order cart = orderService.findCartForCustomer(anonymousCustomer);
-            mergeCartResponse = mergeCartService.mergeCart(customer, cart);
+            Order cart = orderCustomerFacadeService.findCartForCustomer(anonymousCustomer);
+            mergeCartResponse = orderCustomerFacadeService.mergeCart(customer, cart);
         } catch (PricingException e) {
             throw new RuntimeException(e);
         } catch (RemoveFromCartException e) {

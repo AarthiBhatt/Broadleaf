@@ -79,6 +79,21 @@ public class CatalogServiceImpl implements CatalogService {
         return productDao.readProductsByName(searchName, limit, offset);
     }
 
+    public boolean isInCategory(Category category, String categoryName) {
+        Category currentCategory = category;
+        if (currentCategory != null) {
+            if (currentCategory.getName().equals(categoryName)) {
+                return true;
+            }
+            while ((currentCategory = currentCategory.getDefaultParentCategory()) != null) {
+                if (currentCategory.getName().equals(categoryName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public List<Product> findActiveProductsByCategory(Category category) {
         return productDao.readActiveProductsByCategory(category.getId());

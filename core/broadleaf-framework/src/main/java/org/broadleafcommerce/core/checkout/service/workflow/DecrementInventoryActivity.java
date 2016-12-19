@@ -17,16 +17,21 @@
  */
 package org.broadleafcommerce.core.checkout.service.workflow;
 
-import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.apache.commons.collections4.MapUtils;
 import org.broadleafcommerce.core.inventory.service.ContextualInventoryService;
+import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
 
+import com.broadleafcommerce.order.common.domain.OrderSku;
+import com.broadleafcommerce.order.common.dto.OrderSkuDTO;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -48,19 +53,17 @@ public class DecrementInventoryActivity extends BaseActivity<ProcessContext<Chec
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         CheckoutSeed seed = context.getSeedData();
-
-        Map<Sku, Integer> skuQuantityMap = new HashMap<>();
+        
+        Map<Long, Integer> skuQuantityMap = new HashMap<>();
         for (OrderItem orderItem : seed.getOrder().getOrderItems()) {
             if (orderItem instanceof DiscreteOrderItem) {
-                Sku sku = ((DiscreteOrderItem) orderItem).getSku();
+                OrderSku sku = ((DiscreteOrderItem) orderItem).getSku();
                 Integer q = skuQuantityMap.get(sku);
                 q = q == null ? orderItem.getQuantity() : q + orderItem.getQuantity();
-                skuQuantityMap.put(sku, q);
+                skuQuantityMap.put(sku.getExternalId(), q);
             }
         }
 
-        //map to hold skus and quantity purchased
-        Map<Sku, Integer> skuInventoryMap = inventoryService.buildSkuInventoryMap(skuQuantityMap);
 
         Map<String, Object> rollbackState = new HashMap<String, Object>();
         if (getRollbackHandler() != null && !getAutomaticallyRegisterRollbackHandler()) {
@@ -72,19 +75,31 @@ public class DecrementInventoryActivity extends BaseActivity<ProcessContext<Chec
             ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackRegion(), getRollbackHandler(), rollbackState);
         }
             
-        if (!skuInventoryMap.isEmpty()) {
-            Map<String, Object> contextualInfo = new HashMap<String, Object>();
-            contextualInfo.put(ContextualInventoryService.ORDER_KEY, context.getSeedData().getOrder());
-            contextualInfo.put(ContextualInventoryService.ROLLBACK_STATE_KEY, new HashMap<String, Object>());
-            inventoryService.decrementInventory(skuInventoryMap, contextualInfo);
+        if (MapUtils.isNotEmpty(seed.getInventory())) {
+            for (Entry<OrderSkuDTO, Integer> entry : seed.getInventory().entrySet()) {
+                OrderSkuDTO dto = entry.getKey();
+                Integer q = entry.getValue();
+                if (q == null || q < 1) {
+                    throw new IllegalArgumentException("Quantity " + q + " is not valid. Must be greater than zero and not null.");
+                }
+                if (!dto.isActive()) {
+                    throw new IllegalArgumentException("The Sku " + dto.getSku().getExternalId() + "has been marked as unavailable");
+                }
+                Integer requestedQuantity = skuQuantityMap.get(dto.getSku().getExternalId());
+                if (requestedQuantity > q) {
+                    throw new InventoryUnavailableException(
+                            "There was not enough inventory to fulfill this request because there is only " + q + " of sku " + dto.getSku().getExternalId() +
+                                " but only " + requestedQuantity + " was available");
+
+                }
+            }
+            // TODO microservices - implement event system to decrement quantity
+            //inventoryService.decrementInventory(skuInventoryMap, contextualInfo);
             
             if (getRollbackHandler() != null && !getAutomaticallyRegisterRollbackHandler()) {
-                rollbackState.put(DecrementInventoryRollbackHandler.ROLLBACK_BLC_INVENTORY_DECREMENTED, skuInventoryMap);
+                rollbackState.put(DecrementInventoryRollbackHandler.ROLLBACK_BLC_INVENTORY_DECREMENTED, skuQuantityMap);
                 rollbackState.put(DecrementInventoryRollbackHandler.ROLLBACK_BLC_ORDER_ID, seed.getOrder().getId());
             }
-            
-            // add the rollback state that was used in the rollback handler
-            rollbackState.put(DecrementInventoryRollbackHandler.EXTENDED_ROLLBACK_STATE, contextualInfo.get(ContextualInventoryService.ROLLBACK_STATE_KEY));
         }
 
         return context;

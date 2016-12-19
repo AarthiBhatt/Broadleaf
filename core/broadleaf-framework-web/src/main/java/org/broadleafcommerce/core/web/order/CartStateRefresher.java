@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.web.order;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderPersistedEntityListener;
 import org.broadleafcommerce.core.order.domain.OrderPersistedEvent;
@@ -56,10 +55,10 @@ public class CartStateRefresher implements ApplicationListener<OrderPersistedEve
         if (request != null) {
              Order dbOrder = event.getOrder();
             //Update the cart state ONLY IF the IDs of the newly persisted order and whatever is already in CartState match
-            boolean emptyCartState = CartState.getCart() == null || CartState.getCart() instanceof NullOrderImpl;
+            boolean emptyCartState = CartState.getCart() == null;
             if (emptyCartState) {
                 //If cart state is empty, set it to this newly persisted order if it's the active Customer's cart
-                if (CustomerState.getCustomer() != null && CustomerState.getCustomer().getId().equals(dbOrder.getCustomer().getId())
+                if (CustomerState.getCustomer() != null && CustomerState.getCustomer().getId().equals(dbOrder.getOrderCustomer().getExternalId())
                         && OrderStatus.IN_PROCESS.equals(dbOrder.getStatus())) {
                     CartState.setCart(dbOrder);
                 }

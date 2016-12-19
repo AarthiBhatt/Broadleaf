@@ -17,10 +17,10 @@
  */
 package org.broadleafcommerce.core.web.checkout.model;
 
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.AddressImpl;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
-import org.broadleafcommerce.profile.core.domain.PhoneImpl;
+import org.broadleafcommerce.core.payment.domain.CustomerPayment;
+
+import com.broadleafcommerce.order.common.domain.OrderAddress;
+import com.broadleafcommerce.order.common.domain.OrderAddressImpl;
 
 import java.io.Serializable;
 
@@ -34,7 +34,7 @@ public class BillingInfoForm implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected Address address = new AddressImpl();
+    protected OrderAddress address = new OrderAddressImpl();
     protected boolean useShippingAddress;
     protected Long customerPaymentId;
     protected CustomerPayment customerPayment;
@@ -43,16 +43,14 @@ public class BillingInfoForm implements Serializable {
     protected String paymentName;
 
     public BillingInfoForm() {
-        address.setPhonePrimary(new PhoneImpl());
-        address.setPhoneSecondary(new PhoneImpl());
-        address.setPhoneFax(new PhoneImpl());
+        address.setPhone(null);
     }
 
-    public Address getAddress() {
+    public OrderAddress getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(OrderAddress address) {
         this.address = address;
     }
 

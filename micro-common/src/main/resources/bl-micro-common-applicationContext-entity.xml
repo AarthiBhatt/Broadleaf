@@ -30,5 +30,7 @@
     <bean id="org.broadleafcommerce.common.site.domain.SiteCatalogXref" class="org.broadleafcommerce.common.site.domain.SiteCatalogXrefImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.currency.domain.BroadleafCurrency" class="org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl"/>
     <bean id="org.broadleafcommerce.common.locale.domain.Locale" class="org.broadleafcommerce.common.locale.domain.LocaleImpl"/>
+    <bean id="org.broadleafcommerce.common.media.domain.Media" class="org.broadleafcommerce.common.media.domain.MediaImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.common.config.domain.SystemProperty" class="org.broadleafcommerce.common.config.domain.SystemPropertyImpl" scope="prototype" />
 
 </beans>

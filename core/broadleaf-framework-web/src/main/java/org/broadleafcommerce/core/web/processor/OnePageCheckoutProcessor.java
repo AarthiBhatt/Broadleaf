@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.FulfillmentOptionService;
@@ -43,11 +42,12 @@ import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionDTO;
 import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionStateType;
 import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionViewType;
 import org.broadleafcommerce.core.web.order.CartState;
+import org.broadleafcommerce.core.web.translation.OrderAddressTranslationService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
@@ -113,6 +113,9 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
 
     @Resource(name = "blOrderToPaymentRequestDTOService")
     protected OrderToPaymentRequestDTOService orderToPaymentRequestDTOService;
+    
+    @Resource(name = "blOrderAddressTranslationService")
+    protected OrderAddressTranslationService orderAddressTranslationService;
 
     @Override
     public String getName() {
@@ -149,7 +152,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
         //Add PaymentRequestDTO to the model in the case of errors or other cases
         Map<String, Object> newModelVars = new HashMap<>();
         Order cart = CartState.getCart();
-        if (cart != null && !(cart instanceof NullOrderImpl)) {
+        if (cart != null) {
             newModelVars.put("paymentRequestDTO", orderToPaymentRequestDTOService.translateOrder(cart));
         }
 
@@ -202,7 +205,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
                 CustomerAddress defaultAddress = customerAddressService.findDefaultCustomerAddress(CustomerState.getCustomer().getId());
                 if (defaultAddress != null) {
                     Address address = addressService.readAddressById(defaultAddress.getAddressExternalId());
-                    shippingForm.setAddress(address);
+                    shippingForm.setAddress(orderAddressTranslationService.convertAddressToOrderAddress(address));
                     shippingForm.setAddressName(defaultAddress.getAddressName());
                 }
             }
@@ -424,7 +427,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
         List<FulfillmentOption> fulfillmentOptions = fulfillmentOptionService.readAllFulfillmentOptions();
         Order cart = CartState.getCart();
 
-        if (!(cart instanceof NullOrderImpl) && cart.getFulfillmentGroups().size() > 0 && hasPopulatedShippingAddress(cart)) {
+        if (cart.getFulfillmentGroups().size() > 0 && hasPopulatedShippingAddress(cart)) {
             Set<FulfillmentOption> options = new HashSet<>();
             options.addAll(fulfillmentOptions);
             FulfillmentEstimationResponse estimateResponse = null;

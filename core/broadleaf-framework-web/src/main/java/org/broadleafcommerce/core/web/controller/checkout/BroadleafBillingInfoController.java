@@ -18,20 +18,19 @@
 
 package org.broadleafcommerce.core.web.controller.checkout;
 
-import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.payment.domain.CustomerPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
-import org.broadleafcommerce.profile.core.domain.Phone;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+
+import com.broadleafcommerce.order.common.domain.OrderAddress;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,30 +67,16 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
             customerPayment = customerPaymentService.readCustomerPaymentById(billingForm.getCustomerPaymentId());
 
             if (customerPayment != null) {
-                Address address = addressService.readAddressById(customerPayment.getBillingAddressExternalId());
+                OrderAddress address = customerPayment.getBillingAddress();
                 if (address != null) {
-                    billingForm.setAddress(addressService.copyAddress(address));
+                    billingForm.setAddress(address);
                 }
             }
         }
 
-        addressService.populateAddressISOCountrySub(billingForm.getAddress());
         billingInfoFormValidator.validate(billingForm, result);
         if (result.hasErrors()) {
             return getCheckoutView();
-        }
-
-        if ((billingForm.getAddress().getPhonePrimary() != null) &&
-                (StringUtils.isEmpty(billingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
-            billingForm.getAddress().setPhonePrimary(null);
-        }
-        if ((billingForm.getAddress().getPhoneSecondary() != null) &&
-                (StringUtils.isEmpty(billingForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
-            billingForm.getAddress().setPhoneSecondary(null);
-        }
-        if ((billingForm.getAddress().getPhoneFax() != null) &&
-                (StringUtils.isEmpty(billingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
-            billingForm.getAddress().setPhoneFax(null);
         }
 
         boolean found = false;
@@ -102,7 +87,7 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
                 if (p.getBillingAddress() == null) {
                     p.setBillingAddress(billingForm.getAddress());
                 } else {
-                    Address updatedAddress = addressService.copyAddress(p.getBillingAddress(), billingForm.getAddress());
+                    OrderAddress updatedAddress = orderAddressService.copyOrderAddress(billingForm.getAddress());
                     p.setBillingAddress(updatedAddress);
                 }
                 
@@ -139,9 +124,9 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
      */
     protected void copyShippingAddressToBillingAddress(Order order, BillingInfoForm billingInfoForm) {
         if (order.getFulfillmentGroups().get(0) != null) {
-            Address shipping = order.getFulfillmentGroups().get(0).getAddress();
+            OrderAddress shipping = order.getFulfillmentGroups().get(0).getAddress();
             if (shipping != null) {
-                Address billing = addressService.copyAddress(shipping) ;
+                OrderAddress billing = orderAddressService.copyOrderAddress(shipping);
                 billingInfoForm.setAddress(billing);
             }
         }

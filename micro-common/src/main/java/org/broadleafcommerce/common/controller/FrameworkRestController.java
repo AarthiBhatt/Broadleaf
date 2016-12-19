@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Micro Common
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
