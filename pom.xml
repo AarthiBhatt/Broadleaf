@@ -332,7 +332,7 @@
         <module>micro-common</module>
         <module>common</module>
         <!-- <module>core</module> -->
-        <module>admin</module>
+        <!-- <module>admin</module> -->
     </modules>
     <dependencies>
     </dependencies>
