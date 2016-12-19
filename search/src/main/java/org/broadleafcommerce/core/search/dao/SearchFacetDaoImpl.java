@@ -18,14 +18,10 @@
 package org.broadleafcommerce.core.search.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetImpl;
-import org.broadleafcommerce.core.search.domain.IndexField;
-import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -38,7 +34,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
 @Repository("blSearchFacetDao")
@@ -70,43 +65,6 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
         return query.getResultList();
     }
     
-    @Override
-    public <T> List<T> readDistinctValuesForField(String fieldName, Class<T> fieldValueClass) {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<T> criteria = builder.createQuery(fieldValueClass);
-        
-        Root<ProductImpl> product = criteria.from(ProductImpl.class);
-        Path<Sku> sku = product.get("defaultSku");
-        
-        Path<?> pathToUse;
-        if (fieldName.contains("defaultSku.")) {
-            pathToUse = sku;
-            fieldName = fieldName.substring("defaultSku.".length());
-        } else if (fieldName.contains("productAttributes.")) {
-            pathToUse = product.join("productAttributes");
-            
-            fieldName = fieldName.substring("productAttributes.".length());
-            criteria.where(builder.equal(
-                builder.lower(pathToUse.get("name").as(String.class)), fieldName.toLowerCase()));
-            
-            fieldName = "value";
-        } else if (fieldName.contains("product.")) {
-            pathToUse = product;
-            fieldName = fieldName.substring("product.".length());
-        } else {
-            throw new IllegalArgumentException("Invalid facet fieldName specified: " + fieldName);
-        }
-        
-        criteria.where(pathToUse.get(fieldName).as(fieldValueClass).isNotNull());
-        criteria.distinct(true).select(pathToUse.get(fieldName).as(fieldValueClass));
-
-        TypedQuery<T> query = em.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
-        
-        return query.getResultList();
-    }
-
     @Override
     public SearchFacet save(SearchFacet searchFacet) {
         return em.merge(searchFacet);
