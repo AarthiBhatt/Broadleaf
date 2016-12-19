@@ -101,6 +101,4 @@
     
     <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration"/>
     
-    <import resource="bl-common-applicationContext-mbeans.xml" />
-    
 </beans>
