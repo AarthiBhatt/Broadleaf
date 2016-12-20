@@ -20,13 +20,12 @@ package org.broadleafcommerce.core.search.service.solr;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -45,9 +44,6 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
     public static final String CUSTOM_FIELD_EQUALS_FORMAT_REGEX = "^product\\.\\?getProductAttributes\\(\\)\\[\\\"([a-zA-Z0-9_]+)\\\"\\]\\=\\=\\\"([a-zA-Z0-9\\s]+)\\\"$";
     public static final String CUSTOM_FIELD_CONTAINS_FORMAT_REGEX = "^MvelHelper\\.toUpperCase\\(product\\.\\?getProductAttributes\\(\\)\\[\\\"([a-zA-Z0-9_]+)\\\"\\]\\)\\.contains\\(MvelHelper\\.toUpperCase\\(\\\"([a-zA-Z0-9\\s]+)\\\"\\)\\)$";
 
-    @Resource(name = "blCatalogService")
-    protected CatalogService catalogService;
-
     @Resource(name = "blIndexFieldDao")
     protected IndexFieldDao indexFieldDao;
 
@@ -61,8 +57,7 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
             criteria.setQuery(customFieldQuery);
         } else if (isCategoryTargetingRule(mvelRule)) {
             Long categoryId = getCategoryId(mvelRule);
-            Category category = catalogService.findCategoryById(categoryId);
-            criteria.setCategory(category);
+            criteria.setCategoryFilters(Arrays.asList(categoryId.toString()));
         } else {
             throw new UnsupportedOperationException("The provided MVEL rule format is not currently supported " +
                     "for MVEL to Solr Search Criteria conversion.");

@@ -23,9 +23,8 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.core.catalog.domain.Indexable;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.IndexField;
+import org.broadleafcommerce.core.search.domain.Indexable;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -34,7 +33,7 @@ import java.util.List;
 /**
  * Service exposing several methods for creating a Solr index based on catalog product data.
  *
- * @see org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation
+ * @see org.broadleafcommerce.core.search.dao.SolrIndexCachedOperation
  * @author Andre Azzolini (apazzolini)
  * @author Jeff Fischer
  * @author Phillip Verheyden (phillipuniverse)
@@ -204,7 +203,7 @@ public interface SolrIndexService {
 
     /**
      * SolrIndexService exposes {@link #buildIncrementalIndex(int, int, boolean)}.
-     * By wrapping the call to this method inside of a {@link org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation.CacheOperation},
+     * By wrapping the call to this method inside of a {@link org.broadleafcommerce.core.search.dao.SolrIndexCachedOperation.CacheOperation},
      * a single cache will be used for all the contained calls to buildIncrementalIndex. Here's an example:
      * {@code
      *  performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
@@ -224,24 +223,9 @@ public interface SolrIndexService {
      * @param cacheOperation the block of code to perform using a single cache for best performance
      * @throws ServiceException
      */
+    // TODO: microservices - figure out how to execute a full rebuild with the catalog cache from Catalog MS
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException;
     
-    /**
-     * <p>
-     * Filters out Skus that shouldn't be indexed if any of the following are true:
-     * 
-     * <p>
-     * <ol>
-     *  <li>If it's inactive</li>
-     *  <li>If it's a default Sku and shouldn't be sold without product options</li>
-     *  <li>If it's a default Sku for a Product Bundle</li>
-     * </ol>
-     * 
-     * @param skus
-     * @return a new list based on the given set of <b>skus</b> that only contains Skus that should be indexed
-     */
-    public List<Sku> filterIndexableSkus(List<Sku> skus);
-
     /**
      * Iterates through the fields for this indexable and indexes any SearchField's or SearchFacet's.
      *  @param document

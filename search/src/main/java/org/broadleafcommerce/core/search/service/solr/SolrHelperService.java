@@ -24,11 +24,10 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Indexable;
-import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.IndexField;
+import org.broadleafcommerce.core.search.domain.Indexable;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
@@ -161,16 +160,10 @@ public interface SolrHelperService {
     public String getSandBoxChangeTypeFieldName();
 
     /**
-     * @param category
-     * @return the default sort field name for this category
-     */
-    public String getCategorySortFieldName(Category category);
-
-    /**
      * @param categoryId
      * @return the default sort field name for this category
      */
-    public String getCategorySortFieldName(Long categoryId);
+    public String getCategorySortFieldName(String categoryId);
 
     /**
      * Determines if there is a locale prefix that needs to be applied to the given field for this particular request.
@@ -199,24 +192,6 @@ public interface SolrHelperService {
      * @return the default locale
      */
     public Locale getDefaultLocale();
-
-    /**
-     * In certain cases, the category id used for Solr indexing is different than the direct id on the product.
-     * This method provides a hook to substitute the category id if necessary.
-     * 
-     * @param category
-     * @return the category id to use
-     */
-    public Long getCategoryId(Category category);
-
-    /**
-     * In certain cases, the category id used for Solr indexing is different than the direct id on the product.
-     * This method provides a hook to substitute the category id if necessary.
-     *
-     * @param category
-     * @return the category id to use
-     */
-    public Long getCategoryId(Long category);
 
     /**
      * In certain cases, the sku id used for Solr indexing is different than the direct id on the sku.
@@ -417,7 +392,7 @@ public interface SolrHelperService {
      * @param searchCriteria
      * @param defaultSort
      */
-    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort);
+    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria);
 
     /* 
      * Builds a map of the fields with the abbreviation 
@@ -444,10 +419,6 @@ public interface SolrHelperService {
      */
     public void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap, SearchCriteria searchCriteria);
 
-    public Long getCurrentProductId(Indexable indexable);
-
-    public Product getProductForIndexable(Indexable indexable);
-
     /**
      * Returns the type field name, usually 'type_s'
      *
@@ -465,5 +436,4 @@ public interface SolrHelperService {
 
     List<IndexField> getSearchableIndexFields();
 
-    public List<Long> getCategoryFilterIds(Category category, SearchCriteria searchCriteria);
 }

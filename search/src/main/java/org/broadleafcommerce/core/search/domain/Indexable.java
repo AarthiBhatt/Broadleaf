@@ -18,9 +18,7 @@
 /**
  * 
  */
-package org.broadleafcommerce.core.catalog.domain;
-
-import org.broadleafcommerce.core.search.domain.FieldEntity;
+package org.broadleafcommerce.core.search.domain;
 
 /**
  * Mainly a marker interface denoting that the entity should be indexed for search

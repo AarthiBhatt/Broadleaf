@@ -7,10 +7,10 @@
     </parent>
     
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>broadleaf-catalog</artifactId>
+    <artifactId>broadleaf-search</artifactId>
     <packaging>jar</packaging>
-    <name>BroadleafCommerce Catalog</name>
-    <description>BroadleafCommerce Catalog Module</description>
+    <name>BroadleafCommerce Search</name>
+    <description>BroadleafCommerce Search Module</description>
     <url>http://www.broadleafcommerce.org</url>
 
     <properties>
@@ -58,13 +58,8 @@
     </profiles>
     <dependencies>
         <dependency>
-            <groupId>org.broadleafcommerce</groupId>
+            <groupId>com.broadleafcommerce</groupId>
             <artifactId>broadleaf-micro-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-search</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
