@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -31,12 +32,9 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.catalog.dao.ProductDao;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
-import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
@@ -45,10 +43,10 @@ import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchResult;
+import org.broadleafcommerce.core.search.domain.SearchResultItem;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexService;
-import org.restlet.data.Product;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -81,12 +79,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     @Autowired(required = false)
     protected SolrConfiguration solrConfiguration;
 
-    @Value("${solr.index.use.sku}")
-    protected boolean useSku;
-
-    @Resource(name = "blProductDao")
-    protected ProductDao productDao;
-
     @Resource(name = "blFieldDao")
     protected FieldDao fieldDao;
 
@@ -115,14 +107,16 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     @Override
     public SearchResult findSearchResults(SearchCriteria searchCriteria) throws ServiceException {
-        List<SearchFacetDTO> facets = getSearchFacets(searchCriteria.getCategory());
+        // TODO: microservices figure out category facets
+        //List<SearchFacetDTO> facets = getSearchFacets(searchCriteria.getCategory());
+        List<SearchFacetDTO> facets = getSearchFacets();
         if (searchCriteria.getQuery() != null) {
             searchCriteria.setQuery("(" + sanitizeQuery(searchCriteria.getQuery()) + ")");
         } else {
             searchCriteria.setQuery("*:*");
         }
 
-        return findSearchResults(searchCriteria.getQuery(), facets, searchCriteria, getDefaultSort(searchCriteria));
+        return findSearchResults(searchCriteria.getQuery(), facets, searchCriteria);
     }
 
     /**
@@ -134,7 +128,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return the ProductSearchResult of the search
      * @throws ServiceException
      */
-    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort, String... filterQueries)
+    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String... filterQueries)
             throws ServiceException  {
         Map<String, SearchFacetDTO> namedFacetMap = getNamedFacetMap(facets, searchCriteria);
 
@@ -164,7 +158,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         }
 
         // add category filter if applicable
-        if (searchCriteria.getCategory() != null) {
+        if (CollectionUtils.isNotEmpty(searchCriteria.getCategoryFilters())) {
             solrQuery.addFilterQuery(getCategoryFilter(searchCriteria));
         }
 
@@ -173,11 +167,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         solrQuery.set("qf", buildQueryFieldsString(solrQuery, searchCriteria));
 
         // Attach additional restrictions
-        attachSortClause(solrQuery, searchCriteria, defaultSort);
+        attachSortClause(solrQuery, searchCriteria);
         attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
         attachFacets(solrQuery, namedFacetMap, searchCriteria);
         
-        modifySolrQuery(solrQuery, searchCriteria.getQuery(), facets, searchCriteria, defaultSort);
+        modifySolrQuery(solrQuery, searchCriteria.getQuery(), facets, searchCriteria);
 
         solrQuery.setShowDebugInfo(true);
 
@@ -220,28 +214,24 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         result.setQueryResponse(response);
         setPagingAttributes(result, numResults, searchCriteria);
 
-        if (useSku) {
-            List<Sku> skus = getSkus(responseDocuments);
-            result.setSkus(skus);
-        } else {
-            // Get the products
-            List<Product> products = getProducts(responseDocuments);
-            result.setProducts(products);
-        }
+        // Get the products
+        List<SearchResultItem> items = getResultItems(responseDocuments);
+        result.setResultItems(items);
 
         return result;
     }
 
-    protected String getDefaultSort(SearchCriteria criteria) {
-        if (criteria.getCategory() != null) {
-            return shs.getCategorySortFieldName(criteria.getCategory()) + " asc";
-        }
-
-        return null;
-    }
+    // TODO: microservices replicate the category sorting within catalog
+//    protected String getDefaultSort(SearchCriteria criteria) {
+//        if (criteria.getCategory() != null) {
+//            return shs.getCategorySortFieldName(criteria.getCategory()) + " asc";
+//        }
+//
+//        return null;
+//    }
 
     protected String getCategoryFilter(SearchCriteria searchCriteria) {
-        String categoryFilterIds = StringUtils.join(shs.getCategoryFilterIds(searchCriteria.getCategory(), searchCriteria), "\" \"");
+        String categoryFilterIds = StringUtils.join(searchCriteria.getCategoryFilters(), "\" \"");
         
         String categoryFilterField = shs.getCategoryFieldName();
         if (searchCriteria.getSearchExplicitCategory()) {
@@ -320,9 +310,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param defaultSort
      */
     protected void modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
-            List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
+            List<SearchFacetDTO> facets, SearchCriteria searchCriteria) {
 
-        extensionManager.getProxy().modifySolrQuery(query, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
+        extensionManager.getProxy().modifySolrQuery(query, qualifiedSolrQuery, facets, searchCriteria);
     }
     
     protected List<SolrDocument> getResponseDocuments(QueryResponse response) {
@@ -335,45 +325,43 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         ExtensionResultStatusType status = extensionManager.getProxy().getSearchFacets(searchFacets);
 
         if (Objects.equals(ExtensionResultStatusType.NOT_HANDLED, status)) {
-            if (useSku) {
-                return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.SKU));
-            }
             return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.PRODUCT));
         }
 
         return buildSearchFacetDTOs(searchFacets);
     }
 
-    @Override
-    public List<SearchFacetDTO> getSearchFacets(Category category) {
-        List<SearchFacetDTO> searchFacetDTOs = new ArrayList<>();
-
-        if (category != null) {
-            searchFacetDTOs.addAll(getCategoryFacets(category));
-        }
-
-        // if we aren't searching in a category, or globalFacetsForCategorySearch is true, include the global search facets
-        if (globalFacetsForCategorySearch || category == null) {
-            searchFacetDTOs.addAll(getSearchFacets());
-        }
-
-        return searchFacetDTOs;
-    }
-
-    @Override
-    public List<SearchFacetDTO> getCategoryFacets(Category category) {
-        List<SearchFacet> searchFacets = new ArrayList<>();
-        ExtensionResultStatusType status = extensionManager.getProxy().getCategorySearchFacets(category, searchFacets);
-
-        if (Objects.equals(ExtensionResultStatusType.NOT_HANDLED, status)) {
-            List<CategorySearchFacet> categorySearchFacets = category.getCumulativeSearchFacets();
-            for (CategorySearchFacet categorySearchFacet : categorySearchFacets) {
-                searchFacets.add(categorySearchFacet.getSearchFacet());
-            }
-        }
-
-        return buildSearchFacetDTOs(searchFacets);
-    }
+    //TODO: microservices figure out category facets
+//    @Override
+//    public List<SearchFacetDTO> getSearchFacets(Category category) {
+//        List<SearchFacetDTO> searchFacetDTOs = new ArrayList<>();
+//
+//        if (category != null) {
+//            searchFacetDTOs.addAll(getCategoryFacets(category));
+//        }
+//
+//        // if we aren't searching in a category, or globalFacetsForCategorySearch is true, include the global search facets
+//        if (globalFacetsForCategorySearch || category == null) {
+//            searchFacetDTOs.addAll(getSearchFacets());
+//        }
+//
+//        return searchFacetDTOs;
+//    }
+//
+//    @Override
+//    public List<SearchFacetDTO> getCategoryFacets(Category category) {
+//        List<SearchFacet> searchFacets = new ArrayList<>();
+//        ExtensionResultStatusType status = extensionManager.getProxy().getCategorySearchFacets(category, searchFacets);
+//
+//        if (Objects.equals(ExtensionResultStatusType.NOT_HANDLED, status)) {
+//            List<CategorySearchFacet> categorySearchFacets = category.getCumulativeSearchFacets();
+//            for (CategorySearchFacet categorySearchFacet : categorySearchFacets) {
+//                searchFacets.add(categorySearchFacet.getSearchFacet());
+//            }
+//        }
+//
+//        return buildSearchFacetDTOs(searchFacets);
+//    }
 
     /**
      * Sets up the sorting criteria. This will support sorting by multiple fields at a time
@@ -381,8 +369,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param query
      * @param searchCriteria
      */
-    protected void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort) {
-        shs.attachSortClause(query, searchCriteria, defaultSort);
+    protected void attachSortClause(SolrQuery query, SearchCriteria searchCriteria) {
+        shs.attachSortClause(query, searchCriteria);
         query.addSort("score", SolrQuery.ORDER.desc);
     }
 
@@ -462,31 +450,35 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param response
      * @return the actual Product instances as a result of the search
      */
-    protected List<Product> getProducts(List<SolrDocument> responseDocuments) {
-        final List<Long> productIds = new ArrayList<>();
+    protected List<SearchResultItem> getResultItems(List<SolrDocument> responseDocuments) {
+        final List<SearchResultItem> results = new ArrayList<>();
         for (SolrDocument doc : responseDocuments) {
-            productIds.add((Long) doc.getFieldValue(shs.getIndexableIdFieldName()));
+            SearchResultItem resultItem = new SearchResultItem(doc);
+            if (doc.hasChildDocuments()) {
+                for (SolrDocument childDoc : doc.getChildDocuments()) {
+                    resultItem.addChildDocument(new SearchResultItem(childDoc));
+                }
+            }
+            results.add(resultItem);
         }
 
-        List<Product> products = productDao.readProductsByIds(productIds);
+        // TODO: microservices figure out when and how to call this, likely in the component that is calling this
+        //extensionManager.getProxy().batchFetchCatalogData(products);
 
-        extensionManager.getProxy().batchFetchCatalogData(products);
-
-        // We have to sort the products list by the order of the productIds list to maintain sortability in the UI
-        if (products != null) {
-            Collections.sort(products, new Comparator<Product>() {
+        // Sort the final result by indexable id to maintain sortability in the UI
+        if (CollectionUtils.isNotEmpty(results)) {
+            Collections.sort(results, new Comparator<SearchResultItem>() {
                 @Override
-                public int compare(Product o1, Product o2) {
-                    Long o1id = shs.getIndexableId(o1);
-                    Long o2id = shs.getIndexableId(o2);
-                    return new Integer(productIds.indexOf(o1id)).compareTo(productIds.indexOf(o2id));
+                public int compare(SearchResultItem o1, SearchResultItem o2) {
+                    Long o1id = (Long) o1.get(shs.getIndexableIdFieldName());
+                    Long o2id = (Long) o2.get(shs.getIndexableIdFieldName());
+                    return o1id.compareTo(o2id);
                 }
             });
         }
+        extensionManager.getProxy().modifySearchResults(responseDocuments, results);
 
-        extensionManager.getProxy().modifySearchResults(responseDocuments, products);
-
-        return products;
+        return results;
     }
 
 

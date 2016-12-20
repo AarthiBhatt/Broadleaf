@@ -23,8 +23,6 @@ import org.apache.solr.common.SolrDocument;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
@@ -32,6 +30,7 @@ import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
+import org.broadleafcommerce.core.search.domain.SearchResultItem;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
 import java.util.List;
@@ -59,7 +58,7 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
     
     @Override
     public ExtensionResultStatusType modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
-            List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
+            List<SearchFacetDTO> facets, SearchCriteria searchCriteria) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
@@ -69,7 +68,7 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
     }
 
     @Override
-    public ExtensionResultStatusType modifySearchResults(List<SolrDocument> responseDocuments, List<Product> products) {
+    public ExtensionResultStatusType modifySearchResults(List<SolrDocument> responseDocuments, List<SearchResultItem> items) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
@@ -99,28 +98,15 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override
-    public ExtensionResultStatusType addAdditionalCategoryIds(Category category, SearchCriteria searchCriteria, List<Long> categoryIds) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType getCategorySearchFacets(Category category, List<SearchFacet> searchFacets) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
+    //TODO: microservices figure out category search facets
+//    @Override
+//    public ExtensionResultStatusType getCategorySearchFacets(Category category, List<SearchFacet> searchFacets) {
+//        return ExtensionResultStatusType.NOT_HANDLED;
+//    }
 
     @Override
     public ExtensionResultStatusType getSearchableIndexFields(List<IndexField> fields) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override
-    public ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType batchFetchCatalogData(List<Product> products) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
 }

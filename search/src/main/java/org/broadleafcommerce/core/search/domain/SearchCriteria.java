@@ -17,9 +17,10 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
-import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -43,8 +44,8 @@ public class SearchCriteria {
     /**
      * The category that the user searched on
      */
-    protected Category category;
-
+    protected List<String> categoryFilters;
+    
     /**
      * The query that the user actually typed into the search box, fully sanitized
      */
@@ -96,12 +97,12 @@ public class SearchCriteria {
         this.filterCriteria = filterCriteria;
     }
 
-    public Category getCategory() {
-        return category;
+    public List<String> getCategoryFilters() {
+        return categoryFilters;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategoryFilters(List<String> categoryFilters) {
+        this.categoryFilters = categoryFilters;
     }
 
     public String getQuery() {
@@ -119,4 +120,5 @@ public class SearchCriteria {
     public void setSearchExplicitCategory(boolean searchExplicitCategory) {
         this.searchExplicitCategory = searchExplicitCategory;
     }
+    
 }

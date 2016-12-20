@@ -42,23 +42,6 @@ public interface SearchService {
     public void rebuildIndex() throws ServiceException, IOException;
     
     /**
-     * Performs a search for search results in the given category, taking into consideration the SearchCriteria
-     * 
-     * This method will NOT return search results that are in a sub-level of a given category. For example, if you had a 
-     * "Routers" category and a "Enterprise Routers" sub-category, asking for search results in "Routers", would NOT return
-     * search results that are in the "Enterprise Routers" category. 
-     * 
-     * @see #findSearchResultsByCategory(Category, SearchCriteria)
-     * 
-     * @param category
-     * @param searchCriteria
-     * @return
-     * @throws ServiceException
-     */
-    public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria)
-            throws ServiceException;
-    
-    /**
      * Performs a search for search results based on the given SearchCriteria, if SearchCriteria has a category, the category
      * is considering for the search.
      *
@@ -74,21 +57,22 @@ public interface SearchService {
      */
     public List<SearchFacetDTO> getSearchFacets();
 
-    /**
-     * Gets all available facets for the given category and global search
-     *
-     * @param category
-     * @return
-     */
-    public List<SearchFacetDTO> getSearchFacets(Category category);
-
-    /**
-     * Gets all available facets for a given category
-     * 
-     * @param category
-     * @return the available facets
-     */
-    public List<SearchFacetDTO> getCategoryFacets(Category category);
+    //TODO: microservices figure out category facets
+//    /**
+//     * Gets all available facets for the given category and global search
+//     *
+//     * @param category
+//     * @return
+//     */
+//    public List<SearchFacetDTO> getSearchFacets(Category category);
+//
+//    /**
+//     * Gets all available facets for a given category
+//     * 
+//     * @param category
+//     * @return the available facets
+//     */
+//    public List<SearchFacetDTO> getCategoryFacets(Category category);
 
     /**
      * Determines whether or not the necessary configuration is in place

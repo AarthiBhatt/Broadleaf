@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.search.domain;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.restlet.data.Product;
 
 import java.util.List;
 
@@ -30,7 +29,7 @@ import java.util.List;
  */
 public class SearchResult {
     
-    protected List<Product> products;
+    protected List<SearchResultItem> resultItems;
     protected List<SearchFacetDTO> facets;
     
     protected Integer totalResults;
@@ -39,12 +38,12 @@ public class SearchResult {
 
     protected QueryResponse queryResponse;
 
-    public List<Product> getProducts() {
-        return products;
+    public List<SearchResultItem> getResultItems() {
+        return resultItems;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setResultItems(List<SearchResultItem> resultItems) {
+        this.resultItems = resultItems;
     }
 
     public List<SearchFacetDTO> getFacets() {
@@ -80,7 +79,7 @@ public class SearchResult {
     }
     
     public Integer getStartResult() {
-        return (CollectionUtils.isEmpty(products)) ? 0 : ((page - 1) * pageSize) + 1;
+        return (CollectionUtils.isEmpty(getResultItems())) ? 0 : ((page - 1) * pageSize) + 1;
     }
     
     public Integer getEndResult() {
@@ -88,7 +87,7 @@ public class SearchResult {
     }
     
     public Integer getTotalPages() {
-        return (CollectionUtils.isEmpty(products)) ? 1 : (int) Math.ceil(totalResults * 1.0 / pageSize);
+        return (CollectionUtils.isEmpty(getResultItems())) ? 1 : (int) Math.ceil(totalResults * 1.0 / pageSize);
     }
 
     public QueryResponse getQueryResponse() {

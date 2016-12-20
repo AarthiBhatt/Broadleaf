@@ -23,8 +23,6 @@ import org.apache.solr.common.SolrDocument;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
@@ -32,6 +30,7 @@ import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
+import org.broadleafcommerce.core.search.domain.SearchResultItem;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
 import java.util.List;
@@ -67,18 +66,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param defaultSort
      */
     ExtensionResultStatusType modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
-            List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort);
-
-    /**
-     * In certain scenarios, the requested category id might not be the one that should be used in Solr.
-     * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
-     * in the returnContainer should be used.
-     * 
-     * @param category
-     * @param returnContainer
-     * @return the extension result status type
-     */
-    ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer);
+            List<SearchFacetDTO> facets, SearchCriteria searchCriteria);
 
     /**
      * <p>
@@ -108,7 +96,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param products the products that tie to the response documents
      * @return the result of the handler, if NOT_HANDLED, then no changes where made
      */
-    ExtensionResultStatusType modifySearchResults(List<SolrDocument> responseDocuments, List<Product> products);
+    ExtensionResultStatusType modifySearchResults(List<SolrDocument> responseDocuments, List<SearchResultItem> items);
 
     /**
      * Populates the List of SearchFacet's, or else returns NOT_HANDLED
@@ -161,16 +149,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      */
     ExtensionResultStatusType buildActiveFacetFilter(FieldEntity entityType, String solrKey, String[] selectedValues, List<String> valueStrings);
 
-    /**
-     * Adds any additional category ids to filter by when category browsing or searching.
-     *
-     * @param category the current Category we are browsing or searching on
-     * @param searchCriteria the criteria for the current query
-     * @param categoryIds the category IDs we are going to filter on (this already includes the current category's ID)
-     * @return NOT_HANDLED if no IDs were added, and HANDLED_CONTINUE if there were
-     */
-    ExtensionResultStatusType addAdditionalCategoryIds(Category category, SearchCriteria searchCriteria, List<Long> categoryIds);
-
+    // TODO: microservices figure out category search facets
     /**
      * Populates the List of SearchFacet's for the given Category, or else returns NOT_HANDLED
      *
@@ -178,7 +157,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param searchFacets
      * @return
      */
-    ExtensionResultStatusType getCategorySearchFacets(Category category, List<SearchFacet> searchFacets);
+//    ExtensionResultStatusType getCategorySearchFacets(Category category, List<SearchFacet> searchFacets);
 
     /**
      * Populated the List of searchable IndexField's that will be used in building the query fields (qf) for a Solr query.
@@ -189,15 +168,5 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @return HANDLED_CONTINUE if it added field, NOT_HANDLED otherwise
      */
     ExtensionResultStatusType getSearchableIndexFields(List<IndexField> fields);
-
-    /**
-     * Batch fetch important collections for the entire list of products in single batch fetch queries. In general, this is intended
-     * to be used for search results and category landing page results. For batch fetching during solr indexing, see
-     * {@link #startBatchEvent(List)}.
-     *
-     * @param products
-     * @return
-     */
-    ExtensionResultStatusType batchFetchCatalogData(List<Product> products);
 
 }
