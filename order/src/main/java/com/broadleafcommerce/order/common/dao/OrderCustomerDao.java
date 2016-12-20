@@ -32,4 +32,6 @@ public interface OrderCustomerDao {
 
     public void delete(OrderCustomer orderCustomer);
 
+    public OrderCustomer readOrderCustomerByExternalId(Long externalId);
+
 }

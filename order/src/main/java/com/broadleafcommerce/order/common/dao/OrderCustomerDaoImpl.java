@@ -17,15 +17,19 @@
  */
 package com.broadleafcommerce.order.common.dao;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import com.broadleafcommerce.order.common.domain.OrderCustomerImpl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  * Created by brandon on 12/7/16.
@@ -39,18 +43,33 @@ public class OrderCustomerDaoImpl implements OrderCustomerDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    @Override
     public OrderCustomer save(OrderCustomer orderCustomer) {
         return em.merge(orderCustomer);
     }
 
+    @Override
     public OrderCustomer readOrderCustomerById(Long orderCustomerId) {
         return (OrderCustomer) em.find(OrderCustomerImpl.class, orderCustomerId);
     }
+    
+    @Override
+    public OrderCustomer readOrderCustomerByExternalId(Long externalId) {
+        Query q = em.createQuery("SELECT c FROM com.broadleafcommerce.order.common.domain.OrderCustomer c WHERE c.externalId = :id", OrderCustomerImpl.class);
+        q.setParameter("id", externalId);
+        List<OrderCustomer> results = q.getResultList();
+        if (CollectionUtils.isNotEmpty(results)) {
+            return results.get(0);
+        }
+        return null;
+    }
 
+    @Override
     public OrderCustomer create() {
         return (OrderCustomer) entityConfiguration.createEntityInstance(OrderCustomer.class.getName());
     }
 
+    @Override
     public void delete(OrderCustomer orderCustomer) {
         if (!em.contains(orderCustomer)) {
             orderCustomer = readOrderCustomerById(orderCustomer.getId());

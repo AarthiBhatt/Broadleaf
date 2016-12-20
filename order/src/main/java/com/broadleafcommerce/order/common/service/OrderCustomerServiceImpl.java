@@ -45,6 +45,11 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
     public OrderCustomer findOrderCustomerById(Long orderCustomerId) {
         return orderCustomerDao.readOrderCustomerById(orderCustomerId);
     }
+    
+    @Override
+    public OrderCustomer findOrderCustomerByExternalId(Long externalId) {
+        return orderCustomerDao.readOrderCustomerByExternalId(externalId);
+    }
 
     @Override
     public OrderCustomer create() {
