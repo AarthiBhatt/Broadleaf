@@ -68,15 +68,16 @@ public class StoreDaoImpl implements StoreDao {
         return query.getResultList();
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<Store> readAllStoresByState(final String state) {
-        Query query = em.createNamedQuery("BC_FIND_ALL_STORES_BY_STATE");
-        query.setParameter("state", state);
-        query.setParameter("archived", 'N');
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        return query.getResultList();
-    }
+//TODO: microservices - deal with finding stores by state
+//    @Override
+//    @SuppressWarnings("unchecked")
+//    public List<Store> readAllStoresByState(final String state) {
+//        Query query = em.createNamedQuery("BC_FIND_ALL_STORES_BY_STATE");
+//        query.setParameter("state", state);
+//        query.setParameter("archived", 'N');
+//        query.setHint(QueryHints.HINT_CACHEABLE, true);
+//        return query.getResultList();
+//    }
 
     @Override
     public Store save(Store store) {

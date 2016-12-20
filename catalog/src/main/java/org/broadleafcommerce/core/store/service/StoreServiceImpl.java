@@ -56,9 +56,10 @@ public class StoreServiceImpl implements StoreService {
         return storeDao.readAllStores();
     }
 
-    public List<Store> readAllStoresByState(String state) {
-        return storeDao.readAllStoresByState(state);
-    }
+//TODO: microservices - deal with finding stores by state
+//    public List<Store> readAllStoresByState(String state) {
+//        return storeDao.readAllStoresByState(state);
+//    }
 
     @Override
     @Transactional("blTransactionManager")
