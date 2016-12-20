@@ -37,18 +37,9 @@ import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.catalog.dao.ProductDao;
-import org.broadleafcommerce.core.catalog.dao.SkuDao;
-import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
-import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
-import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
-import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
-import org.broadleafcommerce.core.search.dao.CatalogStructure;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
-import org.broadleafcommerce.core.search.dao.SolrIndexDao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
@@ -57,6 +48,7 @@ import org.broadleafcommerce.core.search.domain.Indexable;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.SolrConfiguration;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation.CatalogStructure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,13 +61,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -101,9 +92,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Value("${solr.index.product.pageSize}")
     protected int pageSize;
 
-    @Value("${solr.index.use.sku}")
-    protected boolean useSku;
-
     @Value("${solr.index.commit}")
     protected boolean commit;
 
@@ -115,15 +103,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Value("${solr.index.waitFlush}")
     protected boolean waitFlush;
-
-    @Resource(name = "blProductDao")
-    protected ProductDao productDao;
-
-    @Resource(name = "blSkuDao")
-    protected SkuDao skuDao;
-
-    @Resource(name = "blCatalogService")
-    protected CatalogService catalogService;
 
     @Resource(name = "blFieldDao")
     protected FieldDao fieldDao;
@@ -140,9 +119,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Resource(name = "blTransactionManager")
     protected PlatformTransactionManager transactionManager;
 
-    @Resource(name = "blSolrIndexDao")
-    protected SolrIndexDao solrIndexDao;
-
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
@@ -155,8 +131,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
         try {
-            CatalogStructure cache = new CatalogStructure();
-            SolrIndexCachedOperation.setCache(cache);
+            // TODO: microservices figure out how catalog structure caching should work with Catalog MS
+//            CatalogStructure cache = new CatalogStructure();
+//            SolrIndexCachedOperation.setCache(cache);
             cacheOperation.execute();
         } finally {
             SolrIndexCachedOperation.clearCache();
@@ -269,11 +246,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @return
      */
     protected Long countIndexableItems() {
-        if (useSku) {
-            return skuDao.readCountAllActiveSkus();
-        } else {
-            return productDao.readCountAllActiveProducts();
-        }
+        // TODO: microservices - this count should come from the catalog MS
+        //return productDao.readCountAllActiveProducts();
+        return new Long(100);
     }
 
     /**
@@ -388,11 +363,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             List<Long> productIds = BLCCollectionUtils.collectList(indexables, new TypedTransformer<Long>() {
                 @Override
                 public Long transform(Object input) {
-                    return shs.getCurrentProductId((Indexable) input);
+                    return ((Indexable) input).getId();
                 }
             });
-
-            solrIndexDao.populateProductCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
+            
+            // TODO: microservices - build the cache in catalog ms
+            //solrIndexDao.populateProductCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
 
             List<IndexField> fields = null;
             FieldEntity currentFieldType = null;
@@ -441,7 +417,20 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     protected List<? extends Indexable> readAllActiveIndexables(int pageSize, Long lastId) {
-        return productDao.readAllActiveProducts(pageSize, lastId);
+        // TODO: microservices - send this as a list to search from catalog
+        //return productDao.readAllActiveProducts(pageSize, lastId);
+        return Arrays.asList(new Indexable() {
+            
+            @Override
+            public Long getId() {
+                return 1l;
+            }
+            
+            @Override
+            public FieldEntity getFieldEntityType() {
+                return FieldEntity.PRODUCT;
+            }
+        });
     }
 
     @Override
@@ -549,44 +538,46 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
         extensionManager.getProxy().attachAdditionalBasicFields(indexable, document, shs);
 
-        Long cacheKey = this.shs.getCurrentProductId(indexable); // current
-        if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
-            cacheKey = sandBoxHelper.getOriginalId(cacheKey); // parent
-            if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
-                cacheKey = shs.getIndexableId(indexable); // master
-            }
-        }
-
-        // TODO: figure this out more generally; this doesn't work for CMS content
-        // The explicit categories are the ones defined by the product itself
-        if (cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
-            for (Long categoryId : cache.getParentCategoriesByProduct().get(cacheKey)) {
-                document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
-
-                // Make sure that we're always referencing the parent for the sort field
-                String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
-                // The issue here was the super category id is always what is stored in the cache, while the category
-                // by product id is the overridden versions. Need to always look at parent version for cache stuff, which
-                // is given from shs.getCategoryId
-                // First try the current level
-                String displayOrderKey = categoryId + "-" + cacheKey;
-                Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
-                if (displayOrder == null) {
-                    // Didn't find the cache at the current level, this might be an override so look upwards
-                    displayOrderKey = shs.getCategoryId(categoryId) + "-" + cacheKey;
-                    displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
-                }
-                
-                if (document.getField(categorySortFieldName) == null && displayOrder != null) {
-                    document.addField(categorySortFieldName, displayOrder);
-                }
-
-                // This is the entire tree of every category defined on the product
-                buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<Long>());
-            }
-        }
+        // TODO: microservice - all of the category cache stuff needs to come from the catalog ms
+//        Long cacheKey = indexable.getId(); // current
+//        if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
+//            cacheKey = sandBoxHelper.getOriginalId(cacheKey); // parent
+//            if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
+//                cacheKey = shs.getIndexableId(indexable); // master
+//            }
+//        }
+//
+//        // TODO: figure this out more generally; this doesn't work for CMS content
+//        // The explicit categories are the ones defined by the product itself
+//        if (cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
+//            for (Long categoryId : cache.getParentCategoriesByProduct().get(cacheKey)) {
+//                document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
+//
+//                // Make sure that we're always referencing the parent for the sort field
+//                String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
+//                // The issue here was the super category id is always what is stored in the cache, while the category
+//                // by product id is the overridden versions. Need to always look at parent version for cache stuff, which
+//                // is given from shs.getCategoryId
+//                // First try the current level
+//                String displayOrderKey = categoryId + "-" + cacheKey;
+//                Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
+//                if (displayOrder == null) {
+//                    // Didn't find the cache at the current level, this might be an override so look upwards
+//                    displayOrderKey = shs.getCategoryId(categoryId) + "-" + cacheKey;
+//                    displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
+//                }
+//                
+//                if (document.getField(categorySortFieldName) == null && displayOrder != null) {
+//                    document.addField(categorySortFieldName, displayOrder);
+//                }
+//
+//                // This is the entire tree of every category defined on the product
+//                buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<Long>());
+//            }
+//        }
     }
 
+    //TODO: microservice - all of the category caching needs to come from the catalog ms
     /**
      * Walk the category hierarchy upwards, adding a field for each level to the solr document
      *
@@ -594,22 +585,22 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @param cache the catalog structure cache
      * @param categoryId the current category id
      */
-    protected void buildFullCategoryHierarchy(SolrInputDocument document, CatalogStructure cache, Long categoryId, Set<Long> indexedParents) {
-        Long catIdToAdd = shs.getCategoryId(categoryId); 
-
-        Collection<Object> existingValues = document.getFieldValues(shs.getCategoryFieldName());
-        if (existingValues == null || !existingValues.contains(catIdToAdd)) {
-            document.addField(shs.getCategoryFieldName(), catIdToAdd);
-        }
-
-        Set<Long> parents = cache.getParentCategoriesByCategory().get(categoryId);
-        for (Long parent : parents) {
-            if (!indexedParents.contains(parent)) {
-                indexedParents.add(parent);
-                buildFullCategoryHierarchy(document, cache, parent, indexedParents);
-            }
-        }
-    }
+//    protected void buildFullCategoryHierarchy(SolrInputDocument document, CatalogStructure cache, Long categoryId, Set<Long> indexedParents) {
+//        Long catIdToAdd = shs.getCategoryId(categoryId); 
+//
+//        Collection<Object> existingValues = document.getFieldValues(shs.getCategoryFieldName());
+//        if (existingValues == null || !existingValues.contains(catIdToAdd)) {
+//            document.addField(shs.getCategoryFieldName(), catIdToAdd);
+//        }
+//
+//        Set<Long> parents = cache.getParentCategoriesByCategory().get(categoryId);
+//        for (Long parent : parents) {
+//            if (!indexedParents.contains(parent)) {
+//                indexedParents.add(parent);
+//                buildFullCategoryHierarchy(document, cache, parent, indexedParents);
+//            }
+//        }
+//    }
 
     /**
      * Returns a map of prefix to value for the requested attributes. For example, if the requested field corresponds to
@@ -690,9 +681,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     public Object[] saveState() {
          return new Object[] {
              BroadleafRequestContext.getBroadleafRequestContext(),
-             SkuPricingConsiderationContext.getSkuPricingConsiderationContext(),
-             SkuPricingConsiderationContext.getSkuPricingService(),
-             SkuActiveDateConsiderationContext.getSkuActiveDatesService()
+             // TODO: microservices - don't need to save this state here, should be saved in the catalog ms
+//             SkuPricingConsiderationContext.getSkuPricingConsiderationContext(),
+//             SkuPricingConsiderationContext.getSkuPricingService(),
+//             SkuActiveDateConsiderationContext.getSkuActiveDatesService()
          };
      }
          
@@ -700,9 +692,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @SuppressWarnings("rawtypes")
     public void restoreState(Object[] pack) {
          BroadleafRequestContext.setBroadleafRequestContext((BroadleafRequestContext) pack[0]);
-         SkuPricingConsiderationContext.setSkuPricingConsiderationContext((HashMap) pack[1]);
-         SkuPricingConsiderationContext.setSkuPricingService((DynamicSkuPricingService) pack[2]);
-         SkuActiveDateConsiderationContext.setSkuActiveDatesService((DynamicSkuActiveDatesService) pack[3]);
+         // TODO: microservices - don't need to save this state here, should be saved in the catalog ms
+//         SkuPricingConsiderationContext.setSkuPricingConsiderationContext((HashMap) pack[1]);
+//         SkuPricingConsiderationContext.setSkuPricingService((DynamicSkuPricingService) pack[2]);
+//         SkuActiveDateConsiderationContext.setSkuActiveDatesService((DynamicSkuActiveDatesService) pack[3]);
      }
      
     @Override
@@ -754,9 +747,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @param displayOrderKey
      * @return
      */
+    // TODO: microservices figure out this display order in the catalog ms and tell search about it
     protected Long convertDisplayOrderToLong(CatalogStructure cache, String displayOrderKey) {
-        BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-
+        //BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
+        BigDecimal displayOrder = new BigDecimal("1");
         if (displayOrder == null) {
             return null;
         }
@@ -766,7 +760,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Override
     public void deleteByQuery(String deleteQuery) throws SolrServerException, IOException {
-        String docType = (useSku) ? FieldEntity.SKU.getType() : FieldEntity.PRODUCT.getType();
+        String docType = FieldEntity.PRODUCT.getType();
         String childDeleteQuery = "{!child of=" + shs.getTypeFieldName() + ":" + docType + "} " + deleteQuery;
         solrConfiguration.getServer().deleteByQuery(childDeleteQuery);
         solrConfiguration.getServer().deleteByQuery(deleteQuery);

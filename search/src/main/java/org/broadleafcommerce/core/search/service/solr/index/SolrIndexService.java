@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Service exposing several methods for creating a Solr index based on catalog product data.
  *
- * @see org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation
+ * @see org.broadleafcommerce.core.search.dao.SolrIndexCachedOperation
  * @author Andre Azzolini (apazzolini)
  * @author Jeff Fischer
  * @author Phillip Verheyden (phillipuniverse)
@@ -203,7 +203,7 @@ public interface SolrIndexService {
 
     /**
      * SolrIndexService exposes {@link #buildIncrementalIndex(int, int, boolean)}.
-     * By wrapping the call to this method inside of a {@link org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation.CacheOperation},
+     * By wrapping the call to this method inside of a {@link org.broadleafcommerce.core.search.dao.SolrIndexCachedOperation.CacheOperation},
      * a single cache will be used for all the contained calls to buildIncrementalIndex. Here's an example:
      * {@code
      *  performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
@@ -223,6 +223,7 @@ public interface SolrIndexService {
      * @param cacheOperation the block of code to perform using a single cache for best performance
      * @throws ServiceException
      */
+    // TODO: microservices - figure out how to execute a full rebuild with the catalog cache from Catalog MS
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException;
     
     /**
