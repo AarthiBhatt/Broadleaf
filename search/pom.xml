@@ -9,8 +9,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-search</artifactId>
     <packaging>jar</packaging>
-    <name>BroadleafCommerce Catalog</name>
-    <description>BroadleafCommerce Catalog Module</description>
+    <name>BroadleafCommerce Search</name>
+    <description>BroadleafCommerce Search Module</description>
     <url>http://www.broadleafcommerce.org</url>
 
     <properties>

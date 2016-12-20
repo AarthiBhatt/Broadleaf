@@ -21,7 +21,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.search.dao.CatalogStructure;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +37,7 @@ public class SolrIndexCachedOperation {
 
     public static final Long DEFAULT_CATALOG_CACHE_KEY = 0l;
     
-    private static final ThreadLocal<Map<Long, CatalogStructure>> CACHE = new ThreadLocal<Map<Long, CatalogStructure>>();
+    private static final ThreadLocal<Map<Long, CatalogStructure>> CACHE = new ThreadLocal<>();
 
     /**
      * Retrieve the cache bound to the current thread.
@@ -65,7 +64,7 @@ public class SolrIndexCachedOperation {
         Catalog currentCatalog = ctx == null ? null : ctx.getCurrentCatalog();
         Map<Long, CatalogStructure> catalogCaches = CACHE.get();
         if (catalogCaches == null) {
-            catalogCaches = new HashMap<Long, CatalogStructure>();
+            catalogCaches = new HashMap<>();
             CACHE.set(catalogCaches);
         }
         if (currentCatalog != null) {
@@ -94,5 +93,10 @@ public class SolrIndexCachedOperation {
          */
         void execute() throws ServiceException;
 
+    }
+    
+    // TODO: microservices remove this and any requirements on Search to a CatalogStructure
+    public static class CatalogStructure {
+        
     }
 }
