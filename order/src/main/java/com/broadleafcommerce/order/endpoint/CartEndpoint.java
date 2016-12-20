@@ -233,6 +233,7 @@ public class CartEndpoint extends BaseEndpoint {
             return new ResponseEntity("No order exists for id " + orderId, HttpStatus.BAD_REQUEST);
         }
         OrderPayment payment = orderPaymentDTO.unwrap(request, context);
+        payment.setOrder(order);
         payment = orderPaymentService.save(payment);
         OrderPaymentDTO response = (OrderPaymentDTO) context.getBean(OrderPaymentDTO.class.getName());
         response.wrapDetails(orderService.addPaymentToOrder(order, payment, null), request);
