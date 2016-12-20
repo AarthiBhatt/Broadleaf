@@ -43,7 +43,6 @@ import com.broadleafcommerce.order.common.dto.SplitFulfillmentGroupDTO;
 @Configuration
 @ImportResource({
         "classpath:/bl-order-applicationContext-persistence.xml",
-        "classpath:/bl-order-applicationContext-entity.xml",
         "classpath:/bl-order-applicationContext.xml",
         "classpath:/bl-order-applicationContext-workflow.xml"
 })

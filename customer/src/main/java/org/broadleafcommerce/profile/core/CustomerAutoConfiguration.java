@@ -30,7 +30,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @ImportResource({
         "classpath:/bl-customer-applicationContext-persistence.xml",
-        "classpath:/bl-customer-applicationContext-entity.xml"
 })
 @ComponentScan
 public class CustomerAutoConfiguration {

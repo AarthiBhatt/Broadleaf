@@ -26,7 +26,6 @@ import org.springframework.context.annotation.ImportResource;
 @Configuration
 @ImportResource({
         "classpath:/bl-catalog-applicationContext-persistence.xml",
-        "classpath:/bl-catalog-applicationContext-entity.xml",
         "classpath:/bl-catalog-applicationContext.xml"
 })
 public class CatalogAutoConfiguration {

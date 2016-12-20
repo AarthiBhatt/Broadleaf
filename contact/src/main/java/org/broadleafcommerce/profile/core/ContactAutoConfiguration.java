@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.profile.core;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
@@ -27,7 +26,6 @@ import org.springframework.context.annotation.ImportResource;
 @Configuration
 @ImportResource({
         "classpath:/bl-contact-applicationContext-persistence.xml",
-        "classpath:/bl-contact-applicationContext-entity.xml",
         "classpath:/bl-contact-applicationContext.xml"
 })
 public class ContactAutoConfiguration {
