@@ -38,7 +38,8 @@ public interface StoreDao {
 
     public List<Store> readAllStores();
 
-    public List<Store> readAllStoresByState(final String state);
+//TODO: microservices - deal with finding stores by state
+//    public List<Store> readAllStoresByState(final String state);
 
     public Store save(Store store);
 
