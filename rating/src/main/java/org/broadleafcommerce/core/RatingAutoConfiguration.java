@@ -26,7 +26,6 @@ import org.springframework.context.annotation.ImportResource;
 @Configuration
 @ImportResource({
         "classpath:/bl-rating-applicationContext-persistence.xml",
-        "classpath:/bl-rating-applicationContext-entity.xml",
         "classpath:/bl-rating-applicationContext.xml"
 })
 public class RatingAutoConfiguration {

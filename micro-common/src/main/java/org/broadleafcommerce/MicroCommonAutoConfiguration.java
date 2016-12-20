@@ -26,7 +26,6 @@ import org.springframework.context.annotation.ImportResource;
 @Configuration
 @ImportResource({
         "classpath:/bl-micro-common-applicationContext-persistence.xml",
-        "classpath:/bl-micro-common-applicationContext-entity.xml",
         "classpath:/bl-micro-common-applicationContext.xml"
 })
 public class MicroCommonAutoConfiguration {
