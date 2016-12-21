@@ -251,6 +251,8 @@ public class CartEndpoint extends BaseEndpoint {
             return new ResponseEntity("No payment exists for id " + paymentId, HttpStatus.NOT_FOUND);
         }
         orderService.removePaymentFromOrder(order, payment);
+        // Retrieve the order again because it has been updated
+        order = orderService.findOrderById(order.getId());
         OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
         response.wrapDetails(order, request);
         return new ResponseEntity(response, HttpStatus.OK);
