@@ -45,6 +45,7 @@ public class UpdateProductOptionsOrderItemActivity extends BaseActivity<ProcessC
         OrderItem orderItem = orderItemService.readOrderItemById(Long.valueOf(orderItemRequestDTO.getOrderItemId()));
         if (orderItem != null) {
             OrderItemRequest itemRequest = new OrderItemRequest();
+            itemRequest.setOrderItemDetail(orderItem.getOrderItemDetail());
             itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
             orderItemService.updateOrderItem(orderItem, itemRequest);
 
