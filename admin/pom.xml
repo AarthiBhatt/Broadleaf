@@ -38,9 +38,9 @@
         </developer>
     </developers>
     <modules>
-        <module>broadleaf-admin-module</module>
+        <!--<module>broadleaf-admin-module</module>-->
         <module>broadleaf-open-admin-platform</module>
-        <module>broadleaf-contentmanagement-module</module>
-        <module>broadleaf-admin-functional-tests</module>
+        <!--<module>broadleaf-contentmanagement-module</module>-->
+        <!--<module>broadleaf-admin-functional-tests</module>-->
     </modules>
 </project>
