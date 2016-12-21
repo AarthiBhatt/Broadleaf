@@ -51,6 +51,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -72,6 +73,7 @@ import javax.annotation.Resource;
  * 
  * @author Andre Azzolini (apazzolini)
  */
+@Service("blSearchService")
 public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     private static final Log LOG = LogFactory.getLog(SolrSearchServiceImpl.class);
 
