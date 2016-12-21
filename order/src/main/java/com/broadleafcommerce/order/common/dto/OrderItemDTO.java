@@ -17,12 +17,17 @@
  */
 package com.broadleafcommerce.order.common.dto;
 
+import org.apache.commons.collections4.MapUtils;
 import org.broadleafcommerce.common.api.APIWrapper;
 import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -59,6 +64,9 @@ public class OrderItemDTO extends BaseWrapper implements APIWrapper<OrderItem> {
     
     @JsonProperty("hasSalePriceOverride")
     protected Boolean salePriceOverride;
+    
+    @JsonProperty("orderItemAttributes")
+    protected Map<String, String> orderItemAttributes;
 
     @Override
     public void wrapDetails(OrderItem item, HttpServletRequest request) {
@@ -76,6 +84,13 @@ public class OrderItemDTO extends BaseWrapper implements APIWrapper<OrderItem> {
             this.orderItemDetailDTO = detail;
             this.orderItemDetailDTO.wrapDetails(item.getOrderItemDetail(), request);
         }
+        
+        Map<String, String> itemAttributes = new HashMap<>();
+        Map<String, OrderItemAttribute> origMap = MapUtils.emptyIfNull(item.getOrderItemAttributes());
+        for (String attributeName : origMap.keySet()) {
+            itemAttributes.put(attributeName, origMap.get(attributeName).getValue());
+        }
+        setOrderItemAttributes(itemAttributes);
     }
 
     @Override
