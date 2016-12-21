@@ -60,12 +60,10 @@
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-micro-common</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-search</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <artifactId>solr-solrj</artifactId>
