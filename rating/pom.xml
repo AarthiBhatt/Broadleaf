@@ -86,9 +86,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.broadleafcommerce</groupId>
+            <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-micro-common</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>
