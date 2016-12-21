@@ -33,30 +33,6 @@
         <property name="xssProtectionEnabled" value="${exploitProtection.xssEnabled}" />
     </bean>
 
-    <bean id="blConfiguration" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
-        <property name="ignoreUnresolvablePlaceholders" value="true"/>
-    </bean>
-
-    <!--<bean id="blOverridableProperyLocations" class="org.springframework.beans.factory.config.SetFactoryBean">-->
-        <!--<property name="sourceSet">-->
-            <!--<set>-->
-            <!--</set>-->
-        <!--</property>-->
-    <!--</bean>-->
-
-    <!--<bean id="blProperyLocations" class="org.springframework.beans.factory.config.SetFactoryBean">-->
-        <!--<property name="sourceSet">-->
-            <!--<set>-->
-            <!--</set>-->
-        <!--</property>-->
-    <!--</bean>-->
-
-    <!--<bean id="blConfigurationManager" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager"/>-->
-
-    <!--<bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.NullMessageCreator">-->
-        <!--<constructor-arg ref="blMailSender"/>-->
-    <!--</bean>-->
-
     <bean id="blDirectCopyIgnorePatterns" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
