@@ -18,7 +18,6 @@
 package org.broadleafcommerce.common.web.processor;
 
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.security.handler.CsrfFilter;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
