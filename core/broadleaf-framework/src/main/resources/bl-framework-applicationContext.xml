@@ -141,39 +141,40 @@
     </bean>
 
     <!-- Begin Section Custom Criteria -->
-    <bean id="blProductSectionCustomCriteria" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-                <value>productDirectEdit</value>
-            </list>
-        </property>
-    </bean>
+    <!--TODO: microservices - deal with custom criteria in each specific module-->
+    <!--<bean id="blProductSectionCustomCriteria" class="org.springframework.beans.factory.config.ListFactoryBean">-->
+        <!--<property name="sourceList">-->
+            <!--<list>-->
+                <!--<value>productDirectEdit</value>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
 
-    <bean id="blCategorySectionCustomCriteria" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-                <value>categoryDirectEdit</value>
-            </list>
-        </property>
-    </bean>
+    <!--<bean id="blCategorySectionCustomCriteria" class="org.springframework.beans.factory.config.ListFactoryBean">-->
+        <!--<property name="sourceList">-->
+            <!--<list>-->
+                <!--<value>categoryDirectEdit</value>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
 
-    <bean id="blAdvancedPageSectionCustomCriteria" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-                <value>advancedPage</value>
-            </list>
-        </property>
-    </bean>
+    <!--<bean id="blAdvancedPageSectionCustomCriteria" class="org.springframework.beans.factory.config.ListFactoryBean">-->
+        <!--<property name="sourceList">-->
+            <!--<list>-->
+                <!--<value>advancedPage</value>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
 
-    <bean id="blSectionCustomCriteriaMap" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-                <entry key="org.broadleafcommerce.core.catalog.domain.Product" value-ref="blProductSectionCustomCriteria"/>
-                <entry key="org.broadleafcommerce.core.catalog.domain.Category" value-ref="blCategorySectionCustomCriteria"/>
-                <entry key="org.broadleafcommerce.cms.page.domain.Page" value-ref="blAdvancedPageSectionCustomCriteria"/>
-            </map>
-        </property>
-    </bean>
+    <!--<bean id="blSectionCustomCriteriaMap" class="org.springframework.beans.factory.config.MapFactoryBean">-->
+        <!--<property name="sourceMap">-->
+            <!--<map>-->
+                <!--<entry key="org.broadleafcommerce.core.catalog.domain.Product" value-ref="blProductSectionCustomCriteria"/>-->
+                <!--<entry key="org.broadleafcommerce.core.catalog.domain.Category" value-ref="blCategorySectionCustomCriteria"/>-->
+                <!--<entry key="org.broadleafcommerce.cms.page.domain.Page" value-ref="blAdvancedPageSectionCustomCriteria"/>-->
+            <!--</map>-->
+        <!--</property>-->
+    <!--</bean>-->
     <!-- End Section Custom Criteria -->
 
     <bean id="blOptionalFrameworkTokenMap" class="org.springframework.beans.factory.config.MapFactoryBean">

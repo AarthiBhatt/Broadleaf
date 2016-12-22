@@ -228,8 +228,11 @@
         </property>
     </bean>
 
-    <bean id="blSpringCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-        <property name="cacheManager" ref="blCacheManager"/>
+    <bean id="blFormBuilderExtensionHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
     </bean>
 
     <bean id="blOpenAdminCssLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
@@ -300,4 +303,10 @@
         <property name="resourceTransformers" ref="blCssResourceTransformers" />             
    </bean>
 
+    <bean id="blSectionCustomCriteriaMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+            </map>
+        </property>
+    </bean>
 </beans>
