@@ -28,48 +28,8 @@
                         http://www.springframework.org/schema/util
                         http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <tx:annotation-driven/>
 
-    <bean id="blJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
-
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
-        <property name="jpaVendorAdapter" ref="blJpaVendorAdapter"/>
-        <property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
-        <property name="persistenceUnitName" value="blPU"/>
-    </bean>
-
-    <bean id="blEJB3ConfigurationDao" class="org.broadleafcommerce.common.util.dao.EJB3ConfigurationDaoImpl">
-        <property name="persistenceUnitInfo">
-            <bean factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
-        </property>
-    </bean>
-    
-    <bean id="blCacheManager" class="org.broadleafcommerce.common.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
-        <property name="shared" value="true"/>
-    </bean>
-
-    <bean id="blMergedCacheConfigLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-                <value>classpath:bl-common-ehcache.xml</value>
-            </list>
-        </property>
-    </bean>
-    
-    <bean id="blTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
-    </bean>
-    <!-- Allows the use if @Transactional without any qualifiers -->
-    <alias alias="transactionManager" name="blTransactionManager"/>
-
-    <tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
-        <tx:attributes>
-          <tx:method name="*" propagation="REQUIRED"/>
-          <tx:method name="findNextId" propagation="REQUIRES_NEW"/>
-        </tx:attributes>
-    </tx:advice>
-
-    <bean id="blMergedPersistenceXmlLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean id="blMergedPersistenceXmlLocations-common" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <value>classpath*:/META-INF/persistence-common.xml</value>
@@ -77,28 +37,21 @@
         </property>
     </bean>
 
-    <bean id="blMergedEntityContexts" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="sourceRef" value="blMergedPersistenceXmlLocations-common"/>
+        <property name="targetRef" value="blMergedPersistenceXmlLocations"/>
+    </bean>
+
+    <bean id="blMergedEntityContexts-common" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <value>classpath:bl-common-applicationContext-entity.xml</value>
             </list>
         </property>
     </bean>
-    
-    <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager">
-        <property name="persistenceUnitPostProcessors" ref="blPersistenceUnitPostProcessors"/>
-    </bean>
 
-
-    <bean id="blPersistenceUnitPostProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-                <bean class="org.broadleafcommerce.common.extensibility.jpa.JPAPropertiesPersistenceUnitPostProcessor"/>
-                <bean class="org.broadleafcommerce.common.extensibility.jpa.ConditionalORMConfigPersistenceUnitPostProcessor"/>
-            </list>
-        </property>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="sourceRef" value="blMergedEntityContexts-common"/>
+        <property name="targetRef" value="blMergedEntityContexts"/>
     </bean>
-    
-    <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration"/>
-    
 </beans>
