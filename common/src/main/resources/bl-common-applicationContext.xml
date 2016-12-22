@@ -18,118 +18,15 @@
   -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:util="http://www.springframework.org/schema/util"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <import resource="bl-common-applicationContext-persistence.xml"/>
-    <context:component-scan base-package="org.broadleafcommerce.common"/>
-    
-    <!-- Override Spring's default ApplicationEventMultiCaster with one that is a little smarter about asynchronous -->
-    <bean id="applicationEventMulticaster" class="org.broadleafcommerce.common.event.BroadleafApplicationEventMulticaster"/>
-
-    <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
-        <property name="xsrfProtectionEnabled" value="${exploitProtection.xsrfEnabled}" />
-        <property name="xssProtectionEnabled" value="${exploitProtection.xssEnabled}" />
-    </bean>
 
     <bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.NullMessageCreator">
         <constructor-arg ref="blMailSender"/>
-    </bean>
-
-    <bean id="blDirectCopyIgnorePatterns" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-                <bean class="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePattern">
-                    <property name="patterns">
-                        <array>
-                            <value>org\.apache.*</value>
-                            <value>org\.springframework.*</value>
-                            <value>javassist.*</value>
-                            <value>javax.*</value>
-                            <value>org.broadleafcommerce.openadmin.web.compatibility.JSCompatibilityRequestWrapper</value>
-                        </array>
-                    </property>
-                </bean>
-            </list>
-        </property>
-    </bean>
-    
-    <bean id="blDirectCopyTransformTokenMap" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-                <entry key="archiveOnly" value="org.broadleafcommerce.common.weave.WeaveArchiveStatus"/>
-                <entry key="auditableOnly" value="org.broadleafcommerce.openadmin.weave.WeaveAdminAuditable"/>
-            </map>
-        </property>
-    </bean>
-    
-    <!-- With WebLogic 12c and JRockit 1.6, there seems to be a problem with the instrumentation of domain clases related 
-         to the fact that certain support classes are either not loaded or not initialized when they are referenced from DirectCopyClassTransformer, 
-         EntityMarkerClassTransformer, and others.  These include javassist classes and certain Broadleaf enums and Annotations.
-         The solution is to pre-load those classes before trying to use them.  This factory provides a list to support this mechanism. -->
-    <bean id="blDirectCopyClassPreLoadPatterns" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-            	<value>javassist.ClassPool</value>
-            	<value>javassist.CtClass</value>
-            	<value>javassist.CtConstructor</value>
-            	<value>javassist.CtField</value>
-            	<value>javassist.CtMethod</value>
-            	<value>javassist.LoaderClassPath</value>
-            	<value>javassist.NotFoundException</value>
-            	<value>javassist.bytecode.AnnotationsAttribute</value>
-            	<value>javassist.bytecode.ClassFile</value>
-            	<value>javassist.bytecode.ConstPool</value>
-            	<value>javassist.bytecode.annotation.Annotation</value>
-            	<value>javassist.bytecode.annotation.AnnotationMemberValue</value>
-            	<value>javassist.bytecode.annotation.ArrayMemberValue</value>
-            	<value>javassist.bytecode.annotation.BooleanMemberValue</value>
-            	<value>javassist.bytecode.annotation.MemberValue</value>
-            	<value>javassist.bytecode.annotation.StringMemberValue</value>
-            	<value>javax.annotation.Resource</value>
-            	<value>javax.persistence.EntityListeners</value>
-            	<value>javax.persistence.Embeddable</value>
-            	<value>javax.persistence.Entity</value>
-            	<value>javax.persistence.MappedSuperclass</value>
-            	<value>org.apache.commons.lang3.StringUtils</value>
-            	<value>org.broadleafcommerce.common.logging.LifeCycleEvent</value>
-            	<value>org.broadleafcommerce.common.logging.SupportLogManager</value>
-            	<value>org.broadleafcommerce.common.logging.SupportLogger</value>
-            	<value>org.broadleafcommerce.common.extensibility.jpa.copy.NonCopied</value>
-            </list>
-        </property>
-    </bean> 
-
-    <!--This class transformer is responsible for picking up @DirectCopyTransform annotations on entities -->
-    <bean id="blAnnotationDirectCopyClassTransformer" class="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyClassTransformer">
-        <constructor-arg name="moduleName" value="Annotated Transformation" />
-        <property name="templateTokens" ref="blDirectCopyTransformTokenMap"/>
-        <property name="preLoadClassNamePatterns" ref="blDirectCopyClassPreLoadPatterns"/>
-    </bean>
-
-    <bean id="blEntityMarkerClassTransformer" class="org.broadleafcommerce.common.extensibility.jpa.convert.EntityMarkerClassTransformer" >
-    	<property name="preLoadClassNamePatterns" ref="blDirectCopyClassPreLoadPatterns"/>
-    </bean>
-    
-    <bean id="blConditionalFieldAnnotationClassTransformer" class="org.broadleafcommerce.common.extensibility.jpa.copy.ConditionalFieldAnnotationsClassTransformer">
-        <constructor-arg name="moduleName" value="Conditional Field Annotation Transformation" />
-    </bean>
-
-    <!-- to be overriden by 3rd party modules -->
-    <bean id="blMergedClassTransformers" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-                <ref bean="blAnnotationDirectCopyClassTransformer"/>
-                <ref bean="blEntityMarkerClassTransformer"/>
-                <ref bean="blConditionalFieldAnnotationClassTransformer"/>
-            </list>
-        </property>
     </bean>
 
     <bean id="blServerInfo" class="org.broadleafcommerce.common.email.service.info.ServerInfo">
@@ -305,13 +202,6 @@
     </bean>
    
    <!--  End Spring 4.1 Resource Handling Configuration -->
-   
-    <bean id="blFileServiceProviders" class="org.springframework.beans.factory.config.ListFactoryBean" >
-        <property name="sourceList">
-            <list>
-            </list>
-        </property>
-    </bean>
 
     <bean id="blSiteMapGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -321,60 +211,10 @@
         </property>
     </bean>
 
-    <bean id="blStatisticsServiceLogAdapter" class="org.broadleafcommerce.common.cache.NoOpStatisticsServiceLogAdapter"/>
-
-    <bean id="blEntityExtensionManagers" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-            </map>
-        </property>
-    </bean>
-    
     <bean id="blTranslationExceptionProperties" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
                 <value>pageTemplate.*</value>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="blConditionalDirectCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-            </map>
-        </property>
-    </bean>
-
-    <bean id="blConditionalEntities" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-            </map>
-        </property>
-    </bean>
-
-    <bean id="blConditionalOrmFiles" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-            </map>
-        </property>
-    </bean>
-    
-    <bean id="blConditionalFieldAnnotationCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-            </map>
-        </property>
-    </bean>
-
-    <bean id="blPrecompressedArtifactFileExtensionWhitelist" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
-        <property name="sourceList">
-            <list>
-                <value>.html</value>
-                <value>.js</value>
-                <value>.css</value>
-                <value>.ico</value>
-                <value>.woff</value>
-                <value>.txt</value>
             </list>
         </property>
     </bean>

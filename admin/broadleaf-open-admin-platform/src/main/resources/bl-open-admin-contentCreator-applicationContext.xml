@@ -78,7 +78,7 @@
                 <ref bean="blAdminPermissionCustomPersistenceHandler" />
                 <ref bean="blSystemPropertyCustomPersistenceHandler" />
                 <ref bean="blTranslationCustomPersistenceHandler" />
-                <ref bean="blOfferCustomPersistenceHandler" />
+                <!--<ref bean="blOfferCustomPersistenceHandler" />-->
             </list>
         </property>
     </bean>
@@ -265,10 +265,10 @@
     <bean id="blAdminResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
-                <ref bean="blBLCJSUrlPathResolver" />                         
-                <ref bean="blCacheResourceResolver" />                
-                <ref bean="blVersionResourceResolver" />
-                <ref bean="blBundleResourceResolver" />
+                <ref bean="blBLCJSUrlPathResolver" />
+                <ref bean="blCacheResourceResolver" />
+                <!--<ref bean="blVersionResourceResolver" />-->
+                <!--<ref bean="blBundleResourceResolver" />-->
                 <ref bean="blBLCJSResolver" />
                 <ref bean="blSystemPropertyJSResolver" />
                 <ref bean="blRuleBuilderOptionResourceResolver" />
@@ -308,5 +308,18 @@
             <map>
             </map>
         </property>
+    </bean>
+
+    <bean id="blDirectCopyTransformTokenMap-openadmin" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="auditableOnly" value="org.broadleafcommerce.openadmin.weave.WeaveAdminAuditable"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="sourceRef" value="blDirectCopyTransformTokenMap-openadmin"/>
+        <property name="targetRef" value="blDirectCopyTransformTokenMap"/>
     </bean>
 </beans>

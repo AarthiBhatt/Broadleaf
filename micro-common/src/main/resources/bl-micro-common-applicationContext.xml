@@ -57,7 +57,6 @@
         <property name="sourceMap">
             <map>
                 <entry key="archiveOnly" value="org.broadleafcommerce.common.weave.WeaveArchiveStatus"/>
-                <!--<entry key="auditableOnly" value="org.broadleafcommerce.openadmin.weave.WeaveAdminAuditable"/>-->
             </map>
         </property>
     </bean>
@@ -118,7 +117,7 @@
     <bean id="blMergedClassTransformers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
-                <!--<ref bean="blAnnotationDirectCopyClassTransformer"/>-->
+                <ref bean="blAnnotationDirectCopyClassTransformer"/>
                 <ref bean="blEntityMarkerClassTransformer"/>
                 <ref bean="blConditionalFieldAnnotationClassTransformer"/>
             </list>
@@ -164,14 +163,6 @@
     </bean>   
 
     <bean id="blFrameworkBeanDefinitionPostProcessor" class="org.broadleafcommerce.common.extensibility.FrameworkBeanDefinitionPostProcessor"/>
-
-    <!--TODO: microservices - deal with cache statistics-->
-    <!--<bean id="blStatisticsServiceLogAdapter" class="org.broadleafcommerce.common.cache.NoOpStatisticsServiceLogAdapter"/>-->
-
-    <!--<bean id="blStatisticsService" class="org.broadleafcommerce.common.cache.StatisticsServiceImpl">-->
-        <!--<property name="appName" ref="blJmxNamingBean"/>-->
-        <!--<property name="adapter" ref="blStatisticsServiceLogAdapter"/>-->
-    <!--</bean>-->
 
     <bean id="blEntityExtensionManagers" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
