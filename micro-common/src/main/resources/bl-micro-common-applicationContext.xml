@@ -24,6 +24,7 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.common"/>
+    <context:component-scan base-package="org.broadleafcommerce.core.web.resolver"/>
 
     <!-- Override Spring's default ApplicationEventMultiCaster with one that is a little smarter about asynchronous -->
     <bean id="applicationEventMulticaster" class="org.broadleafcommerce.common.event.BroadleafApplicationEventMulticaster"/>
