@@ -389,11 +389,6 @@
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-common-presentation</artifactId>
-            <version>${broadleaf-presentation.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-micro-common</artifactId>
         </dependency>
         <dependency>
