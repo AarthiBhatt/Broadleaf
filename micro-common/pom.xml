@@ -82,6 +82,12 @@
         </profile>
     </profiles>
     <dependencies>
+        <!-- Broadleaf libraries -->
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-common-presentation</artifactId>
+            <version>${broadleaf-presentation.version}</version>
+        </dependency>
 
         <!--Spring Libraries -->
         <dependency>
