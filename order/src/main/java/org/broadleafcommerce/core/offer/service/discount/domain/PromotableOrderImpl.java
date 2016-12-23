@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
@@ -29,6 +28,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemContainer;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,9 +44,9 @@ public class PromotableOrderImpl implements PromotableOrder {
     protected List<PromotableOrderItem> discountableOrderItems;
     protected boolean currentSortParam = false;
     protected List<PromotableFulfillmentGroup> fulfillmentGroups;
-    protected List<PromotableOrderAdjustment> candidateOrderOfferAdjustments = new ArrayList<PromotableOrderAdjustment>();
+    protected List<PromotableOrderAdjustment> candidateOrderOfferAdjustments = new ArrayList<>();
     protected boolean includeOrderAndItemAdjustments = false;
-    protected Map<String, Object> extraDataMap = new HashMap<String, Object>();
+    protected Map<String, Object> extraDataMap = new HashMap<>();
 
     public PromotableOrderImpl(Order order, PromotableItemFactory itemFactory, boolean includeOrderAndItemAdjustments) {
         this.order = order;
@@ -89,7 +89,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     @Override
     public List<PromotableOrderItem> getAllOrderItems() {
         if (allOrderItems == null) {
-            allOrderItems = new ArrayList<PromotableOrderItem>();
+            allOrderItems = new ArrayList<>();
 
             for (OrderItem orderItem : order.getOrderItems()) {
                 addPromotableOrderItem(orderItem, allOrderItems);
@@ -100,6 +100,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     }
 
     // Return the discountableOrderItems in the current order.
+    @Override
     public List<PromotableOrderItem> getDiscountableOrderItems() {
         return getDiscountableOrderItems(currentSortParam);
     }
@@ -128,7 +129,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     }
 
     protected List<PromotableOrderItem> buildPromotableOrderItemsList() {
-        List<PromotableOrderItem> discountableOrderItems = new ArrayList<PromotableOrderItem>();
+        List<PromotableOrderItem> discountableOrderItems = new ArrayList<>();
 
         for (PromotableOrderItem promotableOrderItem : getAllOrderItems()) {
             if (promotableOrderItem.isDiscountingAllowed()) {
@@ -158,7 +159,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     @Override
     public List<PromotableFulfillmentGroup> getFulfillmentGroups() {
         if (fulfillmentGroups == null) {
-            fulfillmentGroups = new ArrayList<PromotableFulfillmentGroup>();
+            fulfillmentGroups = new ArrayList<>();
             for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
                 fulfillmentGroups.add(itemFactory.createPromotableFulfillmentGroup(fulfillmentGroup, this));
             }
@@ -207,6 +208,7 @@ public class PromotableOrderImpl implements PromotableOrder {
         }
     }
 
+    @Override
     public void updateRuleVariables(Map<String, Object> ruleVars) {
         ruleVars.put("order", order);
     }
@@ -271,18 +273,21 @@ public class PromotableOrderImpl implements PromotableOrder {
         return itemAdjustmentTotal;
     }
 
+    @Override
     public List<PromotableOrderItemPriceDetail> getAllPromotableOrderItemPriceDetails() {
-        List<PromotableOrderItemPriceDetail> allPriceDetails = new ArrayList<PromotableOrderItemPriceDetail>();
+        List<PromotableOrderItemPriceDetail> allPriceDetails = new ArrayList<>();
         for (PromotableOrderItem item : getDiscountableOrderItems()) {
             allPriceDetails.addAll(item.getPromotableOrderItemPriceDetails());
         }
         return allPriceDetails;
     }
 
-    public BroadleafCurrency getOrderCurrency() {
+    @Override
+    public Currency getOrderCurrency() {
         return this.order.getCurrency();
     }
 
+    @Override
     public void setTotalFufillmentCharges(Money totalFulfillmentCharges) {
         order.setTotalFulfillmentCharges(totalFulfillmentCharges);
     }

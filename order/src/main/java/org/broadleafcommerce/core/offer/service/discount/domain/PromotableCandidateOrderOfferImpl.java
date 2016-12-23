@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -25,6 +24,7 @@ import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class PromotableCandidateOrderOfferImpl implements PromotableCandidateOrd
 
     private static final long serialVersionUID = 1L;
     
-    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<>();
     protected Offer offer;
     protected PromotableOrder promotableOrder;
     protected Money potentialSavings;
@@ -92,7 +92,7 @@ public class PromotableCandidateOrderOfferImpl implements PromotableCandidateOrd
         return this.promotableOrder;
     }
     
-    public BroadleafCurrency getCurrency() {
+    public Currency getCurrency() {
         return promotableOrder.getOrderCurrency();
     }
 

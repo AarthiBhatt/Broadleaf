@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.offer.service.discount.domain;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
@@ -30,6 +29,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -44,9 +44,9 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     protected PromotableOrder promotableOrder;
     protected OrderItem orderItem;
     protected PromotableItemFactory itemFactory;
-    protected List<PromotableOrderItemPriceDetail> itemPriceDetails = new ArrayList<PromotableOrderItemPriceDetail>();
+    protected List<PromotableOrderItemPriceDetail> itemPriceDetails = new ArrayList<>();
     protected boolean includeAdjustments;
-    protected Map<String, Object> extraDataMap = new HashMap<String, Object>();
+    protected Map<String, Object> extraDataMap = new HashMap<>();
 
     public PromotableOrderItemImpl(OrderItem orderItem, PromotableOrder promotableOrder, PromotableItemFactory itemFactory,
             boolean includeAdjustments) {
@@ -99,6 +99,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
      * Adds the item to the rule variables map.
      * @param ruleVars
      */
+    @Override
     public void updateRuleVariables(Map<String, Object> ruleVars) {
         ruleVars.put("orderItem", orderItem);
         ruleVars.put("discreteOrderItem", orderItem);
@@ -123,18 +124,22 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
         return null;
     }
 
+    @Override
     public List<PromotableOrderItemPriceDetail> getPromotableOrderItemPriceDetails() {
         return itemPriceDetails;
     }
 
+    @Override
     public Money getSalePriceBeforeAdjustments() {
         return orderItem.getSalePrice();
     }
 
+    @Override
     public Money getRetailPriceBeforeAdjustments() {
         return orderItem.getRetailPrice();
     }
 
+    @Override
     public Money getPriceBeforeAdjustments(boolean applyToSalePrice) {
         if (applyToSalePrice && getSalePriceBeforeAdjustments() != null) {
             return getSalePriceBeforeAdjustments();
@@ -142,6 +147,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
         return getRetailPriceBeforeAdjustments();
     }
 
+    @Override
     public Money getCurrentBasePrice() {
         if (orderItem.getIsOnSale()) {
             return orderItem.getSalePrice();
@@ -150,6 +156,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
         }
     }
 
+    @Override
     public int getQuantity() {
         return orderItem.getQuantity();
     }
@@ -160,7 +167,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     }
 
     @Override
-    public BroadleafCurrency getCurrency() {
+    public Currency getCurrency() {
         return orderItem.getOrder().getCurrency();
     }
 
@@ -199,7 +206,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     public void mergeLikeDetails() {
         if (itemPriceDetails.size() > 1) {
             Iterator<PromotableOrderItemPriceDetail> detailIterator = itemPriceDetails.iterator();
-            Map<String, PromotableOrderItemPriceDetail> detailMap = new HashMap<String, PromotableOrderItemPriceDetail>();
+            Map<String, PromotableOrderItemPriceDetail> detailMap = new HashMap<>();
 
             while (detailIterator.hasNext()) {
                 PromotableOrderItemPriceDetail currentDetail = detailIterator.next();
@@ -243,6 +250,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
         return returnTotal;
     }
 
+    @Override
     public PromotableOrderItemPriceDetail createNewDetail(int quantity) {
         if (includeAdjustments) {
             throw new RuntimeException("Trying to createNewDetail when adjustments have already been included.");
@@ -250,6 +258,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
         return itemFactory.createPromotableOrderItemPriceDetail(this, quantity);
     }
 
+    @Override
     public OrderItem getOrderItem() {
         return orderItem;
     }

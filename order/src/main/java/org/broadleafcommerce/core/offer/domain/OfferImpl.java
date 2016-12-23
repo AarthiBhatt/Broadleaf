@@ -111,7 +111,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @AdminPresentationCollection(friendlyName = "offerCodeTitle",
         group = GroupName.Codes, order = FieldOrder.OfferCodes,
         addType = AddMethodType.PERSIST)
-    protected List<OfferCode> offerCodes = new ArrayList<OfferCode>(100);
+    protected List<OfferCode> offerCodes = new ArrayList<>(100);
 
     @Column(name = "OFFER_NAME", nullable=false)
     @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
@@ -277,10 +277,10 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         tab = TabName.Qualifiers,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY,
         ruleIdentifier = RuleIdentifier.ORDERITEM)
-    protected Set<OfferQualifyingCriteriaXref> qualifyingItemCriteria = new HashSet<OfferQualifyingCriteriaXref>();
+    protected Set<OfferQualifyingCriteriaXref> qualifyingItemCriteria = new HashSet<>();
 
     @Transient
-    protected Set<OfferItemCriteria> legacyQualifyingItemCriteria = new HashSet<OfferItemCriteria>();
+    protected Set<OfferItemCriteria> legacyQualifyingItemCriteria = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferTargetCriteriaXrefImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
@@ -289,10 +289,10 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM,
         validationConfigurations = @ValidationConfiguration(validationImplementation = "blOfferTargetCriteriaItemValidator"))
-    protected Set<OfferTargetCriteriaXref> targetItemCriteria = new HashSet<OfferTargetCriteriaXref>();
+    protected Set<OfferTargetCriteriaXref> targetItemCriteria = new HashSet<>();
 
     @Transient
-    protected Set<OfferItemCriteria> legacyTargetItemCriteria = new HashSet<OfferItemCriteria>();
+    protected Set<OfferItemCriteria> legacyTargetItemCriteria = new HashSet<>();
     
     @Column(name = "TOTALITARIAN_OFFER")
     @AdminPresentation(friendlyName = "OfferImpl_Totalitarian_Offer",
@@ -340,7 +340,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             )
         }
     )
-    Map<String, OfferOfferRuleXref> offerMatchRules = new HashMap<String, OfferOfferRuleXref>();
+    Map<String, OfferOfferRuleXref> offerMatchRules = new HashMap<>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -690,7 +690,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     
     @Override
     public Money getQualifyingItemSubTotal() {
-        return qualifyingItemSubTotal == null ? null : BroadleafCurrencyUtils.getMoney(qualifyingItemSubTotal, null);
+        return qualifyingItemSubTotal == null ? null : BroadleafCurrencyUtils.getMoney(qualifyingItemSubTotal);
     }
 
     @Override
@@ -700,7 +700,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public Money getOrderMinSubTotal() {
-        return orderMinSubTotal == null ? null : BroadleafCurrencyUtils.getMoney(orderMinSubTotal, null);
+        return orderMinSubTotal == null ? null : BroadleafCurrencyUtils.getMoney(orderMinSubTotal);
     }
 
     @Override
@@ -710,7 +710,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public Money getTargetMinSubTotal() {
-        return targetMinSubTotal == null ? null : BroadleafCurrencyUtils.getMoney(targetMinSubTotal, null);
+        return targetMinSubTotal == null ? null : BroadleafCurrencyUtils.getMoney(targetMinSubTotal);
     }
 
     @Override

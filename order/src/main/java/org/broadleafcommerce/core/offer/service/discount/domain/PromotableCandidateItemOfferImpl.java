@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.MinimumTargetsRequired;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -26,6 +25,7 @@ import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,12 +41,12 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     protected int uses = 0;
     
     protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap =
-            new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+            new HashMap<>();
 
     protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateTargetsMap =
-            new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+            new HashMap<>();
     
-    protected List<PromotableOrderItem> legacyCandidateTargets = new ArrayList<PromotableOrderItem>();
+    protected List<PromotableOrderItem> legacyCandidateTargets = new ArrayList<>();
 
     protected int minimumTargetsRequired = 1;
 
@@ -61,7 +61,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     }
 
     @Override
-    public BroadleafCurrency getCurrency() {
+    public Currency getCurrency() {
         return promotableOrder.getOrderCurrency();
     }
 
@@ -243,6 +243,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     /**
      * @see MiniumTargetsRequired
      */
+    @Override
     public void setMinimumTargetsRequired(Integer minimumTargetsRequired) {
         if (minimumTargetsRequired == null || minimumTargetsRequired < 1) {
             this.minimumTargetsRequired = 1;
@@ -258,6 +259,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
      * @see MinimumTargetsRequired
      * @return
      */
+    @Override
     public int getMinimumRequiredTargetQuantity() {
         if (uses > 0) {
             return 1;

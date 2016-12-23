@@ -162,8 +162,8 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderDao.create();
         order.setStatus(OrderStatus.IN_PROCESS);
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
-            order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency());
-            order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
+            order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getJavaCurrency());
+            order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale());
         }
         return persist(order); // No pricing needed here since it's a new cart
     }
@@ -181,7 +181,7 @@ public class OrderServiceImpl implements OrderService {
         }
         
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
-            namedOrder.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
+            namedOrder.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale());
         }
         
         return persist(namedOrder); // No need to price here
@@ -372,7 +372,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional("blTransactionManager")
     public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferException {
-        ArrayList<OfferCode> offerCodes = new ArrayList<OfferCode>();
+        ArrayList<OfferCode> offerCodes = new ArrayList<>();
         offerCodes.add(offerCode);
         return addOfferCodes(order, offerCodes, priceOrder);
     }
@@ -455,7 +455,7 @@ public class OrderServiceImpl implements OrderService {
         if (cartOrder == null) {
             cartOrder = createNewCartForCustomer(namedOrder.getOrderCustomer());
         }
-        List<OrderItem> items = new ArrayList<OrderItem>(namedOrder.getOrderItems());
+        List<OrderItem> items = new ArrayList<>(namedOrder.getOrderItems());
         for (OrderItem item : items) {
             if (moveNamedOrderItems) {
                 removeItem(namedOrder.getId(), item.getId(), false);
@@ -573,7 +573,7 @@ public class OrderServiceImpl implements OrderService {
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, currentAddition == numAdditionRequests);
             ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(cartOpRequest);
 
-            List<ActivityMessageDTO> orderMessages = new ArrayList<ActivityMessageDTO>();
+            List<ActivityMessageDTO> orderMessages = new ArrayList<>();
             orderMessages.addAll(((ActivityMessages) context).getActivityMessages());
 
             // Update the orderItemRequest incase it changed during the initial add to cart workflow
@@ -651,7 +651,7 @@ public class OrderServiceImpl implements OrderService {
             if (oi == null) {
                 throw new WorkflowException(new ItemNotFoundException());
             }
-            List<Long> childrenToRemove = new ArrayList<Long>();
+            List<Long> childrenToRemove = new ArrayList<>();
             findAllChildrenToRemove(childrenToRemove, oi);
             for (Long childToRemove : childrenToRemove) {
                 removeItemInternal(orderId, childToRemove, false);
@@ -687,7 +687,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = findOrderById(orderId);
         try {
 
-            for (OrderItem currentItem : new ArrayList<OrderItem>(order.getOrderItems())) {
+            for (OrderItem currentItem : new ArrayList<>(order.getOrderItems())) {
                 if (!currentItem.isSkuActive()) {
                     removeItem(orderId, currentItem.getId(), priceOrder);
                 }
@@ -741,7 +741,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional("blTransactionManager")
     public void removePaymentsFromOrder(Order order, PaymentType paymentInfoType) {
-        List<OrderPayment> infos = new ArrayList<OrderPayment>();
+        List<OrderPayment> infos = new ArrayList<>();
         for (OrderPayment paymentInfo : order.getPayments()) {
             if (paymentInfoType == null || paymentInfoType.equals(paymentInfo.getType())) {
                 infos.add(paymentInfo);
