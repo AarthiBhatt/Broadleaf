@@ -7,7 +7,7 @@
            th:disabled="${field.readOnly}"
            th:classappend="${group.column == 0} ? 'numeric-field'"
            th:field="*{fields['__${field.name}__'].value}"
-           th:value="${#blc.getPrice('__${field.value}__')}"/>
+           th:value="${#price.getPrice('__${field.value}__')}"/>
 </div>
 
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" ></span>

@@ -19,9 +19,6 @@
 package org.broadleafcommerce.core.web.expression;
 
 import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -29,8 +26,6 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogURLService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
-
-import java.text.NumberFormat;
 
 import javax.annotation.Resource;
 
@@ -86,23 +81,4 @@ public class BLCVariableExpression implements BroadleafVariableExpression {
         return currentUrl;
     }
 
-    /**
-     * Returns the price at the correct scale and rounding for the default currency
-     * @see Money#defaultCurrency()
-     * @param amount
-     * @return
-     */
-    public String getPrice(String amount) {
-        Money price = Money.ZERO;
-        String sanitizedAmount = StringUtil.removeNonNumerics(amount);
-        if (StringUtils.isNotEmpty(sanitizedAmount)) {
-            price = new Money(sanitizedAmount);
-            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-            if (brc.getJavaLocale() != null) {
-                NumberFormat formatter = BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(), price.getCurrency());
-                return formatter.format(price.getAmount());
-            }
-        }
-        return "$ " + price.getAmount().toString();
-    }
 }
