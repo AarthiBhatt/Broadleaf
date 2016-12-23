@@ -18,19 +18,20 @@
 package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.order.domain.Order;
-import com.broadleafcommerce.order.common.domain.OrderAddress;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus;
 
+import com.broadleafcommerce.order.common.domain.OrderAddress;
+
 import java.io.Serializable;
+import java.util.Currency;
 import java.util.List;
 
 /**
@@ -224,6 +225,6 @@ public interface OrderPayment extends Serializable, Status, MultiTenantCloneable
     /**
      * The currency that this payment should be taken in. This is a delegate to {@link #getOrder()#getCurrency()}.
      */
-    public BroadleafCurrency getCurrency();
+    public Currency getCurrency();
 
 }

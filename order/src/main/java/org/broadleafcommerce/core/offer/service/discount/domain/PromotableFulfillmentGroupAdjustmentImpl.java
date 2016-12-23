@@ -17,13 +17,13 @@
  */
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Currency;
 
 public class PromotableFulfillmentGroupAdjustmentImpl extends AbstractPromotionRounding implements PromotableFulfillmentGroupAdjustment, OfferHolder {
     
@@ -44,6 +44,7 @@ public class PromotableFulfillmentGroupAdjustmentImpl extends AbstractPromotionR
         computeAdjustmentValues();
     }
 
+    @Override
     public Offer getOffer() {
         return promotableCandidateFulfillmentGroupOffer.getOffer();
     }
@@ -111,7 +112,8 @@ public class PromotableFulfillmentGroupAdjustmentImpl extends AbstractPromotionR
         return adjustmentValue;
     }
 
-    public BroadleafCurrency getCurrency() {
+    @Override
+    public Currency getCurrency() {
         return promotableFulfillmentGroup.getFulfillmentGroup().getOrder().getCurrency();
     }
 

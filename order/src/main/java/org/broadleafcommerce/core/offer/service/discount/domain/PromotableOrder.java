@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.Order;
 
 import java.io.Serializable;
+import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 
@@ -164,7 +165,7 @@ public interface PromotableOrder extends Serializable {
      * Returns the {@link BroadleafCurrency} for the current order.
      * @return
      */
-    BroadleafCurrency getOrderCurrency();
+    Currency getOrderCurrency();
 
     /**
      * Sets the total fulfillmentCharges the order.

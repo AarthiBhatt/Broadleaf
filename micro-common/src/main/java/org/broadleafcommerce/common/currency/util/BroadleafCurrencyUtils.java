@@ -38,27 +38,43 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BroadleafCurrencyUtils {
 
-    protected static final Map<String, NumberFormat> FORMAT_CACHE = new ConcurrentHashMap<String, NumberFormat>();
+    protected static final Map<String, NumberFormat> FORMAT_CACHE = new ConcurrentHashMap<>();
 
     public static final MathContext ROUND_FLOOR_MATH_CONTEXT = new MathContext(0, RoundingMode.FLOOR);
 
     public static Money getMoney(BigDecimal amount, BroadleafCurrency currency) {
+        return getMoney(amount, currency == null ? null : currency.getCurrencyCode());
+    }
+    
+    public static Money getMoney(BigDecimal amount, Currency currency) {
+        return getMoney(amount, currency == null ? null : currency.getCurrencyCode());
+    }
+    
+    public static Money getMoney(BigDecimal amount, String currencyCode) {
         if (amount == null) {
             return null;
         }
 
-        if (currency != null) {
-            return new Money(amount, currency.getCurrencyCode());
+        if (currencyCode != null) {
+            return new Money(amount, currencyCode);
         } else {
             return new Money(amount, Money.defaultCurrency());
         }
     }
-
+    
     public static Money getMoney(BigDecimal amount) {
-        return getMoney(amount, null);
+        return getMoney(amount, (String) null);
     }
 
     public static Money getMoney(BroadleafCurrency currency) {
+        if (currency != null) {
+            return new Money(0, currency.getCurrencyCode());
+        } else {
+            return new Money();
+        }
+    }
+    
+    public static Money getMoney(Currency currency) {
         if (currency != null) {
             return new Money(0, currency.getCurrencyCode());
         } else {

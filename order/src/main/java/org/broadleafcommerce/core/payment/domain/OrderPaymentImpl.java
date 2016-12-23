@@ -21,7 +21,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -44,8 +43,6 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.Order;
-import com.broadleafcommerce.order.common.domain.OrderAddress;
-import com.broadleafcommerce.order.common.domain.OrderAddressImpl;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.payment.service.OrderPaymentStatusService;
 import org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus;
@@ -55,8 +52,12 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.springframework.context.ApplicationContext;
 
+import com.broadleafcommerce.order.common.domain.OrderAddress;
+import com.broadleafcommerce.order.common.domain.OrderAddressImpl;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -160,7 +161,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @OneToMany(mappedBy = "orderPayment", targetEntity = PaymentTransactionImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @AdminPresentationCollection(friendlyName="OrderPaymentImpl_Details",
             tab = Presentation.Tab.Name.Log, tabOrder = Presentation.Tab.Order.Log)
-    protected List<PaymentTransaction> transactions = new ArrayList<PaymentTransaction>();
+    protected List<PaymentTransaction> transactions = new ArrayList<>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -252,7 +253,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     
     @Override
     public List<PaymentTransaction> getTransactionsForType(PaymentTransactionType type) {
-        List<PaymentTransaction> result = new ArrayList<PaymentTransaction>();
+        List<PaymentTransaction> result = new ArrayList<>();
         for (PaymentTransaction tx : getTransactions()) {
             if (tx.getType().equals(type)) {
                 result.add(tx);
@@ -322,7 +323,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     }
 
     @Override
-    public BroadleafCurrency getCurrency() {
+    public Currency getCurrency() {
         if (order != null) {
             return order.getCurrency();
         }

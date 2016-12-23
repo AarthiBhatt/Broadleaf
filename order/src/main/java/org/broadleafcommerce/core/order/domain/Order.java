@@ -19,8 +19,6 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -30,13 +28,17 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity;
+import org.broadleafcommerce.core.pricing.service.workflow.TotalActivity;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import com.broadleafcommerce.order.common.domain.OrderItemDetail;
 
 import java.io.Serializable;
+import java.util.Currency;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -423,18 +425,24 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      * 
      * @return
      */
-    BroadleafCurrency getCurrency();
+    Currency getCurrency();
+    
+    String getCurrencyCode();
+    void setCurrencyCode(String currencyCode);
 
     /**
      * Set the currency that the {@link Order} is priced in.
      * 
      * @param currency
      */
-    void setCurrency(BroadleafCurrency currency);
+    void setCurrency(Currency currency);
 
     Locale getLocale();
 
     void setLocale(Locale locale);
+    
+    String getLocaleCode();
+    void setLocaleCode(String localeCode);
 
     /**
      * Returns true if this item has order adjustments.

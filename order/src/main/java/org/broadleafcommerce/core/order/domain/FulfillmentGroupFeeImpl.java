@@ -106,7 +106,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     @JoinTable(name = "BLC_FG_FEE_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_FEE_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
+    protected List<TaxDetail> taxes = new ArrayList<>();
     
     @Column(name = "TOTAL_FEE_TAX", precision=19, scale=5)
     @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Total_Fee_Tax", order=4000, fieldType=SupportedFieldType.MONEY)

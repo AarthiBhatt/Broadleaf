@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import org.apache.commons.beanutils.BeanComparator;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.AdvancedOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -28,6 +27,7 @@ import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.List;
 
 /**
@@ -40,7 +40,7 @@ public class PromotableOfferUtility {
     
     public static Money computeAdjustmentValue(Money currentPriceDetailValue, BigDecimal offerUnitValue, OfferHolder offerHolder, PromotionRounding rounding) {
         Offer offer = offerHolder.getOffer();
-        BroadleafCurrency currency = offerHolder.getCurrency();
+        Currency currency = offerHolder.getCurrency();
 
         OfferDiscountType discountType = offer.getDiscountType();
         Money adjustmentValue;

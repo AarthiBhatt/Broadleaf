@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.pricing.service.workflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -45,7 +44,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
     
     private static final Log LOG = LogFactory.getLog(FulfillmentItemPricingActivity.class);
 
-    protected BroadleafCurrency getCurrency(FulfillmentGroup fg) {
+    protected Currency getCurrency(FulfillmentGroup fg) {
         return fg.getOrder().getCurrency();
     }
     
@@ -75,7 +74,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
-        Map<OrderItem,List<FulfillmentGroupItem>> partialOrderItemMap = new HashMap<OrderItem,List<FulfillmentGroupItem>>();
+        Map<OrderItem,List<FulfillmentGroupItem>> partialOrderItemMap = new HashMap<>();
 
         // Calculate the fulfillmentGroupItem total
         populateItemTotalAmount(order, partialOrderItemMap);
@@ -113,7 +112,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
                     // to one or more of the items.
                     List<FulfillmentGroupItem> fgItemList = partialOrderItemMap.get(orderItem);
                     if (fgItemList == null) {
-                        fgItemList = new ArrayList<FulfillmentGroupItem>();
+                        fgItemList = new ArrayList<>();
                         partialOrderItemMap.put(orderItem, fgItemList);
                     }
                     fgItemList.add(fgItem);

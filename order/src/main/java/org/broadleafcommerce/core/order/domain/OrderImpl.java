@@ -23,15 +23,11 @@ import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.PreviewStatus;
 import org.broadleafcommerce.common.persistence.Previewable;
@@ -73,9 +69,11 @@ import com.broadleafcommerce.order.common.domain.OrderItemDetail;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
@@ -265,15 +263,13 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         group = GroupName.Advanced, order = FieldOrder.ATTRIBUTES)
     protected Map<String,OrderAttribute> orderAttributes = new HashMap<>();
     
-    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
-    @JoinColumn(name = "CURRENCY_CODE")
+    @Column(name = "CURRENCY_CODE")
     @AdminPresentation(excluded = true)
-    protected BroadleafCurrency currency;
+    protected String currencyCode = Money.defaultCurrency().getCurrencyCode();
 
-    @ManyToOne(targetEntity = LocaleImpl.class)
-    @JoinColumn(name = "LOCALE_CODE")
+    @Column(name = "LOCALE_CODE")
     @AdminPresentation(excluded = true)
-    protected Locale locale;
+    protected String localeCode = Locale.getDefault().toString();
     
     @Column(name = "IS_TAX_EXEMPT")
     @AdminPresentation(friendlyName = "OrderImpl_Is_Tax_Exempt",
@@ -643,22 +639,43 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
     
     @Override
-    public BroadleafCurrency getCurrency() {
-        return currency;
+    public String getCurrencyCode() {
+        return currencyCode;
     }
+    
     @Override
-    public void setCurrency(BroadleafCurrency currency) {
-        this.currency = currency;
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+    
+    @Override
+    public Currency getCurrency() {
+        return currencyCode == null ? null : Currency.getInstance(currencyCode);
+    }
+    
+    @Override
+    public void setCurrency(Currency currency) {
+        this.currencyCode = currency == null ? null : currency.getCurrencyCode();
     }
 
     @Override
     public Locale getLocale() {
-        return locale;
+        return localeCode == null ? null : org.springframework.util.StringUtils.parseLocaleString(localeCode);
     }
 
     @Override
     public void setLocale(Locale locale) {
-        this.locale = locale;
+        this.localeCode = locale == null ? null : locale.toString();
+    }
+    
+    @Override
+    public String getLocaleCode() {
+        return localeCode;
+    }
+    
+    @Override
+    public void setLocaleCode(String localeCode) {
+        this.localeCode = localeCode;
     }
     
     @Override
@@ -706,14 +723,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             return customerName;
         }
         return "";
-    }
-
-    @Override
-    public String getCurrencyCode() {
-        if (getCurrency() != null) {
-            return getCurrency().getCurrencyCode();
-        }
-        return null;
     }
 
     @Override
@@ -765,7 +774,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Override
     public List<ActivityMessageDTO> getOrderMessages() {
         if (this.orderMessages == null) {
-            this.orderMessages = new ArrayList<ActivityMessageDTO>();
+            this.orderMessages = new ArrayList<>();
         }
         return this.orderMessages;
     }
@@ -799,6 +808,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         return phoneNumber;
     }
     
+    @Override
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }

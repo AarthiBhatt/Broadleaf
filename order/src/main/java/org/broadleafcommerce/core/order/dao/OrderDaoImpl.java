@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.order.dao;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
@@ -42,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -122,7 +122,7 @@ public class OrderDaoImpl implements OrderDao {
 
         if (CollectionUtils.isNotEmpty(statuses)) {
             // We only want results that match the orders with the correct status
-            ArrayList<String> statusStrings = new ArrayList<String>();
+            ArrayList<String> statusStrings = new ArrayList<>();
             for (OrderStatus status : statuses) {
                 statusStrings.add(status.getType());
             }
@@ -209,8 +209,8 @@ public class OrderDaoImpl implements OrderDao {
         order.setStatus(OrderStatus.IN_PROCESS);
 
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
-            order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency());
-            order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
+            order.setCurrency(BroadleafRequestContext.getBroadleafRequestContext().getJavaCurrency());
+            order.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale());
         }
 
         if (extensionManager != null) {
@@ -254,7 +254,7 @@ public class OrderDaoImpl implements OrderDao {
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
             ListIterator<Order> iter = orders.listIterator();
             while (iter.hasNext()) {
-                Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+                Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale();
                 Order order = iter.next();
                 if (locale != null && !locale.equals(order.getLocale())) {
                     iter.remove();

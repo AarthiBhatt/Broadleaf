@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.offer.service.processor;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.NullComparator;
 import org.apache.commons.collections.comparators.ReverseComparator;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
@@ -42,6 +41,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,7 +135,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
         }
 
         if (rule != null && rule.getMatchRule() != null) {
-            HashMap<String, Object> vars = new HashMap<String, Object>();
+            HashMap<String, Object> vars = new HashMap<>();
             fulfillmentGroup.updateRuleVariables(vars);
             Boolean expressionOutcome = executeExpression(rule.getMatchRule(), vars);
             if (expressionOutcome != null && expressionOutcome) {
@@ -159,7 +159,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
     @Override
     @SuppressWarnings("unchecked")
     public boolean applyAllFulfillmentGroupOffers(List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, PromotableOrder order) {
-        Map<FulfillmentGroupOfferPotential, List<PromotableCandidateFulfillmentGroupOffer>> offerMap = new HashMap<FulfillmentGroupOfferPotential, List<PromotableCandidateFulfillmentGroupOffer>>();
+        Map<FulfillmentGroupOfferPotential, List<PromotableCandidateFulfillmentGroupOffer>> offerMap = new HashMap<>();
         for (PromotableCandidateFulfillmentGroupOffer candidate : qualifiedFGOffers) {
             FulfillmentGroupOfferPotential potential = new FulfillmentGroupOfferPotential();
             potential.setOffer(candidate.getOffer());
@@ -168,7 +168,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
             }
             offerMap.get(potential).add(candidate);
         }
-        List<FulfillmentGroupOfferPotential> potentials = new ArrayList<FulfillmentGroupOfferPotential>();
+        List<FulfillmentGroupOfferPotential> potentials = new ArrayList<>();
         for (FulfillmentGroupOfferPotential potential : offerMap.keySet()) {
             List<PromotableCandidateFulfillmentGroupOffer> fgOffers = offerMap.get(potential);
             Collections.sort(fgOffers, new ReverseComparator(new BeanComparator("discountedAmount", new NullComparator())));
@@ -181,7 +181,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
             }
             for (PromotableCandidateFulfillmentGroupOffer candidate : fgOffers) {
                 if (potential.getTotalSavings().getAmount().equals(BankersRounding.zeroAmount())) {
-                    BroadleafCurrency currency = order.getOrderCurrency();
+                    Currency currency = order.getOrderCurrency();
                     if (currency != null) {
                         potential.setTotalSavings(new Money(BigDecimal.ZERO, currency.getCurrencyCode()));
                     } else {
@@ -268,7 +268,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 
     @Override
     public List<FulfillmentGroupOfferPotential> removeTrailingNotCombinableFulfillmentGroupOffers(List<FulfillmentGroupOfferPotential> candidateOffers) {
-        List<FulfillmentGroupOfferPotential> remainingCandidateOffers = new ArrayList<FulfillmentGroupOfferPotential>();
+        List<FulfillmentGroupOfferPotential> remainingCandidateOffers = new ArrayList<>();
         int offerCount = 0;
         for (FulfillmentGroupOfferPotential candidateOffer : candidateOffers) {
             if (offerCount == 0) {

@@ -17,12 +17,12 @@
  */
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemContainer;
 
 import java.io.Serializable;
+import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 
@@ -101,7 +101,7 @@ public interface PromotableOrderItem extends Serializable {
      * Returns the currency of the related order.
      * @return
      */
-    BroadleafCurrency getCurrency();
+    Currency getCurrency();
 
     /**
      * Effectively deletes all priceDetails associated with this item and r
