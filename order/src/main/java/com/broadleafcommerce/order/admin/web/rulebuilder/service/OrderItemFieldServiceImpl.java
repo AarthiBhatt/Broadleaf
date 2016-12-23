@@ -57,34 +57,6 @@ public class OrderItemFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .options("[]")
                 .type(SupportedFieldType.INTEGER)
                 .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_orderItemCategoryName")
-                .name("category.name")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_orderItemCategoryUrl")
-                .name("category.url")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_orderItemProductManufacturer")
-                .name("product.manufacturer")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_orderItemSkuLongDescription")
-                .name("sku.longDescription")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
     }
 
     @Override
