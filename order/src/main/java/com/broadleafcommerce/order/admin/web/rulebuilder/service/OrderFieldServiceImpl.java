@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package com.broadleafcommerce.orderadmin.web.rulebuilder.service;
+package com.broadleafcommerce.order.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.RuleOperatorType;
@@ -28,61 +28,32 @@ import org.springframework.stereotype.Service;
 /**
  * An implementation of a RuleBuilderFieldService
  * that constructs metadata necessary
- * to build the supported fields for an Order Item entity
+ * to build the supported fields for an Order entity
  *
  * @author Elbert Bautista (elbertbautista)
  */
-@Service("blOrderItemFieldService")
-public class OrderItemFieldServiceImpl extends AbstractRuleBuilderFieldService {
+@Service("blOrderFieldService")
+public class OrderFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
-    //TODO: extensibility mechanism, support i18N
     @Override
     public void init() {
         fields.add(new FieldData.Builder()
-                .label("rule_orderItemName")
-                .name("name")
+                .label("rule_orderCurrencyCode")
+                .name("currency.currencyCode")
                 .operators(RuleOperatorType.TEXT)
                 .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("rule_orderItemPrice")
-                .name("price")
+                .label("rule_orderSubtotal")
+                .name("subTotal")
                 .operators(RuleOperatorType.NUMERIC)
                 .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.MONEY)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("rule_orderItemQuantity")
-                .name("quantity")
-                .operators(RuleOperatorType.NUMERIC)
-                .options(RuleOptionType.EMPTY_COLLECTION)
-                .type(SupportedFieldType.INTEGER)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_orderItemCategoryName")
-                .name("category.name")
-                .operators(RuleOperatorType.TEXT)
-                .options(RuleOptionType.EMPTY_COLLECTION)
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_orderItemCategoryUrl")
-                .name("category.url")
-                .operators(RuleOperatorType.TEXT)
-                .options(RuleOptionType.EMPTY_COLLECTION)
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_orderItemProductManufacturer")
-                .name("product.manufacturer")
-                .operators(RuleOperatorType.TEXT)
-                .options(RuleOptionType.EMPTY_COLLECTION)
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_orderItemSkuLongDescription")
-                .name("sku.longDescription")
+                .label("rule_localeCode")
+                .name("locale")
                 .operators(RuleOperatorType.TEXT)
                 .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
@@ -91,11 +62,11 @@ public class OrderItemFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     @Override
     public String getName() {
-        return RuleIdentifier.ORDERITEM;
+        return RuleIdentifier.ORDER;
     }
 
     @Override
     public String getDtoClassName() {
-        return "org.broadleafcommerce.core.order.domain.OrderItemImpl";
+        return "org.broadleafcommerce.core.order.domain.OrderImpl";
     }
 }
