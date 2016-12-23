@@ -37,7 +37,7 @@ public class OrderFieldServiceImpl extends AbstractRuleBuilderFieldService {
     public void init() {
         fields.add(new FieldData.Builder()
                 .label("rule_orderCurrencyCode")
-                .name("currency.currencyCode")
+                .name("currencyCode")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
@@ -51,7 +51,7 @@ public class OrderFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_localeCode")
-                .name("locale")
+                .name("localeCode")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
