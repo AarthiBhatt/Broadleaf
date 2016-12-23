@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.admin.persistence.validation;
+package com.broadleafcommerce.order.admin.persistence.validation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
