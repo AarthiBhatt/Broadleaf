@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.admin.web.rulebuilder.service;
+package com.broadleafcommerce.order.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -65,21 +65,14 @@ public class FulfillmentGroupFieldServiceImpl  extends AbstractRuleBuilderFieldS
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_fulfillmentGroupCity")
-                .name("address.city")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_fulfillmentGroupCounty")
-                .name("address.county")
+                .name("address.cityLocality")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_fulfillmentGroupState")
-                .name("address.state.name")
+                .name("address.stateProvinceRegion")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
@@ -93,28 +86,14 @@ public class FulfillmentGroupFieldServiceImpl  extends AbstractRuleBuilderFieldS
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_fulfillmentGroupCountry")
-                .name("address.country.name")
+                .name("address.countryCode")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_fulfillmentGroupPrimaryPhone")
-                .name("address.phonePrimary.phoneNumber")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_fulfillmentGroupSecondaryPhone")
-                .name("address.phoneSecondary.phoneNumber")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_fulfillmentGroupFax")
-                .name("address.phoneFax.phoneNumber")
+                .name("address.phone")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
