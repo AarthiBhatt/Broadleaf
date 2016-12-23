@@ -35,6 +35,9 @@
             <list>
                 <ref bean="blOrderItemFieldService"/>
                 <ref bean="blOrderFieldService"/>
+                <ref bean="blTimeFieldService"/>
+                <ref bean="blRequestFieldService"/>
+                <ref bean="blFulfillmentGroupFieldService"/>
             </list>
         </property>
     </bean>
