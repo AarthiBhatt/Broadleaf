@@ -18,7 +18,7 @@
 /**
  * 
  */
-package com.broadleafcommerce.order.extensibility.jpa;
+package org.broadleafcommerce.core.payment.extensibility.jpa;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;

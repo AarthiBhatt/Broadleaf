@@ -25,6 +25,7 @@ import org.springframework.context.annotation.ImportResource;
  */
 @Configuration
 @ImportResource({
+        "classpath:/bl-payment-applicationContext-persistence.xml",
         "classpath:/bl-payment-applicationContext.xml"
 })
 public class PaymentAutoConfiguration {
