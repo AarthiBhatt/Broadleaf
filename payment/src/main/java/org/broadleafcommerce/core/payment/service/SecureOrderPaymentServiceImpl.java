@@ -19,12 +19,12 @@ package org.broadleafcommerce.core.payment.service;
 
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.TransactionUtils;
+import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.dao.SecureOrderPaymentDao;
 import org.broadleafcommerce.core.payment.domain.secure.BankAccountPayment;
 import org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment;
 import org.broadleafcommerce.core.payment.domain.secure.GiftCardPayment;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
-import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,23 +68,23 @@ public class SecureOrderPaymentServiceImpl implements SecureOrderPaymentService 
     }
 
     @Override
-    public Referenced findSecurePaymentInfo(String referenceNumber, PaymentType paymentType) throws WorkflowException {
+    public Referenced findSecurePaymentInfo(String referenceNumber, PaymentType paymentType) throws PaymentException {
         if (paymentType == PaymentType.CREDIT_CARD) {
             CreditCardPayment ccinfo = findCreditCardInfo(referenceNumber);
             if (ccinfo == null) {
-                throw new WorkflowException("No credit card info associated with credit card payment type with reference number: " + referenceNumber);
+                throw new PaymentException("No credit card info associated with credit card payment type with reference number: " + referenceNumber);
             }
             return ccinfo;
         } else if (paymentType == PaymentType.BANK_ACCOUNT) {
             BankAccountPayment bankinfo = findBankAccountInfo(referenceNumber);
             if (bankinfo == null) {
-                throw new WorkflowException("No bank account info associated with bank account payment type with reference number: " + referenceNumber);
+                throw new PaymentException("No bank account info associated with bank account payment type with reference number: " + referenceNumber);
             }
             return bankinfo;
         } else if (paymentType == PaymentType.GIFT_CARD) {
             GiftCardPayment gcinfo = findGiftCardInfo(referenceNumber);
             if (gcinfo == null) {
-                throw new WorkflowException("No bank account info associated with gift card payment type with reference number: " + referenceNumber);
+                throw new PaymentException("No bank account info associated with gift card payment type with reference number: " + referenceNumber);
             }
             return gcinfo;
         }
@@ -94,7 +94,7 @@ public class SecureOrderPaymentServiceImpl implements SecureOrderPaymentService 
 
     @Override
     @Transactional(TransactionUtils.SECURE_TRANSACTION_MANAGER)
-    public void findAndRemoveSecurePaymentInfo(String referenceNumber, PaymentType paymentType) throws WorkflowException {
+    public void findAndRemoveSecurePaymentInfo(String referenceNumber, PaymentType paymentType) throws PaymentException {
         Referenced referenced = findSecurePaymentInfo(referenceNumber, paymentType);
         if (referenced != null) {
             remove(referenced);

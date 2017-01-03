@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
+import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -751,7 +752,7 @@ public class OrderServiceImpl implements OrderService {
         for (OrderPayment paymentInfo : infos) {
             try {
                 securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfo.getReferenceNumber(), paymentInfo.getType());
-            } catch (WorkflowException e) {
+            } catch (PaymentException e) {
                 // do nothing--this is an acceptable condition
                 LOG.debug("No secure payment is associated with the OrderPayment", e);
             }
@@ -773,7 +774,7 @@ public class OrderServiceImpl implements OrderService {
         if (paymentToRemove != null){
             try {
                 securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentToRemove.getReferenceNumber(), payment.getType());
-            } catch (WorkflowException e) {
+            } catch (PaymentException e) {
                 // do nothing--this is an acceptable condition
                 LOG.debug("No secure payment is associated with the OrderPayment", e);
             }

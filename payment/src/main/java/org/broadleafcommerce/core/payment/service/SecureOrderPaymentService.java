@@ -18,12 +18,12 @@
 package org.broadleafcommerce.core.payment.service;
 
 import org.broadleafcommerce.common.payment.PaymentType;
+import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
-import org.broadleafcommerce.core.workflow.WorkflowException;
 
 public interface SecureOrderPaymentService {
 
-    public Referenced findSecurePaymentInfo(String referenceNumber, PaymentType paymentType) throws WorkflowException;
+    public Referenced findSecurePaymentInfo(String referenceNumber, PaymentType paymentType) throws PaymentException;
 
     public Referenced save(Referenced securePayment);
 
@@ -31,6 +31,6 @@ public interface SecureOrderPaymentService {
 
     public void remove(Referenced securePayment);
 
-    public void findAndRemoveSecurePaymentInfo(String referenceNumber, PaymentType paymentType) throws WorkflowException;
+    public void findAndRemoveSecurePaymentInfo(String referenceNumber, PaymentType paymentType) throws PaymentException;
 
 }
