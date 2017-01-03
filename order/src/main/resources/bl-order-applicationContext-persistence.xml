@@ -48,34 +48,5 @@
         <property name="collectionRef" value="blMergedPersistenceXmlLocations-order"/>
         <property name="targetRef" value="blMergedPersistenceXmlLocations"/>
     </bean>
-    
-    <bean id="blEntityManagerFactorySecureInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
-        <property name="jpaVendorAdapter" ref="blJpaVendorAdapter"/>
-        <property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
-        <property name="persistenceUnitName" value="blSecurePU"/>
-    </bean>
-
-    <bean id="blTransactionManagerSecureInfo" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="blEntityManagerFactorySecureInfo" />
-    </bean>
-
-    <tx:advice id="blTxAdviceSecureInfo" transaction-manager="blTransactionManagerSecureInfo">
-        <tx:attributes>
-          <tx:method name="*" propagation="REQUIRED"/>
-        </tx:attributes>
-    </tx:advice>
-    
-    <bean id="blPersistenceUnitPostProcessors-order" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-                <bean class="com.broadleafcommerce.order.extensibility.jpa.SecureJPAPropertiesPersistenceUnitPostProcessor"/>
-            </list>
-        </property>
-    </bean>
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blPersistenceUnitPostProcessors-order"/>
-        <property name="targetRef" value="blPersistenceUnitPostProcessors"/>
-    </bean>
-    
 
 </beans>
