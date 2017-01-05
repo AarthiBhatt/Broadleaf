@@ -18,11 +18,15 @@
 package org.broadleafcommerce.common.controller;
 
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 
 /**
@@ -58,29 +62,70 @@ public class FrameworkControllerHandlerMapping extends RequestMappingHandlerMapp
 
     @Override
     protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
-        RequestMappingInfo requestMappingInfo = super.getMappingForMethod(method, handlerType);
 
-        //if there is no request mapping on the method, then we will short circuit and return null
-        if (requestMappingInfo == null) {
-            return null;
-        }
-
-        FrameworkController frameworkControllerAnnotation = handlerType.getAnnotation(FrameworkController.class);
-        if (frameworkControllerAnnotation != null && frameworkControllerAnnotation.value().length > 0) {
-            return combineParentRequestMapping(frameworkControllerAnnotation.value()[0], requestMappingInfo);
-        }
-
-        FrameworkRestController frameworkRestControllerAnnotation = handlerType.getAnnotation(FrameworkRestController.class);
-        if (frameworkRestControllerAnnotation != null && frameworkRestControllerAnnotation.value().length > 0) {
-            return combineParentRequestMapping(frameworkRestControllerAnnotation.value()[0], requestMappingInfo);
+        RequestMappingInfo requestMappingInfo = createRequestMappingInfo(method);
+        if (requestMappingInfo != null) {
+            RequestMappingInfo typeInfo = createRequestMappingInfo(handlerType);
+            if (typeInfo != null) {
+                requestMappingInfo = typeInfo.combine(requestMappingInfo);
+            }
         }
 
         return requestMappingInfo;
     }
 
-    protected RequestMappingInfo combineParentRequestMapping(RequestMapping parentRequestMapping, RequestMappingInfo requestMappingInfo) {
-        parentRequestMapping = AnnotationUtils.synthesizeAnnotation(parentRequestMapping, null);
-        RequestMappingInfo parentRequestMappingInfo = createRequestMappingInfo(parentRequestMapping, null);
-        return parentRequestMappingInfo.combine(requestMappingInfo);
+    private RequestMappingInfo createRequestMappingInfo(AnnotatedElement element) {
+        FrameworkMapping frameworkMapping = element.getAnnotation(FrameworkMapping.class);
+        frameworkMapping = AnnotationUtils.synthesizeAnnotation(frameworkMapping, null);
+        return (frameworkMapping != null ? createRequestMappingInfo(convertFrameworkMappingToRequestMapping(frameworkMapping), null) : null);
+    }
+
+    private RequestMapping convertFrameworkMappingToRequestMapping(final FrameworkMapping frameworkMapping) {
+        return new RequestMapping() {
+            @Override
+            public String name() {
+                return frameworkMapping.name();
+            }
+
+            @Override
+            public String[] value() {
+                return frameworkMapping.value();
+            }
+
+            @Override
+            public String[] path() {
+                return frameworkMapping.path();
+            }
+
+            @Override
+            public RequestMethod[] method() {
+                return frameworkMapping.method();
+            }
+
+            @Override
+            public String[] params() {
+                return frameworkMapping.params();
+            }
+
+            @Override
+            public String[] headers() {
+                return frameworkMapping.headers();
+            }
+
+            @Override
+            public String[] consumes() {
+                return frameworkMapping.consumes();
+            }
+
+            @Override
+            public String[] produces() {
+                return frameworkMapping.produces();
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return RequestMapping.class;
+            }
+        };
     }
 }

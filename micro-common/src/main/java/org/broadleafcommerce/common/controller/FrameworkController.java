@@ -50,17 +50,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface FrameworkController {
-
-    /**
-     * Parent {@link RequestMapping} to use while building the path to endpoints.
-     * <p>
-     * This is the {@link FrameworkController} equivalent to specifying {@link org.springframework.stereotype.Controller}
-     * and {@link RequestMapping} together.
-     * <p>
-     * While this is technically an array, only the first {@link RequestMapping} will be used. Since there is no {@code
-     * default null} for annotations, this had to be created as a list in order to have a sane default.
-     *
-     * @see RequestMapping
-     */
-    RequestMapping[] value() default {};
 }

@@ -17,8 +17,9 @@
  */
 package org.broadleafcommerce.common.controller;
 
+import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestMethod;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,16 +27,53 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Convenience annotation that behaves exactly like {@link FrameworkController} plus {@link ResponseBody}.
- *
- * @author Philip Baggett (pbaggett)
+ * @see RequestMapping
  * @see FrameworkController
- * @see ResponseBody
- * @since 5.2
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@ResponseBody
-public @interface FrameworkRestController {
+public @interface FrameworkMapping {
+
+    /**
+     * @see RequestMapping#name()
+     */
+    String name() default "";
+
+    /**
+     * @see RequestMapping#value()
+     */
+    @AliasFor("path")
+    String[] value() default {};
+
+    /**
+     * @see RequestMapping#path()
+     */
+    @AliasFor("value")
+    String[] path() default {};
+
+    /**
+     * @see RequestMapping#method()
+     */
+    RequestMethod[] method() default {};
+
+    /**
+     * @see RequestMapping#params()
+     */
+    String[] params() default {};
+
+    /**
+     * @see RequestMapping#headers()
+     */
+    String[] headers() default {};
+
+    /**
+     * @see RequestMapping#consumes()
+     */
+    String[] consumes() default {};
+
+    /**
+     * @see RequestMapping#produces()
+     */
+    String[] produces() default {};
 }
