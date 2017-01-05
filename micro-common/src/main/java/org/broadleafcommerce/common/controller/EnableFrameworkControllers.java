@@ -62,6 +62,12 @@ import static org.springframework.context.annotation.ComponentScan.Filter;
         includeFilters = @Filter({FrameworkController.class, FrameworkRestController.class}))
 public @interface EnableFrameworkControllers {
 
+    /////////////////////////////////////////////////////////////////////////////////////
+    //// BREAKING THIS CODE BECAUSE IT NEEDS TO BE ADDED TO 5.2 THEN MERGED INTO 6.0 ////
+    //// ALSO JAVADOC NEEDS TO BE UPDATED ///////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////
+    return false;
+
     /**
      * A set of {@link Filter}s that describe classes to exclude from component scanning.
      * <p>
