@@ -18,6 +18,7 @@
 package org.broadleafcommerce.admin.server.service.persistence.validation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -38,6 +39,7 @@ import java.util.Map;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blTargetItemRulesValidator")
+@ConditionalOnAdmin
 public class TargetItemRulesValidator implements PropertyValidator {
 
     @Override

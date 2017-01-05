@@ -19,16 +19,8 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mo="http://schema.broadleafcommerce.org/mo"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-               http://www.springframework.org/schema/beans/spring-beans.xsd
-               http://www.springframework.org/schema/context
-               http://www.springframework.org/schema/context/spring-context.xsd
-               http://schema.broadleafcommerce.org/mo
-               http://schema.broadleafcommerce.org/mo/mo-3.0.xsd">
-
-    <context:component-scan base-package="com.broadleafcommerce.order.admin"/>
+               http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="blAdminExtendedRuleBuilderFieldServices" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -42,8 +34,8 @@
         </property>
     </bean>
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blAdminExtendedRuleBuilderFieldServices" />
-        <property name="targetRef" value="blRuleBuilderFieldServices" />
+        <property name="collectionRef" value="blAdminExtendedRuleBuilderFieldServices"/>
+        <property name="targetRef" value="blRuleBuilderFieldServices"/>
     </bean>
 
 </beans>

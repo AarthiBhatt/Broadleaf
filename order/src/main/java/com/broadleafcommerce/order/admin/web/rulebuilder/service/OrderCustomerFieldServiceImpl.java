@@ -17,6 +17,7 @@
  */
 package com.broadleafcommerce.order.admin.web.rulebuilder.service;
 
+import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
@@ -33,6 +34,7 @@ import com.broadleafcommerce.order.common.domain.OrderCustomerImpl;
  * @author Elbert Bautista (elbertbautista)
  */
 @Service("blOrderCustomerFieldService")
+@ConditionalOnAdmin
 public class OrderCustomerFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     @Override

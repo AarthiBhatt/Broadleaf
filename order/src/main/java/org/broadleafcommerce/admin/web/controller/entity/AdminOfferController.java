@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.admin.web.controller.entity;
 
+import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
@@ -44,6 +45,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("blAdminOfferController")
 @RequestMapping("/" + AdminOfferController.SECTION_KEY)
+@ConditionalOnAdmin
 public class AdminOfferController extends AdminBasicEntityController {
     
     public static final String SECTION_KEY = "offer";

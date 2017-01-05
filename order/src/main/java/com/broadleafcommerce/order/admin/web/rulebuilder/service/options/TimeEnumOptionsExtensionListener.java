@@ -18,6 +18,7 @@
 package com.broadleafcommerce.order.admin.web.rulebuilder.service.options;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.common.time.DayOfMonthType;
 import org.broadleafcommerce.common.time.DayOfWeekType;
 import org.broadleafcommerce.common.time.HourOfDayType;
@@ -35,6 +36,7 @@ import java.util.Map;
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blTimeOptionsExtensionListener")
+@ConditionalOnAdmin
 public class TimeEnumOptionsExtensionListener extends AbstractRuleBuilderEnumOptionsExtensionListener {
 
     @Override

@@ -18,6 +18,7 @@
 package org.broadleafcommerce.admin.web.controller.entity;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -37,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller("blAdminOrderController")
 @RequestMapping("/" + AdminOrderController.SECTION_KEY)
+@ConditionalOnAdmin
 public class AdminOrderController extends AdminBasicEntityController {
     
     public static final String SECTION_KEY = "order";

@@ -20,6 +20,7 @@ package org.broadleafcommerce.admin.server.service.handler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -56,6 +57,7 @@ import java.util.Objects;
  * Created by Jon on 11/23/15.
  */
 @Component("blOfferCustomPersistenceHandler")
+@ConditionalOnAdmin
 public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(OfferCustomPersistenceHandler.class);

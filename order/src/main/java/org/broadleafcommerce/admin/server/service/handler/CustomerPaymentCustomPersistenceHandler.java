@@ -20,6 +20,7 @@ package org.broadleafcommerce.admin.server.service.handler;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -57,6 +58,7 @@ import javax.persistence.PersistenceContext;
  * @author Chris Kittrell (ckittrell)
  */
 @Component("blCustomerPaymentCustomPersistenceHandler")
+@ConditionalOnAdmin
 public class CustomerPaymentCustomPersistenceHandler extends ClassCustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(CustomerPaymentCustomPersistenceHandler.class);

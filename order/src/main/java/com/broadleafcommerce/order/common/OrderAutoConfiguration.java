@@ -17,6 +17,7 @@
  */
 package com.broadleafcommerce.order.common;
 
+import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,11 +42,11 @@ import com.broadleafcommerce.order.common.dto.SplitFulfillmentGroupDTO;
  * Created by brandon on 12/9/16.
  */
 @Configuration
-@ImportResource({
+@ImportResource(value = {
         "classpath:/bl-order-applicationContext-persistence.xml",
         "classpath:/bl-order-applicationContext.xml",
         "classpath:/bl-order-applicationContext-workflow.xml"
-})
+}, reader = FrameworkXmlBeanDefinitionReader.class)
 public class OrderAutoConfiguration {
     
     @Bean(name = "com.broadleafcommerce.order.common.dto.OfferCodeDTO")

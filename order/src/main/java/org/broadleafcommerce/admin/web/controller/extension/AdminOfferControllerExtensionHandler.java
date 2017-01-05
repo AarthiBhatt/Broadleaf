@@ -18,6 +18,7 @@
 package org.broadleafcommerce.admin.web.controller.extension;
 
 import org.broadleafcommerce.admin.web.controller.entity.AdminOfferController;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.presentation.client.RuleBuilderDisplayType;
 import org.broadleafcommerce.core.offer.domain.OfferAdminPresentation;
@@ -35,6 +36,7 @@ import javax.annotation.Resource;
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blAdminOfferControllerExtensionHandler")
+@ConditionalOnAdmin
 public class AdminOfferControllerExtensionHandler extends AbstractAdminAbstractControllerExtensionHandler {
 
     @Resource(name = "blAdminAbstractControllerExtensionManager")

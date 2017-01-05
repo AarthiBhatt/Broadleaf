@@ -18,6 +18,7 @@
 package com.broadleafcommerce.order.admin.persistence.validation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -40,6 +41,7 @@ import javax.annotation.Resource;
  * @author Jaci Eckert
  */
 @Component("blOfferTargetCriteriaItemValidator")
+@ConditionalOnAdmin
 public class OfferTargetItemCriteriaValidator extends ValidationConfigurationBasedPropertyValidator {
 
     @Resource(name = "blRuleFieldExtractionUtility")
