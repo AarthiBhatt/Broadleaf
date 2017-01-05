@@ -18,6 +18,7 @@
 package com.broadleafcommerce.order.endpoint;
 
 import org.broadleafcommerce.common.api.BaseEndpoint;
+import org.broadleafcommerce.common.controller.FrameworkMapping;
 import org.broadleafcommerce.common.controller.FrameworkRestController;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
@@ -27,25 +28,23 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 import com.broadleafcommerce.order.common.dto.OrderDTO;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-@FrameworkRestController(@RequestMapping(path = "/checkout"))
+@FrameworkRestController
+@FrameworkMapping("/checkout")
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class CheckoutEndpoint extends BaseEndpoint {
 
     @Resource(name = "blCheckoutService")
     protected CheckoutService checkoutService;
-    
+
     @Resource(name = "blOrderService")
     protected OrderService orderService;
-    
-    @RequestMapping(path = "/{orderId}", method = RequestMethod.POST)
+
+    @FrameworkMapping(path = "/{orderId}", method = RequestMethod.POST)
     public ResponseEntity checkout(HttpServletRequest request, @PathVariable Long orderId) {
         Order order = orderService.findOrderById(orderId);
         if (order == null) {

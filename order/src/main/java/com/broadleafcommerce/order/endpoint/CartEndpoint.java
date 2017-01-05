@@ -19,6 +19,7 @@ package com.broadleafcommerce.order.endpoint;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.api.BaseEndpoint;
+import org.broadleafcommerce.common.controller.FrameworkMapping;
 import org.broadleafcommerce.common.controller.FrameworkRestController;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
@@ -42,9 +43,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 import com.broadleafcommerce.order.common.domain.OrderAddress;
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import com.broadleafcommerce.order.common.dto.OrderDTO;
@@ -52,15 +51,14 @@ import com.broadleafcommerce.order.common.dto.OrderPaymentDTO;
 import com.broadleafcommerce.order.common.dto.SplitFulfillmentGroupDTO;
 import com.broadleafcommerce.order.common.service.OrderAddressService;
 import com.broadleafcommerce.order.common.service.OrderCustomerService;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-@FrameworkRestController(@RequestMapping(path = "/cart"))
+@FrameworkRestController
+@FrameworkMapping("/cart")
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class CartEndpoint extends BaseEndpoint {
     
@@ -85,7 +83,7 @@ public class CartEndpoint extends BaseEndpoint {
     @Resource(name = "blOrderAddressService")
     protected OrderAddressService orderAddressService;
 
-    @RequestMapping(path = "/customer/{id}", method = RequestMethod.GET)
+    @FrameworkMapping(path = "/customer/{id}", method = RequestMethod.GET)
     public ResponseEntity findCartByCustomerId(HttpServletRequest request, @PathVariable Long id) {
         OrderCustomer customer = orderCustomerService.findOrderCustomerById(id);
         if (customer == null) {
@@ -100,7 +98,7 @@ public class CartEndpoint extends BaseEndpoint {
         return new ResponseEntity(response, HttpStatus.OK);
     }
     
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+    @FrameworkMapping(path = "/{id}", method = RequestMethod.GET)
     public ResponseEntity findCartById(HttpServletRequest request, @PathVariable Long id) {
         Order order = orderService.findOrderById(id);
         if (order == null) {
@@ -111,7 +109,7 @@ public class CartEndpoint extends BaseEndpoint {
         return new ResponseEntity(response, HttpStatus.OK);
     }
     
-    @RequestMapping(path = "/customer/{customerId}", method = RequestMethod.POST)
+    @FrameworkMapping(path = "/customer/{customerId}", method = RequestMethod.POST)
     public ResponseEntity createNewCartForCustomer(HttpServletRequest request, @PathVariable Long customerId) {
         OrderCustomer customer = orderCustomerService.findOrderCustomerById(customerId);
         if (customer == null) {
@@ -126,7 +124,7 @@ public class CartEndpoint extends BaseEndpoint {
         return new ResponseEntity(response, HttpStatus.OK);
     }
     
-    @RequestMapping(path = "/create", method = RequestMethod.POST)
+    @FrameworkMapping(path = "/create", method = RequestMethod.POST)
     public ResponseEntity createCart(HttpServletRequest request) {
         Order order = orderService.createCart();
         OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
@@ -134,7 +132,7 @@ public class CartEndpoint extends BaseEndpoint {
         return new ResponseEntity(response, HttpStatus.OK);
     }
     
-    @RequestMapping(path = "/{id}/add", method = RequestMethod.POST)
+    @FrameworkMapping(path = "/{id}/add", method = RequestMethod.POST)
     public ResponseEntity addItemToOrder(HttpServletRequest request, @PathVariable Long id, @RequestBody OrderItemRequestDTO dto) {
         try {
             OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
@@ -145,7 +143,7 @@ public class CartEndpoint extends BaseEndpoint {
         }
     }
     
-    @RequestMapping(path = "/{orderId}/remove/{itemId}", method = RequestMethod.POST)
+    @FrameworkMapping(path = "/{orderId}/remove/{itemId}", method = RequestMethod.POST)
     public ResponseEntity removeItemFromOrder(HttpServletRequest request, @PathVariable("orderId") Long orderId, @PathVariable("itemId") Long orderItemId) {
         try {
             OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
@@ -156,7 +154,7 @@ public class CartEndpoint extends BaseEndpoint {
         }
     }
     
-    @RequestMapping(path = "/{orderId}/udpate/{itemId}/options", method = RequestMethod.POST)
+    @FrameworkMapping(path = "/{orderId}/udpate/{itemId}/options", method = RequestMethod.POST)
     public ResponseEntity updateItemOptions(HttpServletRequest request,
                                             @PathVariable("orderId") Long orderId,
                                             @PathVariable("itemId") Long itemId,
@@ -171,7 +169,7 @@ public class CartEndpoint extends BaseEndpoint {
         }
     }
     
-    @RequestMapping(path = "/{orderId}/update/{itemId}/{quantity}", method = RequestMethod.POST)
+    @FrameworkMapping(path = "/{orderId}/update/{itemId}/{quantity}", method = RequestMethod.POST)
     public ResponseEntity updateItemQuantity(HttpServletRequest request,
                                              @PathVariable("orderId")  Long orderId,
                                              @PathVariable("itemId")   Long itemId,
@@ -188,7 +186,7 @@ public class CartEndpoint extends BaseEndpoint {
         }
     }
     
-    @RequestMapping(path = "/{orderId}/add/promo/{promoCode}", method = RequestMethod.POST)
+    @FrameworkMapping(path = "/{orderId}/add/promo/{promoCode}", method = RequestMethod.POST)
     public ResponseEntity addPromoToOrder(HttpServletRequest request, @PathVariable("orderId") Long orderId, @PathVariable("promoCode") String promoCode) {
         Order order = orderService.findOrderById(orderId);
         if (order == null) {
@@ -207,7 +205,7 @@ public class CartEndpoint extends BaseEndpoint {
         }
     }
     
-    @RequestMapping(path = "/{orderId}/remove/promo/{promoCode}", method = RequestMethod.POST)
+    @FrameworkMapping(path = "/{orderId}/remove/promo/{promoCode}", method = RequestMethod.POST)
     public ResponseEntity removePromoFromOrder(HttpServletRequest request, @PathVariable("orderId") Long orderId, @PathVariable("promoCode") String promoCode) {
         Order order = orderService.findOrderById(orderId);
         if (order == null) {
@@ -226,7 +224,7 @@ public class CartEndpoint extends BaseEndpoint {
         }
     }
     
-    @RequestMapping(path = "/{orderId}/add/payment", method = RequestMethod.POST)
+    @FrameworkMapping(path = "/{orderId}/add/payment", method = RequestMethod.POST)
     public ResponseEntity addPaymentToOrder(HttpServletRequest request, @PathVariable("orderId") Long orderId, @RequestBody OrderPaymentDTO orderPaymentDTO) {
         Order order = orderService.findOrderById(orderId);
         if (order == null) {
@@ -240,7 +238,7 @@ public class CartEndpoint extends BaseEndpoint {
         return new ResponseEntity(response, HttpStatus.OK);
     }
     
-    @RequestMapping(path = "/{orderId}/remove/payment/{paymentId}", method = RequestMethod.POST)
+    @FrameworkMapping(path = "/{orderId}/remove/payment/{paymentId}", method = RequestMethod.POST)
     public ResponseEntity removePaymentFromOrder(HttpServletRequest request, @PathVariable("orderId") Long orderId, @PathVariable("paymentId") Long paymentId) {
         Order order = orderService.findOrderById(orderId);
         if (order == null) {
@@ -256,7 +254,7 @@ public class CartEndpoint extends BaseEndpoint {
         return new ResponseEntity(response, HttpStatus.OK);
     }
     
-    @RequestMapping(path = "/{orderId}/remove/address/{addressId}", method = RequestMethod.POST)
+    @FrameworkMapping(path = "/{orderId}/remove/address/{addressId}", method = RequestMethod.POST)
     public ResponseEntity removeAddressFromOrder(HttpServletRequest request, @PathVariable("orderId") Long orderId, @PathVariable("addressId") Long addressId) {
         Order order = orderService.findOrderById(orderId);
         if (order == null) {
@@ -293,7 +291,7 @@ public class CartEndpoint extends BaseEndpoint {
         }
     }
     
-    @RequestMapping(path = "/{orderId}/add/address", method = RequestMethod.POST)
+    @FrameworkMapping(path = "/{orderId}/add/address", method = RequestMethod.POST)
     public ResponseEntity addAddressToOrderItems(HttpServletRequest request, @PathVariable("orderId") Long orderId, @RequestBody SplitFulfillmentGroupDTO splitFulfillmentGroupDTO) {
         Order order = orderService.findOrderById(orderId);
         if (order == null) {
