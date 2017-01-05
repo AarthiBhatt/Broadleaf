@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package com.broadleafcommerce.order.admin.web.rulebuilder.service;
+package org.broadleafcommerce.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
@@ -29,72 +29,57 @@ import org.springframework.stereotype.Service;
 /**
  * An implementation of a RuleBuilderFieldService
  * that constructs metadata necessary
- * to build the supported fields for a Time entity
+ * to build the supported fields for a Request entity
  *
  * @author Andre Azzolini (apazzolini)
  */
-@Service("blTimeFieldService")
+@Service("blRequestFieldService")
 @ConditionalOnAdmin
-public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
+public class RequestFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     @Override
     public void init() {
         fields.add(new FieldData.Builder()
-                .label("rule_timeHourOfDay")
-                .name("hour")
-                .operators(RuleOperatorType.SELECTIZE_ENUMERATION)
-                .options(RuleOptionType.HOUR_OF_DAY)
-                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
-                .build());
-        
-        fields.add(new FieldData.Builder()
-                .label("rule_timeDayOfWeek")
-                .name("dayOfWeek")
-                .operators(RuleOperatorType.SELECTIZE_ENUMERATION)
-                .options(RuleOptionType.DAY_OF_WEEK)
-                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
-                .build());
-        
-        fields.add(new FieldData.Builder()
-                .label("rule_timeMonth")
-                .name("month")
-                .operators(RuleOperatorType.SELECTIZE_ENUMERATION)
-                .options(RuleOptionType.MONTH)
-                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
-                .build());
-        
-        fields.add(new FieldData.Builder()
-                .label("rule_timeDayOfMonth")
-                .name("dayOfMonth")
-                .operators(RuleOperatorType.SELECTIZE_ENUMERATION)
-                .options(RuleOptionType.DAY_OF_MONTH)
-                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
-                .build());
-        
-        fields.add(new FieldData.Builder()
-                .label("rule_timeMinute")
-                .name("minute")
-                .operators(RuleOperatorType.SELECTIZE_ENUMERATION)
-                .options(RuleOptionType.MINUTE)
-                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
-                .build());
-        
-        fields.add(new FieldData.Builder()
-                .label("rule_timeDate")
-                .name("date")
-                .operators(RuleOperatorType.DATE)
+                .label("rule_requestSearchKeyword")
+                .name("properties['blcSearchKeyword']")
+                .operators(RuleOperatorType.TEXT)
                 .options(RuleOptionType.EMPTY_COLLECTION)
-                .type(SupportedFieldType.DATE)
+                .type(SupportedFieldType.STRING)
+                .skipValidation(true)
+                .build());
+
+        fields.add(new FieldData.Builder()
+                .label("rule_requestFullUrl")
+                .name("fullUrlWithQueryString")
+                .operators(RuleOperatorType.TEXT)
+                .options(RuleOptionType.EMPTY_COLLECTION)
+                .type(SupportedFieldType.STRING)
+                .build());
+        
+        fields.add(new FieldData.Builder()
+                .label("rule_requestUri")
+                .name("requestURI")
+                .operators(RuleOperatorType.TEXT)
+                .options(RuleOptionType.EMPTY_COLLECTION)
+                .type(SupportedFieldType.STRING)
+                .build());
+        
+        fields.add(new FieldData.Builder()
+                .label("rule_requestIsSecure")
+                .name("secure")
+                .operators(RuleOperatorType.BOOLEAN)
+                .options(RuleOptionType.EMPTY_COLLECTION)
+                .type(SupportedFieldType.BOOLEAN)
                 .build());
     }
 
     @Override
     public String getName() {
-        return RuleIdentifier.TIME;
+        return RuleIdentifier.REQUEST;
     }
 
     @Override
     public String getDtoClassName() {
-        return "org.broadleafcommerce.common.TimeDTO";
+        return "org.broadleafcommerce.common.RequestDTOImpl";
     }
 }

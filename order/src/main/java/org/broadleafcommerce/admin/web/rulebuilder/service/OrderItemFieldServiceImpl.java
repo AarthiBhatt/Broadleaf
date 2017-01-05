@@ -15,68 +15,61 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package com.broadleafcommerce.order.admin.web.rulebuilder.service;
+package org.broadleafcommerce.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
+import org.broadleafcommerce.common.presentation.RuleOperatorType;
+import org.broadleafcommerce.common.presentation.RuleOptionType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.AbstractRuleBuilderFieldService;
 import org.springframework.stereotype.Service;
 
-import com.broadleafcommerce.order.common.domain.OrderCustomerImpl;
-
 /**
  * An implementation of a RuleBuilderFieldService
  * that constructs metadata necessary
- * to build the supported fields for a Customer entity
+ * to build the supported fields for an Order Item entity
  *
  * @author Elbert Bautista (elbertbautista)
  */
-@Service("blOrderCustomerFieldService")
+@Service("blOrderItemFieldService")
 @ConditionalOnAdmin
-public class OrderCustomerFieldServiceImpl extends AbstractRuleBuilderFieldService {
+public class OrderItemFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
+    //TODO: extensibility mechanism, support i18N
     @Override
     public void init() {
         fields.add(new FieldData.Builder()
-                .label("rule_customerId")
-                .name("id")
-                .operators("blcOperators_Numeric")
-                .options("[]")
-                .type(SupportedFieldType.ID)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_customerEmailAddress")
-                .name("emailAddress")
-                .operators("blcOperators_Text")
-                .options("[]")
+                .label("rule_orderItemName")
+                .name("name")
+                .operators(RuleOperatorType.TEXT)
+                .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("rule_customerFirstName")
-                .name("firstName")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
+                .label("rule_orderItemPrice")
+                .name("price")
+                .operators(RuleOperatorType.NUMERIC)
+                .options(RuleOptionType.EMPTY_COLLECTION)
+                .type(SupportedFieldType.MONEY)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("rule_customerLastName")
-                .name("lastName")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
+                .label("rule_orderItemQuantity")
+                .name("quantity")
+                .operators(RuleOperatorType.NUMERIC)
+                .options(RuleOptionType.EMPTY_COLLECTION)
+                .type(SupportedFieldType.INTEGER)
                 .build());
     }
 
     @Override
     public String getName() {
-        return RuleIdentifier.CUSTOMER;
+        return RuleIdentifier.ORDERITEM;
     }
 
     @Override
     public String getDtoClassName() {
-        return OrderCustomerImpl.class.getName();
+        return "org.broadleafcommerce.core.order.domain.OrderItemImpl";
     }
-
 }
