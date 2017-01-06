@@ -59,14 +59,8 @@ import static org.springframework.context.annotation.ComponentScan.Filter;
 @ComponentScan(
         useDefaultFilters = false,
         basePackages = {"org.broadleafcommerce", "com.broadleafcommerce"},
-        includeFilters = @Filter({FrameworkController.class}))
-public @interface EnableFrameworkControllers {
-
-    /////////////////////////////////////////////////////////////////////////////////////
-    //// BREAKING THIS CODE BECAUSE IT NEEDS TO BE ADDED TO 5.2 THEN MERGED INTO 6.0 ////
-    //// ALSO JAVADOC NEEDS TO BE UPDATED ///////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////
-    return false;
+        includeFilters = @Filter({FrameworkRestController.class}))
+public @interface EnableFrameworkRestControllers {
 
     /**
      * A set of {@link Filter}s that describe classes to exclude from component scanning.
