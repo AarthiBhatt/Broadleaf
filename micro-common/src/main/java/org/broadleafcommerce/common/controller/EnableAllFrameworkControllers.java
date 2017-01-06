@@ -18,7 +18,6 @@
 package org.broadleafcommerce.common.controller;
 
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.annotation.AliasFor;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -31,14 +30,15 @@ import static org.springframework.context.annotation.ComponentScan.Filter;
  * Enables {@link FrameworkController} and {@link FrameworkRestController} annotations.
  * <p>
  * Scan all Broadleaf modules for {@link FrameworkController} and {@link FrameworkRestController} so that their {@link
- * org.springframework.web.bind.annotation.RequestMapping}s will get included in {@link
+ * FrameworkMapping}s will get included in {@link
  * FrameworkControllerHandlerMapping} to provide default implementations of web endpoints.
  * <p>
- * If only some {@link FrameworkController}s are desired, then use {@link #excludeFilters()} to disable undesired
- * default controllers.
+ * If only some controllers are desired, then you must individually use {@link EnableFrameworkControllers} and
+ * {@link EnableFrameworkRestControllers} and utilize their excludeFilters property to disable the unwanted controllers.
+ * See {@link EnableFrameworkControllers} documentation for how to properly use these two annotations together.
  * <p>
  * <b>DO NOT place this annotation on the same class as another {@link ComponentScan} or other annotations that compose
- * {@link ComponentScan} such as {@code @SpringBootApplication} as they will conflict when Spring performs annotation
+ * {@link ComponentScan} such as {@code @SpringBootApplication}, as they will conflict when Spring performs annotation
  * composition.</b> Instead, you can create a nested class in your {@code @SprintBootApplication} class like this:
  * <pre>
  * {@code
@@ -50,6 +50,7 @@ import static org.springframework.context.annotation.ComponentScan.Filter;
  * @author Philip Baggett (pbaggett)
  * @see FrameworkController
  * @see FrameworkRestController
+ * @see FrameworkMapping
  * @see FrameworkControllerHandlerMapping
  * @since 5.2
  */

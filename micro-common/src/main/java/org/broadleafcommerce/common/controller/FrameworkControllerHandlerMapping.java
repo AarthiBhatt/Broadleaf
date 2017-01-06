@@ -18,7 +18,6 @@
 package org.broadleafcommerce.common.controller;
 
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;

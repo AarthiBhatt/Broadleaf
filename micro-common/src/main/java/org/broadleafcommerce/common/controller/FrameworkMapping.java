@@ -27,8 +27,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * This annotation behaves exactly like {@link RequestMapping} except it is used inside {@link FrameworkController} and
+ * {@link FrameworkRestController} controllers.
+ * <p>
+ * This reasoning for this annotation instead of just using {@link RequestMapping} is that when framework controllers
+ * haven't been enabled and a framework controller is extended by a class annotated with {@link
+ * org.springframework.stereotype.Controller} or {@link org.springframework.web.bind.annotation.RestController} then the
+ * undesired {@link RequestMapping}s will get picked up once again due to Spring's annotation inheritance mechanics.
+ *
  * @see RequestMapping
  * @see FrameworkController
+ * @see FrameworkRestController
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
