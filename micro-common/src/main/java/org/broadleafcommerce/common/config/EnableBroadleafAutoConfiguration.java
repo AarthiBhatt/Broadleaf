@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  * @author Philip Baggett (pbaggett)
  * @author Brandon Hines (bhines)
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ImportResource(locations = {

@@ -20,6 +20,7 @@
  */
 package org.broadleafcommerce.core.search.config;
 
+import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.broadleafcommerce.core.search.service.solr.FileSystemSolrIndexStatusProviderImpl;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexStatusProvider;
 import org.springframework.context.annotation.Bean;
@@ -36,10 +37,10 @@ import java.util.List;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Configuration
-@ImportResource({
+@ImportResource(value = {
         "classpath:/bl-search-applicationContext-persistence.xml",
         "classpath:/bl-search-applicationContext.xml"
-})
+}, reader = FrameworkXmlBeanDefinitionReader.class)
 @ComponentScan("org.broadleafcommerce.core.search")
 public class SearchAutoConfiguration {
 

@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.profile.core;
 
+import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
@@ -24,9 +25,9 @@ import org.springframework.context.annotation.ImportResource;
  * Created by brandon on 11/21/16.
  */
 @Configuration
-@ImportResource({
+@ImportResource(value = {
         "classpath:/bl-contact-applicationContext-persistence.xml",
         "classpath:/bl-contact-applicationContext.xml"
-})
+}, reader = FrameworkXmlBeanDefinitionReader.class)
 public class ContactAutoConfiguration {
 }

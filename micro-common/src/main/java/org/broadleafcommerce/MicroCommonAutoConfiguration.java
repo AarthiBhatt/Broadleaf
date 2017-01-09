@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce;
 
+import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
@@ -24,9 +25,9 @@ import org.springframework.context.annotation.ImportResource;
  * Created by brandon on 11/29/16.
  */
 @Configuration
-@ImportResource({
+@ImportResource(value = {
         "classpath:/bl-micro-common-applicationContext-persistence.xml",
         "classpath:/bl-micro-common-applicationContext.xml"
-})
+}, reader = FrameworkXmlBeanDefinitionReader.class)
 public class MicroCommonAutoConfiguration {
 }
