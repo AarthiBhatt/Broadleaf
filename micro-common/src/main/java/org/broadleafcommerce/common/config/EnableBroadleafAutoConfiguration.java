@@ -38,7 +38,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ImportResource(locations = {
-        "classpath*:/blc-config/bl-*-applicationContext.xml"
+        "classpath*:/blc-config/bl-*-applicationContext.xml",
+        "classpath*:/blc-config/bl-*-applicationContext-servlet.xml"
 }, reader = FrameworkXmlBeanDefinitionReader.class)
 public @interface EnableBroadleafAutoConfiguration {
 }
