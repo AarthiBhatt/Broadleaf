@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Payment
+ * BroadleafCommerce Search
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,19 +15,42 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce;
+/**
+ * 
+ */
+package org.broadleafcommerce.autoconfig.search;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
+import org.broadleafcommerce.core.search.service.solr.FileSystemSolrIndexStatusProviderImpl;
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexStatusProvider;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
- * Created by brandon on 12/5/16.
+ * 
+ * 
+ * @author Phillip Verheyden (phillipuniverse)
  */
 @Configuration
 @ImportResource(value = {
-        "classpath:/bl-payment-applicationContext-persistence.xml",
-        "classpath:/bl-payment-applicationContext.xml"
+        "classpath:/bl-search-applicationContext-persistence.xml",
+        "classpath:/bl-search-applicationContext.xml"
 }, reader = FrameworkXmlBeanDefinitionReader.class)
-public class PaymentAutoConfiguration {
+@ComponentScan("org.broadleafcommerce.core.search")
+public class SearchAutoConfiguration {
+
+    @Bean
+    public List<SolrIndexStatusProvider> blSolrIndexStatusProviders() {
+        return Arrays.asList(blFileSystemSolrIndexStatusProvider());
+    }
+    
+    @Bean
+    public SolrIndexStatusProvider blFileSystemSolrIndexStatusProvider() {
+        return new FileSystemSolrIndexStatusProviderImpl();
+    }
 }

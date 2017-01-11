@@ -15,19 +15,28 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core;
+package org.broadleafcommerce.autoconfig.customer;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * Created by brandon on 11/21/16.
+ * @author Philip Baggett (pbaggett)
  */
 @Configuration
 @ImportResource(value = {
-        "classpath:/bl-contact-applicationContext-persistence.xml",
-        "classpath:/bl-contact-applicationContext.xml"
+        "classpath:/bl-customer-applicationContext-persistence.xml",
 }, reader = FrameworkXmlBeanDefinitionReader.class)
-public class ContactAutoConfiguration {
+@ComponentScan
+public class CustomerAutoConfiguration {
+
+    @Bean
+    public PasswordEncoder blPasswordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+    }
 }

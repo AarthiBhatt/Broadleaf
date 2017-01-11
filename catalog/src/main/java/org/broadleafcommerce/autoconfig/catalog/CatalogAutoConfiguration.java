@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Contact
+ * BroadleafCommerce Catalog
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,28 +15,19 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.profile.core;
+package org.broadleafcommerce.autoconfig.catalog;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * @author Philip Baggett (pbaggett)
+ * Created by brandon on 12/2/16.
  */
 @Configuration
 @ImportResource(value = {
-        "classpath:/bl-customer-applicationContext-persistence.xml",
+        "classpath:/bl-catalog-applicationContext-persistence.xml",
+        "classpath:/bl-catalog-applicationContext.xml"
 }, reader = FrameworkXmlBeanDefinitionReader.class)
-@ComponentScan
-public class CustomerAutoConfiguration {
-
-    @Bean
-    public PasswordEncoder blPasswordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-    }
+public class CatalogAutoConfiguration {
 }

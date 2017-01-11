@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Contact
+ * BroadleafCommerce Payment
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,19 +15,19 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core;
+package org.broadleafcommerce.autoconfig.payment;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 /**
- * Created by brandon on 12/2/16.
+ * Created by brandon on 12/5/16.
  */
 @Configuration
 @ImportResource(value = {
-        "classpath:/bl-rating-applicationContext-persistence.xml",
-        "classpath:/bl-rating-applicationContext.xml"
+        "classpath:/bl-payment-applicationContext-persistence.xml",
+        "classpath:/bl-payment-applicationContext.xml"
 }, reader = FrameworkXmlBeanDefinitionReader.class)
-public class RatingAutoConfiguration {
+public class PaymentAutoConfiguration {
 }

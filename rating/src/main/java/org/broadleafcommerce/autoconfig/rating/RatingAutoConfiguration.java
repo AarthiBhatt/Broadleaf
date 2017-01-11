@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Catalog
+ * BroadleafCommerce Contact
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core;
+package org.broadleafcommerce.autoconfig.rating;
 
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.annotation.Configuration;
@@ -26,8 +26,8 @@ import org.springframework.context.annotation.ImportResource;
  */
 @Configuration
 @ImportResource(value = {
-        "classpath:/bl-catalog-applicationContext-persistence.xml",
-        "classpath:/bl-catalog-applicationContext.xml"
+        "classpath:/bl-rating-applicationContext-persistence.xml",
+        "classpath:/bl-rating-applicationContext.xml"
 }, reader = FrameworkXmlBeanDefinitionReader.class)
-public class CatalogAutoConfiguration {
+public class RatingAutoConfiguration {
 }
