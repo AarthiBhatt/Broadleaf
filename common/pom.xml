@@ -3,7 +3,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>client-IF-5.0.4-GA-patch1</version>
+        <version>client-IF-5.0.4-GA-patch2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-common</artifactId>
