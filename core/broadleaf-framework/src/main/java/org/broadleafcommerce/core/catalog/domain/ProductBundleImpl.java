@@ -73,7 +73,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     protected Boolean itemsPromotable = false;
 
     @Column(name = "BUNDLE_PROMOTABLE")
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(friendlyName ="productBundlePromotable", tab=TabName.Pricing, group="productBundleGroup", tooltip ="productBundlePromotableToolTip")
     protected Boolean bundlePromotable = false;
 
     @Column(name = "BUNDLE_PRIORITY")
