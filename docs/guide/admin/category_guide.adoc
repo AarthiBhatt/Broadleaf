@@ -1,0 +1,35 @@
+:source-highlighter: highlightjs
+:title: Managing Categories
+:sectlinks: true
+:icons: /images/
+:toc: macro
+:toc-title: On This Page
+:workflow: Workflow Docs
+:stylesheet: readthedocs.css
+:module: BroadleafCommercePrivate
+:module-images: /images/{module}/
+:chapter: Catalog
+:chapter-section: Category
+:doc-guide: admin
+:document-url: /{doc-guide}/{chapter}/{chapter-section}/{title}
+
+[subs="attributes"]
+= {title}
+
+This guide will walk you through creating, editing, and deleting a Category in the Admin application.
+
+toc::[]
+== Creating a Category
+
+ * Navigate to `Catalog > Category` in Admin Module
+
+
+== Editing a Category
+
+ * Navigate to `Catalog > Category` in Admin Module
+
+== Deleting a Category
+
+* Navigate to `Catalog > Category` in Admin Module
+
+
