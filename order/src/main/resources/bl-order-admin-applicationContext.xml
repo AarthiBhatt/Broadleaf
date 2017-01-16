@@ -22,11 +22,25 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="blAdminExtendedRuleBuilderFieldServices" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean id="blCustomPersistenceHandlers-order" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blOfferCustomPersistenceHandler"/>
+                <ref bean="blCustomerPaymentCustomPersistenceHandler"/>
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="sourceRef" value="blCustomPersistenceHandlers-order"/>
+        <property name="targetRef" value="blCustomPersistenceHandlers"/>
+    </bean>
+
+    <bean id="blRuleBuilderFieldServices-order" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <ref bean="blOrderItemFieldService"/>
                 <ref bean="blOrderFieldService"/>
+                <ref bean="blOrderCustomerFieldService"/>
                 <ref bean="blTimeFieldService"/>
                 <ref bean="blRequestFieldService"/>
                 <ref bean="blFulfillmentGroupFieldService"/>
@@ -34,7 +48,7 @@
         </property>
     </bean>
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="sourceRef" value="blAdminExtendedRuleBuilderFieldServices"/>
+        <property name="sourceRef" value="blRuleBuilderFieldServices-order"/>
         <property name="targetRef" value="blRuleBuilderFieldServices"/>
     </bean>
 

@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.RuleOperatorType;
 import org.broadleafcommerce.common.presentation.RuleOptionType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.AbstractRuleBuilderFieldService;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,40 @@ public class OrderItemFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.INTEGER)
                 .build());
+
+        //Order Item Detail Attribute Map Fields
+        fields.add(new FieldData.Builder()
+                .label("rule_orderItemCategoryName")
+                .name("orderItemDetail.itemDetailAttributesMap.category.name")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .skipValidation(true)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("rule_orderItemCategoryUrl")
+                .name("orderItemDetail.itemDetailAttributesMap.category.url")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .skipValidation(true)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("rule_orderItemProductManufacturer")
+                .name("orderItemDetail.itemDetailAttributesMap.product.manufacturer")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .skipValidation(true)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("rule_orderItemSkuLongDescription")
+                .name("orderItemDetail.itemDetailAttributesMap.sku.longDescription")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .skipValidation(true)
+                .build());
     }
 
     @Override
@@ -70,6 +105,6 @@ public class OrderItemFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     @Override
     public String getDtoClassName() {
-        return "org.broadleafcommerce.core.order.domain.OrderItemImpl";
+        return OrderItemImpl.class.getName();
     }
 }

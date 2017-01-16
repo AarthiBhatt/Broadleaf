@@ -41,7 +41,7 @@ public class OrderCustomerFieldServiceImpl extends AbstractRuleBuilderFieldServi
     public void init() {
         fields.add(new FieldData.Builder()
                 .label("rule_customerId")
-                .name("id")
+                .name("externalId")
                 .operators("blcOperators_Numeric")
                 .options("[]")
                 .type(SupportedFieldType.ID)
@@ -66,6 +66,40 @@ public class OrderCustomerFieldServiceImpl extends AbstractRuleBuilderFieldServi
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
+                .build());
+
+        //Customer Attribute Map Fields
+        fields.add(new FieldData.Builder()
+                .label("rule_customerLoggedIn")
+                .name("customerAttributesMap.loggedIn")
+                .operators("blcOperators_Boolean")
+                .options("[]")
+                .type(SupportedFieldType.BOOLEAN)
+                .skipValidation(true)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("rule_customerRegistered")
+                .name("customerAttributesMap.registered")
+                .operators("blcOperators_Boolean")
+                .options("[]")
+                .type(SupportedFieldType.BOOLEAN)
+                .skipValidation(true)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("rule_customerReceiveEmail")
+                .name("customerAttributesMap.receiveEmail")
+                .operators("blcOperators_Boolean")
+                .options("[]")
+                .type(SupportedFieldType.BOOLEAN)
+                .skipValidation(true)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("rule_customerUserName")
+                .name("customerAttributesMap.username")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .skipValidation(true)
                 .build());
     }
 
