@@ -170,20 +170,14 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
 
     public Money add(Money other) {
         if (!other.getCurrency().equals(getCurrency())) {
-            if (CurrencyConversionContext.getCurrencyConversionContext() != null &&
-                    CurrencyConversionContext.getCurrencyConversionContext().size() > 0 &&
-                    CurrencyConversionContext.getCurrencyConversionService() != null) {
-                other = CurrencyConversionContext.getCurrencyConversionService().convertCurrency(other, getCurrency(), amount.scale());
-            } else {
-                if (this == Money.ZERO) {
-                    return new Money(amount.add(other.amount), other.currency, amount.scale() == 0
-                            ? BankersRounding.getScaleForCurrency(other.currency) : amount.scale());
-                } else if (other == Money.ZERO) {
-                    return this;
-                }
-                throw new UnsupportedOperationException("No currency conversion service is registered, cannot add different currency " +
-                        "types together (" + getCurrency().getCurrencyCode() + " " + other.getCurrency().getCurrencyCode() + ")");
+            if (this == Money.ZERO) {
+                return new Money(amount.add(other.amount), other.currency, amount.scale() == 0
+                        ? BankersRounding.getScaleForCurrency(other.currency) : amount.scale());
+            } else if (other == Money.ZERO) {
+                return this;
             }
+            throw new UnsupportedOperationException("No currency conversion service is registered, cannot add different currency " +
+                    "types together (" + getCurrency().getCurrencyCode() + " " + other.getCurrency().getCurrencyCode() + ")");
         }
 
         return new Money(amount.add(other.amount), currency, amount.scale() == 0 ? BankersRounding.getScaleForCurrency(currency) : amount.scale());
@@ -191,20 +185,14 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
 
     public Money subtract(Money other) {
         if (!other.getCurrency().equals(getCurrency())) {
-            if (CurrencyConversionContext.getCurrencyConversionContext() != null &&
-                    CurrencyConversionContext.getCurrencyConversionContext().size() > 0 &&
-                    CurrencyConversionContext.getCurrencyConversionService() != null) {
-                other = CurrencyConversionContext.getCurrencyConversionService().convertCurrency(other, getCurrency(), amount.scale());
-            } else {
-                if (other == Money.ZERO) {
-                    return this;
-                } else if (this == Money.ZERO) {
-                    return new Money(amount.subtract(other.amount), other.currency, amount.scale() == 0
-                            ? BankersRounding.getScaleForCurrency(other.currency) : amount.scale());
-                }
-                throw new UnsupportedOperationException("No currency conversion service is registered, cannot subtract different currency " +
-                        "types (" + getCurrency().getCurrencyCode() + ", " + other.getCurrency().getCurrencyCode() + ")");
+            if (other == Money.ZERO) {
+                return this;
+            } else if (this == Money.ZERO) {
+                return new Money(amount.subtract(other.amount), other.currency, amount.scale() == 0
+                        ? BankersRounding.getScaleForCurrency(other.currency) : amount.scale());
             }
+            throw new UnsupportedOperationException("No currency conversion service is registered, cannot subtract different currency " +
+                    "types (" + getCurrency().getCurrencyCode() + ", " + other.getCurrency().getCurrencyCode() + ")");
         }
 
         return new Money(amount.subtract(other.amount), currency, amount.scale() == 0 ? BankersRounding.getScaleForCurrency(currency) : amount.scale());
@@ -434,12 +422,6 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
      * @return The default currency to use when none is specified
      */
     public static Currency defaultCurrency() {
-        if (CurrencyConsiderationContext.getCurrencyConsiderationContext() != null &&
-                CurrencyConsiderationContext.getCurrencyConsiderationContext().size() > 0 &&
-                CurrencyConsiderationContext.getCurrencyDeterminationService() != null) {
-            return Currency.getInstance(CurrencyConsiderationContext.getCurrencyDeterminationService().getCurrencyCode(CurrencyConsiderationContext.getCurrencyConsiderationContext()));
-        }
-
         // Check the BLC Thread
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
 
