@@ -81,14 +81,6 @@
                 <ref bean="blPageCartRuleProcessor"/>
             </list>
         </property>
-    </bean>    
-
-    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
-        <property name="converters">
-            <set>
-                <bean class="org.broadleafcommerce.common.locale.util.LocaleConverter" />
-            </set>
-        </property>
     </bean>
 
     <!-- Add a default implementation for payments of type PaymentGatewayType.PASSTHROUGH -->
