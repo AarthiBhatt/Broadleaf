@@ -9,86 +9,69 @@
 :module: BroadleafCommercePrivate
 :module-images: /images/{module}/
 :chapter: Catalog
+:icons: fonts
 :chapter-section: Product
 :doc-guide: admin
 :document-url: /{doc-guide}/{chapter}/{chapter-section}/{title}
-
+:related-category: /admin/catalog/category/managing-categories
+:related-enterprise: /admin/site-updates/my-changes/promote-and-approve-workflow
 
 [subs="attributes"]
 = {title}
 
-This guide will walk you through creating, deleting, and editing a Product in the Admin application.
+This guide will walk you through creating, editing, and deleting a Product in the Admin application.
 
-toc::[]
 == Creating a Product
 
-* Navigate to `Catalog > Product` in Admin Module
+[instruction]
+--
 
+.Navigate to `Catalog > Product` in Admin Module
 image:{module-images}catalog_product_nav.png[Catalog > Product]
+--
 
-* Click the "Add Product" button
+[instruction]
+--
 
+.Click the "Add Product" button
 image:{module-images}add_product.png[Catalog > Product]
+--
 
-* Fill out the Product information and click "save"
-
+[instruction]
+--
+.Fill out the Product information and click "save"
 image:{module-images}created_product.png[Catalog > Product]
 
 NOTE: All Required fields must be filled out in order to be able to save the Product
-
-[square]
-* Promote the new product
-
-.Promote Screen
-image:{module-images}promote_change.png[Catalog > Product]
-
-.Deep Dive
-[subs="attributes"]
-****
-see: {workflow}
-****
-
-[square]
-* Approve the new Product and "Deploy Now"
-
-.Approval Screen
-image:{module-images}approve_screen.png[Approve Message]
-
-* Result
-
-image:{module-images}catalog_product_nav.png[Catalog > Product]
+--
 
 
 == Editing a Product
 
-* Navigate to the product you want to edit by going to `Catalog > Product` in Admin Module
+[instruction]
+--
+.Navigate to the product you want to edit by going to `Catalog > Product` in Admin Module
+image:{module-images}catalog_product_nav.png[Catalog > Product]
+--
 
-* Make the desired change and press "save"
-
-[enterprise]
-* [enterprise only] Promote the edited product
-
-[enterprise]
-* [enterprise only] Approve the new change to the Product and "Deploy Now"
-
-* Result
-
-image:{module-images}catalog_product_nav.png[Catalog > Product]----
-
+[instruction]
+--
+.Make the desired change and press "save"
+image:{module-images}created_product.png[Catalog > Product]
+--
 
 == Deleting a Product
 
-* Navigate to Product you want to edit by going to `Catalog > Product` in Admin Module
-
+[instruction]
+--
+.Navigate to Product you want to edit by going to `Catalog > Product` in Admin Module
 image:{module-images}catalog_product_nav.png[Catalog > Product]
+--
 
-* [enterprise only] Promote the deletion of the Product by navigating to  " "
-
+[instruction]
+--
+.Click the right error located by the save bottom and press "delete"
 image:{module-images}catalog_product_nav.png[Catalog > Product]
-
-* [enterprise only] Approve the deletion of the Product by navigating to  " "
-
-image:{module-images}catalog_product_nav.png[Catalog > Product]
-
+--
 
 

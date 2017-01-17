@@ -18,7 +18,6 @@
 
 This guide will walk you through creating, editing, and deleting a Category in the Admin application.
 
-toc::[]
 == Creating a Category
 
  * Navigate to `Catalog > Category` in Admin Module
