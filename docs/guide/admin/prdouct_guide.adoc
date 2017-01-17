@@ -70,7 +70,7 @@ image:{module-images}catalog_product_nav.png[Catalog > Product]
 
 [instruction]
 --
-.Click the right error located by the save bottom and press "delete"
+.Click the right arror button located by the save bottom and press "delete"
 image:{module-images}catalog_product_nav.png[Catalog > Product]
 --
 
