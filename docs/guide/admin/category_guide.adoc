@@ -12,23 +12,60 @@
 :chapter-section: Category
 :doc-guide: admin
 :document-url: /{doc-guide}/{chapter}/{chapter-section}/{title}
+:related-product: /admin/catalog/product/managing-products
+:save-button: {module-images}save_button.png
+:edit-button: {module-images}edit_button.png
+:entity-options-button: {module-images}entity_option_button.png
 
 [subs="attributes"]
 = {title}
 
-This guide will walk you through creating, editing, and deleting a Category in the Admin application.
+This guide will walk you through the basics of creating, editing, and deleting a Category in the Admin application.
+
 
 == Creating a Category
 
- * Navigate to `Catalog > Category` in Admin Module
 
+[instruction]
+--
+Navigate to `Catalog > Category` in Admin Module
+image:{module-images}catalog_category_nav.png[Catalog > Category]
+
+--
+
+[instruction]
+--
+Click the image:{module-images}add_category_button.png[] button and fill out the required fields.
+image:{module-images}add_category.png[Create Category]
+
+--
 
 == Editing a Category
 
- * Navigate to `Catalog > Category` in Admin Module
+[instruction]
+--
+.From the list of categories page, hover over the category you wish to edit and click the image:{edit-button}[] button
+image:{module-images}edit_category_nav.png[Edit Category]
+
+--
+
+[instruction]
+--
+.Once you have finished making the desired changes, save the change by pressing the image:{save-button}[] button
+image:{module-images}edit_category.png[Edit Category]
+
+--
+
+
 
 == Deleting a Category
 
-* Navigate to `Catalog > Category` in Admin Module
 
+[instruction]
+--
+From the information page of the Category you want to delete, click the image:{entity-options-button}[] button which is located next the image:{save-button}[] button.
 
+.Delete the Category by clicking "Delete" option.
+image:{module-images}delete_category.png[Delete Category]
+
+--

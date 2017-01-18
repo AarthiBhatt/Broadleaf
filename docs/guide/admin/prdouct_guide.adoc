@@ -15,6 +15,10 @@
 :document-url: /{doc-guide}/{chapter}/{chapter-section}/{title}
 :related-category: /admin/catalog/category/managing-categories
 :related-enterprise: /admin/site-updates/my-changes/promote-and-approve-workflow
+:add-button: {module-images}add_product_button.png
+:save-button: {module-images}save_button.png
+:edit-button: {module-images}edit_button.png
+:entity-options-button: {module-images}entity_option_button.png
 
 [subs="attributes"]
 = {title}
@@ -33,13 +37,13 @@ image:{module-images}catalog_product_nav.png[Catalog > Product]
 [instruction]
 --
 
-.Click the "Add Product" button
+Click the image:{add-button}[] button
 image:{module-images}add_product.png[Catalog > Product]
 --
 
 [instruction]
 --
-.Fill out the Product information and click "save"
+.Fill out the Product information and click image:{save-button}[]
 image:{module-images}created_product.png[Catalog > Product]
 
 NOTE: All Required fields must be filled out in order to be able to save the Product
@@ -50,13 +54,14 @@ NOTE: All Required fields must be filled out in order to be able to save the Pro
 
 [instruction]
 --
-.Navigate to the product you want to edit by going to `Catalog > Product` in Admin Module
-image:{module-images}catalog_product_nav.png[Catalog > Product]
+.From the list of products page, click the name product you wish to edit.
+image:{module-images}edit_product_nav.png[Edit Product]
+
 --
 
 [instruction]
 --
-.Make the desired change and press "save"
+.Make the desired change and press image:{save-button}[]
 image:{module-images}created_product.png[Catalog > Product]
 --
 
@@ -64,14 +69,13 @@ image:{module-images}created_product.png[Catalog > Product]
 
 [instruction]
 --
-.Navigate to Product you want to edit by going to `Catalog > Product` in Admin Module
-image:{module-images}catalog_product_nav.png[Catalog > Product]
+From the information page of the Product you want to delete, click the image:{entity-options-button}[] button which is located next the image:{save-button}[] button.
+
+Delete the Product by clicking "Delete" option.
+image:{module-images}delete_product.png[Delete Product]
+
 --
 
-[instruction]
---
-.Click the right arror button located by the save bottom and press "delete"
-image:{module-images}catalog_product_nav.png[Catalog > Product]
---
+
 
 
