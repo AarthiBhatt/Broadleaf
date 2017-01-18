@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Email
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,23 +15,21 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.email.domain;
+package org.broadleafcommerce.common.email.dao;
 
-import java.io.Serializable;
+import org.broadleafcommerce.common.email.domain.EmailTarget;
+import org.broadleafcommerce.common.email.domain.EmailTracking;
 
 /**
- * The EmailTarget interface is used to specify the recipients of the email.
+ * @author jfischer
  *
- * @see EmailTargetImpl
- * @author bpolster
  */
-public interface EmailTarget extends Serializable {
+public interface EmailReportingDao {
 
-    public String getEmailAddress();
-    public void setEmailAddress(String emailAddress);
-    public String[] getCCAddresses();
-    public void setCCAddresses(String[] ccAddresses);
-    public String[] getBCCAddresses();
-    public void setBCCAddresses(String[] BCCAddresses);
+    public Long createTracking(String emailAddress, String type, String extraValue) ;
+    public void recordOpen(Long emailId, String userAgent);
+    public void recordClick(Long emailId, String customerId, String destinationUri, String queryString);
+    public EmailTracking retrieveTracking(Long emailId);
+    public EmailTarget createTarget();
 
 }
