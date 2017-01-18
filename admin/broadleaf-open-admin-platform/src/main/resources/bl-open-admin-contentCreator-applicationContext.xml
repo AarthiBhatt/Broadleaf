@@ -223,6 +223,8 @@
     <bean id="blRuleBuilderFieldServices" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
+                <ref bean="blTimeFieldService"/>
+                <ref bean="blRequestFieldService"/>
             </list>
         </property>
     </bean>
