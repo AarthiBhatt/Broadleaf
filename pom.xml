@@ -330,6 +330,7 @@
         <module>content</module>
         <module>customer</module>
         <module>order</module>
+        <module>email</module>
         <module>micro-common</module>
         <module>common</module>
         <!-- <module>core</module> -->
