@@ -17,17 +17,35 @@
  */
 package org.broadleafcommerce.autoconfig.email;
 
+import org.broadleafcommerce.common.email.service.info.EmailInfo;
+import org.broadleafcommerce.common.email.service.info.NullEmailInfo;
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+
+import java.io.IOException;
 
 /**
  * Created by brandon on 1/19/17.
  */
 @Configuration
 @ImportResource(value = {
-        "classpath:/bl-email-applicationContext-persistence.xml",
-        "classpath:/bl-email-applicationContext.xml"
+        "classpath:/bl-email-applicationContext-persistence.xml"
 }, reader = FrameworkXmlBeanDefinitionReader.class)
+@ComponentScan(basePackages = {
+        "org.broadleafcommerce.common.email"
+})
 public class EmailAutoConfiguration {
+
+    @Bean
+    public EmailInfo blEmailInfo() {
+        return new EmailInfo();
+    }
+
+    @Bean
+    public EmailInfo blNullEmailInfo() throws IOException {
+        return new NullEmailInfo();
+    }
 }
