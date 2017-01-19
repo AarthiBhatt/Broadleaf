@@ -122,23 +122,6 @@
             </list>
         </property>
     </bean>
-
-    <!--<bean id="blServerInfo" class="org.broadleafcommerce.common.email.service.info.ServerInfo">-->
-        <!--<property name="serverName" value="localhost"/>-->
-        <!--<property name="serverPort" value="8080"/>-->
-    <!--</bean>-->
-
-    <!--<bean id="blMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">-->
-        <!--<property name="host"><value>localhost</value></property>-->
-        <!--<property name="port"><value>25</value></property>-->
-        <!--<property name="protocol"><value>smtp</value></property>-->
-        <!--<property name="javaMailProperties">-->
-            <!--<props>-->
-                <!--<prop key="mail.smtp.starttls.enable">true</prop>-->
-                <!--<prop key="mail.smtp.timeout">25000</prop>-->
-            <!--</props>-->
-        <!--</property>-->
-    <!--</bean>-->
     
     <bean id="blSpringCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
         <property name="cacheManager" ref="blCacheManager"/>

@@ -25,7 +25,6 @@
         <class>org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl</class>
         <class>org.broadleafcommerce.common.email.domain.EmailTrackingImpl</class>
         <class>org.broadleafcommerce.common.email.domain.EmailTrackingOpensImpl</class>
-        <class>org.broadleafcommerce.common.email.domain.EmailTargetImpl</class>
         <exclude-unlisted-classes/>
     </persistence-unit>
 </persistence>
