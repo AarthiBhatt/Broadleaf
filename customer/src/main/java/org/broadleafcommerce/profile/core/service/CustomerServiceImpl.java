@@ -22,6 +22,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.email.service.EmailService;
+import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordReset;
@@ -115,21 +117,20 @@ public class CustomerServiceImpl implements CustomerService {
     @Resource(name="blRoleDao")
     protected RoleDao roleDao;
 
-//TODO: microservices - deal with email service
-//    @Resource(name="blEmailService")
-//    protected EmailService emailService;
-//
-//    @Resource(name="blForgotPasswordEmailInfo")
-//    protected EmailInfo forgotPasswordEmailInfo;
-//
-//    @Resource(name="blForgotUsernameEmailInfo")
-//    protected EmailInfo forgotUsernameEmailInfo;
-//
-//    @Resource(name="blRegistrationEmailInfo")
-//    protected EmailInfo registrationEmailInfo;
-//
-//    @Resource(name="blChangePasswordEmailInfo")
-//    protected EmailInfo changePasswordEmailInfo;
+    @Resource(name="blEmailService")
+    protected EmailService emailService;
+
+    @Resource(name="blForgotPasswordEmailInfo")
+    protected EmailInfo forgotPasswordEmailInfo;
+
+    @Resource(name="blForgotUsernameEmailInfo")
+    protected EmailInfo forgotUsernameEmailInfo;
+
+    @Resource(name="blRegistrationEmailInfo")
+    protected EmailInfo registrationEmailInfo;
+
+    @Resource(name="blChangePasswordEmailInfo")
+    protected EmailInfo changePasswordEmailInfo;
     
     protected int tokenExpiredMinutes = 30;
     protected int passwordTokenLength = 20;   
@@ -207,8 +208,7 @@ public class CustomerServiceImpl implements CustomerService {
         HashMap<String, Object> vars = new HashMap<String, Object>();
         vars.put("customer", retCustomer);
 
-        //TODO: microservices - deal with email service
-        //emailService.sendTemplateEmail(customer.getEmailAddress(), getRegistrationEmailInfo(), vars);
+        emailService.sendTemplateEmail(customer.getEmailAddress(), getRegistrationEmailInfo(), vars);
         notifyPostRegisterListeners(retCustomer);
         return retCustomer;
     }
@@ -499,8 +499,7 @@ public class CustomerServiceImpl implements CustomerService {
                 HashMap<String, Object> vars = new HashMap<String, Object>();
                 vars.put("userNames", activeUsernames);
 
-                //TODO: microservices - deal with email services
-                //emailService.sendTemplateEmail(emailAddress, getForgotUsernameEmailInfo(), vars);
+                emailService.sendTemplateEmail(emailAddress, getForgotUsernameEmailInfo(), vars);
             } else {
                 // send inactive username found email.
                 response.addErrorCode("inactiveUser");
@@ -553,8 +552,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
             vars.put("resetPasswordUrl", resetPasswordUrl);
 
-            //TODO: microservices - deal with email services
-            //emailService.sendTemplateEmail(customer.getEmailAddress(), getForgotPasswordEmailInfo(), vars);
+            emailService.sendTemplateEmail(customer.getEmailAddress(), getForgotPasswordEmailInfo(), vars);
         }
         return response;
     }
@@ -705,38 +703,37 @@ public class CustomerServiceImpl implements CustomerService {
         this.passwordTokenLength = passwordTokenLength;
     }
 
-//TODO: microservices - deal with email service
-//    public EmailInfo getForgotPasswordEmailInfo() {
-//        return forgotPasswordEmailInfo;
-//    }
-//
-//    public void setForgotPasswordEmailInfo(EmailInfo forgotPasswordEmailInfo) {
-//        this.forgotPasswordEmailInfo = forgotPasswordEmailInfo;
-//    }
-//
-//    public EmailInfo getForgotUsernameEmailInfo() {
-//        return forgotUsernameEmailInfo;
-//    }
-//
-//    public void setForgotUsernameEmailInfo(EmailInfo forgotUsernameEmailInfo) {
-//        this.forgotUsernameEmailInfo = forgotUsernameEmailInfo;
-//    }
-//
-//    public EmailInfo getRegistrationEmailInfo() {
-//        return registrationEmailInfo;
-//    }
-//
-//    public void setRegistrationEmailInfo(EmailInfo registrationEmailInfo) {
-//        this.registrationEmailInfo = registrationEmailInfo;
-//    }
-//
-//    public EmailInfo getChangePasswordEmailInfo() {
-//        return changePasswordEmailInfo;
-//    }
-//
-//    public void setChangePasswordEmailInfo(EmailInfo changePasswordEmailInfo) {
-//        this.changePasswordEmailInfo = changePasswordEmailInfo;
-//    }
+    public EmailInfo getForgotPasswordEmailInfo() {
+        return forgotPasswordEmailInfo;
+    }
+
+    public void setForgotPasswordEmailInfo(EmailInfo forgotPasswordEmailInfo) {
+        this.forgotPasswordEmailInfo = forgotPasswordEmailInfo;
+    }
+
+    public EmailInfo getForgotUsernameEmailInfo() {
+        return forgotUsernameEmailInfo;
+    }
+
+    public void setForgotUsernameEmailInfo(EmailInfo forgotUsernameEmailInfo) {
+        this.forgotUsernameEmailInfo = forgotUsernameEmailInfo;
+    }
+
+    public EmailInfo getRegistrationEmailInfo() {
+        return registrationEmailInfo;
+    }
+
+    public void setRegistrationEmailInfo(EmailInfo registrationEmailInfo) {
+        this.registrationEmailInfo = registrationEmailInfo;
+    }
+
+    public EmailInfo getChangePasswordEmailInfo() {
+        return changePasswordEmailInfo;
+    }
+
+    public void setChangePasswordEmailInfo(EmailInfo changePasswordEmailInfo) {
+        this.changePasswordEmailInfo = changePasswordEmailInfo;
+    }
 
     @Deprecated
     protected boolean usingDeprecatedPasswordEncoder() {

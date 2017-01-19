@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.autoconfig.customer;
 
+import org.broadleafcommerce.common.email.service.info.EmailInfo;
+import org.broadleafcommerce.common.email.service.info.NullEmailInfo;
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -25,6 +27,8 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.IOException;
+
 /**
  * @author Philip Baggett (pbaggett)
  */
@@ -32,11 +36,33 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ImportResource(value = {
         "classpath:/bl-customer-applicationContext-persistence.xml",
 }, reader = FrameworkXmlBeanDefinitionReader.class)
-@ComponentScan
+@ComponentScan(basePackages = {
+        "org.broadleafcommerce.profile.core"
+})
 public class CustomerAutoConfiguration {
 
     @Bean
     public PasswordEncoder blPasswordEncoder() {
         return NoOpPasswordEncoder.getInstance();
+    }
+
+    @Bean
+    public EmailInfo blRegistrationEmailInfo() throws IOException {
+        return new NullEmailInfo();
+    }
+
+    @Bean
+    public EmailInfo blForgotPasswordEmailInfo() throws IOException {
+        return new NullEmailInfo();
+    }
+
+    @Bean
+    public EmailInfo blForgotUsernameEmailInfo() throws IOException {
+        return new NullEmailInfo();
+    }
+
+    @Bean
+    public EmailInfo blChangePasswordEmailInfo() throws IOException {
+        return new NullEmailInfo();
     }
 }
