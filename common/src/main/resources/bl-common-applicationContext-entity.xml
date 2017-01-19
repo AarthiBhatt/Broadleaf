@@ -21,10 +21,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="org.broadleafcommerce.common.email.domain.EmailTracking" class="org.broadleafcommerce.common.email.domain.EmailTrackingImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.common.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.common.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.common.email.domain.EmailTrackingOpensImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.common.email.domain.EmailTarget" class="org.broadleafcommerce.common.email.domain.EmailTargetImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.common.i18n.domain.ISOCountry" class="org.broadleafcommerce.common.i18n.domain.ISOCountryImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.i18n.domain.Translation" class="org.broadleafcommerce.common.i18n.domain.TranslationImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.sitemap.domain.SiteMapConfiguration" class="org.broadleafcommerce.common.sitemap.domain.SiteMapConfigurationImpl" scope="prototype" />
