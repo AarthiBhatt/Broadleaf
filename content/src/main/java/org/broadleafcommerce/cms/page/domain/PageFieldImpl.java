@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -108,13 +109,10 @@ public class PageFieldImpl implements PageField, ProfileEntity {
 
     @Override
     public String getValue() {
-// TODO microservices - deal with i18n domain
         if (stringValue != null && stringValue.length() > 0) {
-//            return DynamicTranslationProvider.getValue(page, "pageTemplate|" + fieldKey, stringValue);
-            return stringValue;
+            return DynamicTranslationProvider.getValue(page, "pageTemplate|" + fieldKey, stringValue);
         } else {
-//            return DynamicTranslationProvider.getValue(page, "pageTemplate|" + fieldKey, lobValue);
-            return lobValue;
+            return DynamicTranslationProvider.getValue(page, "pageTemplate|" + fieldKey, lobValue);
         }
     }
 

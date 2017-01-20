@@ -153,14 +153,13 @@
         </property>
     </bean>
 
-    <!--TODO: microservices - deal with translation-->
-    <!--<bean id="blTranslationExceptionProperties" class="org.springframework.beans.factory.config.ListFactoryBean" >-->
-        <!--<property name="sourceList">-->
-            <!--<list>-->
-                <!--<value>pageTemplate.*</value>-->
-            <!--</list>-->
-        <!--</property>-->
-    <!--</bean>-->
+    <bean id="blTranslationExceptionProperties" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <value>pageTemplate.*</value>
+            </list>
+        </property>
+    </bean>
 
     <bean id="blConditionalDirectCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">

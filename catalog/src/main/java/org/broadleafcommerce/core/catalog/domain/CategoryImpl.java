@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
@@ -459,7 +460,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public String getName() {
-        return name; //TODO microservices - deal with i18n return DynamicTranslationProvider.getValue(this, "name", name);
+        return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override
@@ -518,7 +519,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public String getDescription() {
-        return description;// TODO microservices - deal with i18n return DynamicTranslationProvider.getValue(this, "description", description);
+        return DynamicTranslationProvider.getValue(this, "description", description);
     }
 
     @Override
@@ -574,7 +575,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public String getLongDescription() {
-        return longDescription;// TODO microservices - deal with i18n return DynamicTranslationProvider.getValue(this, "longDescription", longDescription);
+        return DynamicTranslationProvider.getValue(this, "longDescription", longDescription);
     }
 
     @Override

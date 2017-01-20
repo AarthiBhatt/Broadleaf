@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
@@ -69,9 +70,7 @@ public class ChallengeQuestionImpl implements ChallengeQuestion {
 
     @Override
     public String getQuestion() {
-        return question;
-        // TODO: microservices - deal with I18n translation
-        // return DynamicTranslationProvider.getValue(this, "question", question);
+         return DynamicTranslationProvider.getValue(this, "question", question);
     }
 
     @Override

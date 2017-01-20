@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -172,7 +173,7 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
 
     @Override
     public String getFriendlyName() {
-        return friendlyName;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "friendlyName", friendlyName);
+        return DynamicTranslationProvider.getValue(this, "friendlyName", friendlyName);
     }
 
     @Override

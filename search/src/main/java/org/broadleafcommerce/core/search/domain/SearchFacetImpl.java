@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -188,7 +189,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
 
     @Override
     public String getName() {
-        return name;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "name", name);
+        return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override
@@ -202,7 +203,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
             return getName();
         }
 
-        return label;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "label", label);
+        return DynamicTranslationProvider.getValue(this, "label", label);
     }
 
     @Override

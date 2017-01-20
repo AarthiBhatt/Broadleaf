@@ -143,10 +143,7 @@ public class AddressServiceImpl implements AddressService {
             dest.setPostalCode(orig.getPostalCode());
             dest.setZipFour(orig.getZipFour());
             dest.setCountry(orig.getCountry());
-
-            //TODO: microservices - deal with I18n domain
-            //dest.setIsoCountryAlpha2(orig.getIsoCountryAlpha2());
-
+            dest.setIsoCountryAlpha2(orig.getIsoCountryAlpha2());
             dest.setCompanyName(orig.getCompanyName());
             dest.setPrimaryPhone(orig.getPrimaryPhone());
             dest.setSecondaryPhone(orig.getSecondaryPhone());
@@ -167,21 +164,20 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public void populateAddressISOCountrySub(Address address) {
-//TODO: microservices - deal with I18n domain
-//        if (StringUtils.isBlank(address.getIsoCountrySubdivision()) &&
-//                address.getIsoCountryAlpha2() != null &&
-//                StringUtils.isNotBlank(address.getStateProvinceRegion())) {
-//
-//            String friendlyStateProvRegion = address.getStateProvinceRegion();
-//            CountrySubdivision isoCountrySub = countrySubdivisionService.findSubdivisionByCountryAndAltAbbreviation(address.getIsoCountryAlpha2().getAlpha2(), friendlyStateProvRegion);
-//            if (isoCountrySub == null) {
-//                isoCountrySub = countrySubdivisionService.findSubdivisionByCountryAndName(address.getIsoCountryAlpha2().getAlpha2(), friendlyStateProvRegion);
-//            }
-//
-//            if (isoCountrySub != null) {
-//                address.setIsoCountrySubdivision(isoCountrySub.getAbbreviation());
-//            }
-//        }
+        if (StringUtils.isBlank(address.getIsoCountrySubdivision()) &&
+                address.getIsoCountryAlpha2() != null &&
+                StringUtils.isNotBlank(address.getStateProvinceRegion())) {
+
+            String friendlyStateProvRegion = address.getStateProvinceRegion();
+            CountrySubdivision isoCountrySub = countrySubdivisionService.findSubdivisionByCountryAndAltAbbreviation(address.getIsoCountryAlpha2().getAlpha2(), friendlyStateProvRegion);
+            if (isoCountrySub == null) {
+                isoCountrySub = countrySubdivisionService.findSubdivisionByCountryAndName(address.getIsoCountryAlpha2().getAlpha2(), friendlyStateProvRegion);
+            }
+
+            if (isoCountrySub != null) {
+                address.setIsoCountrySubdivision(isoCountrySub.getAbbreviation());
+            }
+        }
     }
 
     /**

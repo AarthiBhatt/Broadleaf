@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -122,7 +123,7 @@ public class SkuAttributeImpl implements SkuAttribute {
      */
     @Override
     public String getValue() {
-        return value;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "value", value);
+        return DynamicTranslationProvider.getValue(this, "value", value);
     }
 
     /* (non-Javadoc)
@@ -138,7 +139,7 @@ public class SkuAttributeImpl implements SkuAttribute {
      */
     @Override
     public String getName() {
-        return name;// TODO microservices - deal with i18n domain return DynamicTranslationProvider.getValue(this, "name", name);
+        return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     /* (non-Javadoc)

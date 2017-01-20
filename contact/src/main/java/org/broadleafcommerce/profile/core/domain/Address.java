@@ -18,6 +18,7 @@
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 
 import java.io.Serializable;
 
@@ -110,18 +111,17 @@ public interface Address extends Serializable, MultiTenantCloneable<Address> {
     @Deprecated
     public Country getCountry();
 
-//TODO: microservices - deal with I18n domain
-//    /**
-//     * gets the ISO 3166-1 alpha-2 code for the country where this address resides
-//     * @return - the ISOCountry representation of the code
-//     */
-//    public ISOCountry getIsoCountryAlpha2();
-//
-//    /**
-//     * sets the ISO 3166-1 alpha-2 code for the country where this address resides
-//     * @param isoCountryAlpha2 - ISO 3166-1 alpha-2 code
-//     */
-//    public void setIsoCountryAlpha2(ISOCountry isoCountryAlpha2);
+    /**
+     * gets the ISO 3166-1 alpha-2 code for the country where this address resides
+     * @return - the ISOCountry representation of the code
+     */
+    public ISOCountry getIsoCountryAlpha2();
+
+    /**
+     * sets the ISO 3166-1 alpha-2 code for the country where this address resides
+     * @param isoCountryAlpha2 - ISO 3166-1 alpha-2 code
+     */
+    public void setIsoCountryAlpha2(ISOCountry isoCountryAlpha2);
 
     public String getTokenizedAddress();
 

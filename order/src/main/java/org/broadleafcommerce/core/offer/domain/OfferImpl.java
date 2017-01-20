@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -581,7 +582,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public String getMarketingMessage() {
-        return marketingMessage;// TODO microservices - deal with i18n return DynamicTranslationProvider.getValue(this, "marketingMessage", marketingMessage);
+        return DynamicTranslationProvider.getValue(this, "marketingMessage", marketingMessage);
     }
 
     @Override

@@ -19,8 +19,11 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
@@ -178,13 +181,12 @@ public class AddressImpl implements Address {
     @Deprecated
     protected Country country;
 
-//TODO: microservices - deal with I18n domain
-//    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ISOCountryImpl.class)
-//    @JoinColumn(name = "ISO_COUNTRY_ALPHA2")
-//    @Index(name="ADDRESS_ISO_COUNTRY_IDX", columnNames={"ISO_COUNTRY_ALPHA2"})
-//    @AdminPresentation(friendlyName = "AddressImpl_Country_Alpha2", order=100, group = "AddressImpl_Address")
-//    @AdminPresentationToOneLookup
-//    protected ISOCountry isoCountryAlpha2;
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ISOCountryImpl.class)
+    @JoinColumn(name = "ISO_COUNTRY_ALPHA2")
+    @Index(name="ADDRESS_ISO_COUNTRY_IDX", columnNames={"ISO_COUNTRY_ALPHA2"})
+    @AdminPresentation(friendlyName = "AddressImpl_Country_Alpha2", order=100, group = "AddressImpl_Address")
+    @AdminPresentationToOneLookup
+    protected ISOCountry isoCountryAlpha2;
 
     @Column(name = "POSTAL_CODE")
     @AdminPresentation(friendlyName = "AddressImpl_Postal_Code", order=120, group = "AddressImpl_Address")
@@ -342,16 +344,15 @@ public class AddressImpl implements Address {
         this.stateProvinceRegion = stateProvinceRegion;
     }
 
-//TODO: microservices - deal with I18n domain
-//    @Override
-//    public ISOCountry getIsoCountryAlpha2() {
-//        return isoCountryAlpha2;
-//    }
-//
-//    @Override
-//    public void setIsoCountryAlpha2(ISOCountry isoCountryAlpha2) {
-//        this.isoCountryAlpha2 = isoCountryAlpha2;
-//    }
+    @Override
+    public ISOCountry getIsoCountryAlpha2() {
+        return isoCountryAlpha2;
+    }
+
+    @Override
+    public void setIsoCountryAlpha2(ISOCountry isoCountryAlpha2) {
+        this.isoCountryAlpha2 = isoCountryAlpha2;
+    }
 
     @Override
     public String getPostalCode() {
@@ -616,14 +617,11 @@ public class AddressImpl implements Address {
                 return false;
         } else if (!country.equals(other.country))
             return false;
-
-//TODO: microservices - deal with I18n domain
-//        if (isoCountryAlpha2 == null) {
-//            if (other.isoCountryAlpha2 != null)
-//                return false;
-//        } else if (!isoCountryAlpha2.equals(other.isoCountryAlpha2))
-//            return false;
-
+        if (isoCountryAlpha2 == null) {
+            if (other.isoCountryAlpha2 != null)
+                return false;
+        } else if (!isoCountryAlpha2.equals(other.isoCountryAlpha2))
+            return false;
         if (county == null) {
             if (other.county != null)
                 return false;
@@ -676,10 +674,7 @@ public class AddressImpl implements Address {
         result = prime * result + ((city == null) ? 0 : city.hashCode());
         result = prime * result + ((companyName == null) ? 0 : companyName.hashCode());
         result = prime * result + ((country == null) ? 0 : country.hashCode());
-
-//TODO: microservices - deal with I18n domain
-//        result = prime * result + ((isoCountryAlpha2 == null) ? 0 : isoCountryAlpha2.hashCode());
-
+        result = prime * result + ((isoCountryAlpha2 == null) ? 0 : isoCountryAlpha2.hashCode());
         result = prime * result + ((county == null) ? 0 : county.hashCode());
         result = prime * result + ((fullName == null) ? 0 : fullName.hashCode());
         result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
@@ -709,8 +704,7 @@ public class AddressImpl implements Address {
         cloned.setFirstName(firstName);
         cloned.setLastName(lastName);
         cloned.setFullName(fullName);
-        // TODO microservices - deal with i18n domain
-        //cloned.setIsoCountryAlpha2(isoCountryAlpha2);
+        cloned.setIsoCountryAlpha2(isoCountryAlpha2);
         cloned.setIsoCountrySubdivision(isoCountrySubdivision);
         cloned.setStreet(isStreet);
         cloned.setZipFour(zipFour);

@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -136,9 +137,7 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
 
     @Override
     public String getName() {
-        // TODO microservices - deal with i18n
-        //return DynamicTranslationProvider.getValue(this, "name", name);
-        return name;
+        return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override

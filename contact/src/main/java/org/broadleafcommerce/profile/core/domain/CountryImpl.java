@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
@@ -61,9 +62,7 @@ public class CountryImpl implements Country, AdminMainEntity {
     }
 
     public String getName() {
-        return name;
-        //TODO: microservices - deal with I18n translation
-        // return DynamicTranslationProvider.getValue(this, "name", name);
+         return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     public void setName(String name) {
