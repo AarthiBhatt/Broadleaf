@@ -188,7 +188,16 @@ public interface OrderService {
      * @return the persisted version of the OrderPayment
      */
     public OrderPayment addPaymentToOrder(Order order, OrderPayment payment, Referenced securePaymentInfo);
-    
+
+
+    /**
+     * Persists the given order to the database
+     *
+     * @param order
+     * @return the persisted Order, which will be a different instance than the Order passed in
+     */
+    public Order save(Order order);
+
     /**
      * Persists the given order to the database. If the priceOrder flag is set to true,
      * the pricing workflow will execute before the order is written to the database.

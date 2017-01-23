@@ -350,6 +350,12 @@ public class OrderServiceImpl implements OrderService {
 
         return order;
     }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public Order save(Order order) {
+        return persist(order);
+    }
     
     // This method exists to provide OrderService methods the ability to save an order
     // without having to worry about a PricingException being thrown.

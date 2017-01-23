@@ -44,6 +44,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.broadleafcommerce.order.common.domain.OrderAddress;
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
 import com.broadleafcommerce.order.common.dto.OrderDTO;
@@ -125,8 +127,12 @@ public class CartEndpoint extends BaseEndpoint {
     }
     
     @FrameworkMapping(path = "/create", method = RequestMethod.POST)
-    public ResponseEntity createCart(HttpServletRequest request) {
+    public ResponseEntity createCart(HttpServletRequest request, @RequestBody Map<String, Object> requestData) {
         Order order = orderService.createCart();
+        if (requestData.get("email") != null) {
+            order.setEmailAddress((String) requestData.get("email"));
+            order = orderService.save(order);
+        }
         OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
         response.wrapDetails(order, request);
         return new ResponseEntity(response, HttpStatus.OK);
