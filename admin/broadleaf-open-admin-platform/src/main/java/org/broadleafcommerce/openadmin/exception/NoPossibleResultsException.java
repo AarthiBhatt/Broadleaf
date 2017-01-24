@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.exception;
+package org.broadleafcommerce.openadmin.exception;
 
 /**
  * The admin will throw this exception when a query is attempted across multiple class hierarchies

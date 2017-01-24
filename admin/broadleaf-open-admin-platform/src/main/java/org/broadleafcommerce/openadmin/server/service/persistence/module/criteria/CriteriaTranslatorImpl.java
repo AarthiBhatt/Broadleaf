@@ -20,7 +20,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.criter
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.exception.NoPossibleResultsException;
+import org.broadleafcommerce.openadmin.exception.NoPossibleResultsException;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
