@@ -1,0 +1,26 @@
+:source-highlighter: highlightjs
+:title: Working with Product Bundles
+:sectlinks: true
+:icons: /images/
+:stylesheet: readthedocs.css
+:module: BroadleafCommercePrivate
+:module-images: /images/{module}/
+:chapter: Catalog Management
+:icons: fonts
+:chapter-section: Product
+:sub-section: Working with Product Bundles
+:guide-type: admin
+:document-url: /{guide-type}/{chapter}/{chapter-section}/{title}
+:related-product: /admin/catalog/product/managing-products
+:related-enterprise: /admin/site-updates/my-changes/promote-and-approve-workflow
+:add-button: {module-images}add_product_button.png
+:save-button: {module-images}save_button.png
+:edit-button: {module-images}edit_button.png
+:entity-options-button: {module-images}entity_option_button.png
+
+[subs="attributes"]
+= {title}
+
+This guide will walk you through creating a Product Bundle in the Admin application.
+
+== Creating a Product Bundle

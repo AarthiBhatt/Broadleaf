@@ -1,18 +1,18 @@
 :source-highlighter: highlightjs
 :title: Managing Products
+:url-page-title: Managing Products
 :sectlinks: true
 :icons: /images/
-:toc: macro
-:toc-title: On This Page
 :workflow: Workflow Docs
 :stylesheet: readthedocs.css
 :module: BroadleafCommercePrivate
 :module-images: /images/{module}/
-:chapter: Catalog
+:chapter: Catalog Management
 :icons: fonts
 :chapter-section: Product
-:doc-guide: admin
-:document-url: /{doc-guide}/{chapter}/{chapter-section}/{title}
+:sub-section:  Basic Management of Product
+:guide-type: admin
+:document-url: /{guide-type}/{chapter}/{chapter-section}/{url-page-title}
 :related-category: /admin/catalog/category/managing-categories
 :related-enterprise: /admin/site-updates/my-changes/promote-and-approve-workflow
 :add-button: {module-images}add_product_button.png
@@ -75,7 +75,3 @@ Delete the Product by clicking "Delete" option.
 image:{module-images}delete_product.png[Delete Product]
 
 --
-
-
-
-
