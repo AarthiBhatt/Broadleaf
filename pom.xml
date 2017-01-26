@@ -334,7 +334,7 @@
         <module>sitemap</module>
         <module>micro-common</module>
         <module>common-web</module>
-        <module>common</module>
+        <!--<module>common</module>-->
         <!-- <module>core</module> -->
          <module>admin</module>
     </modules>
