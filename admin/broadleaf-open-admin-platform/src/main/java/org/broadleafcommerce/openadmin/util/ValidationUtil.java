@@ -15,7 +15,9 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.util;
+package org.broadleafcommerce.openadmin.util;
+
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 
 import java.util.Iterator;
 import java.util.List;

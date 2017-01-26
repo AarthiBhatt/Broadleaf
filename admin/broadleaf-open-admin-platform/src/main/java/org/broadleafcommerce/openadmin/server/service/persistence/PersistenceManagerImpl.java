@@ -27,7 +27,7 @@ import org.broadleafcommerce.openadmin.exception.NoPossibleResultsException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
-import org.broadleafcommerce.common.util.ValidationUtil;
+import org.broadleafcommerce.openadmin.util.ValidationUtil;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;

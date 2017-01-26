@@ -39,7 +39,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.util.StringUtil;
-import org.broadleafcommerce.common.util.ValidationUtil;
+import org.broadleafcommerce.openadmin.util.ValidationUtil;
 import org.broadleafcommerce.common.util.dao.TQJoin;
 import org.broadleafcommerce.common.util.dao.TQOrder;
 import org.broadleafcommerce.common.util.dao.TQRestriction;
