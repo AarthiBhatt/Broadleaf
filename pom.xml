@@ -331,6 +331,7 @@
         <module>customer</module>
         <module>order</module>
         <module>email</module>
+        <module>sitemap</module>
         <module>micro-common</module>
         <module>common-web</module>
         <module>common</module>
@@ -611,6 +612,13 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-email</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.broadleafcommerce</groupId>
+                <artifactId>broadleaf-sitemap</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>

@@ -397,6 +397,10 @@
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-sitemap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-payment</artifactId>
         </dependency>
     </dependencies>
