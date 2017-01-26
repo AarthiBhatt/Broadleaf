@@ -393,6 +393,10 @@
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-common-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-payment</artifactId>
         </dependency>
     </dependencies>

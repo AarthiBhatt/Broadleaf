@@ -332,6 +332,7 @@
         <module>order</module>
         <module>email</module>
         <module>micro-common</module>
+        <module>common-web</module>
         <module>common</module>
         <!-- <module>core</module> -->
          <module>admin</module>
@@ -532,6 +533,13 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-micro-common</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.broadleafcommerce</groupId>
+                <artifactId>broadleaf-common-web</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
