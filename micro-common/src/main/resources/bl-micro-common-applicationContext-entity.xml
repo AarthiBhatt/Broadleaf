@@ -21,6 +21,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
+    <bean id="org.broadleafcommerce.common.i18n.domain.ISOCountry" class="org.broadleafcommerce.common.i18n.domain.ISOCountryImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.common.i18n.domain.Translation" class="org.broadleafcommerce.common.i18n.domain.TranslationImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration" class="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue" class="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.common.structure.dto.StructuredContentDTO" class="org.broadleafcommerce.common.structure.dto.StructuredContentDTO" scope="prototype" />

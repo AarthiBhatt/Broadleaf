@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean id="blSiteResolver" class="org.broadleafcommerce.common.web.NullBroadleafSiteResolver" />
+    <bean id="blThemeResolver" class="org.broadleafcommerce.common.web.NullBroadleafThemeResolver" />
+
+    <!-- Resource Resolver Chains  -->
+    <bean id="blSiteResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blBLCJSUrlPathResolver" />
+                <ref bean="blCacheResourceResolver" />
+                <ref bean="blVersionResourceResolver" />
+                <ref bean="blBundleResourceResolver" />
+                <ref bean="blBLCJSResolver" />
+                <ref bean="blSystemPropertyJSResolver" />
+                <ref bean="blPathResourceResolver" />
+            </list>
+        </property>
+    </bean>
+
+    <!--  Spring 4.1 Resource Handling -->
+    <bean id="blJsLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <value>classpath:/common_style/js/</value>
+                <value>classpath:/extensions/js/</value><!-- To allow a common place for modules or extensions to put js files. -->
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blCssLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <value>classpath:/common_style/css/</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blFontLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <value>classpath:/common_style/fonts/</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blImageLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <value>classpath:/common_style/img/</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blJsFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blAdminJsLibFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blCssFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+
+    <!--  Spring 4.1 Resource Resolvers -->
+    <bean id="blJsResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blCssResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+
+    <!--  Spring 4.1 Resource Transformers -->
+    <bean id="blJsResourceTransformers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blCachingResourceTransformer" />
+                <ref bean="blMinifyResourceTransformer" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blCssResourceTransformers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blCachingResourceTransformer" />
+                <ref bean="blMinifyResourceTransformer" />
+            </list>
+        </property>
+    </bean>
+
+    <!--  Spring 4.1 Site Resource Handling Base Classes -->
+    <bean id="siteResourceHttpRequestHandlerBase" abstract="true"
+          class="org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler">
+        <property name="cacheSeconds" value="${staticResourceBrowserCacheSeconds}" />
+        <property name="resourceResolvers" ref="blSiteResourceResolvers" />
+    </bean>
+
+    <bean id="siteJsResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blJsLocations" />
+        <property name="resourceTransformers" ref="blJsResourceTransformers" />
+    </bean>
+
+    <bean id="siteCssResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blCssLocations" />
+        <property name="resourceTransformers" ref="blCssResourceTransformers" />
+    </bean>
+
+    <bean id="siteImageResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blImageLocations" />
+    </bean>
+
+    <bean id="siteFontResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blFontLocations"/>
+    </bean>
+
+</beans>
