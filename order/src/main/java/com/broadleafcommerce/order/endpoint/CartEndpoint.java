@@ -18,6 +18,7 @@
 package com.broadleafcommerce.order.endpoint;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.api.BaseEndpoint;
 import org.broadleafcommerce.common.controller.FrameworkMapping;
 import org.broadleafcommerce.common.controller.FrameworkRestController;
@@ -48,6 +49,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.broadleafcommerce.order.common.domain.OrderAddress;
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
+import com.broadleafcommerce.order.common.dto.OrderCustomerDTO;
 import com.broadleafcommerce.order.common.dto.OrderDTO;
 import com.broadleafcommerce.order.common.dto.OrderPaymentDTO;
 import com.broadleafcommerce.order.common.dto.SplitFulfillmentGroupDTO;
@@ -127,12 +129,21 @@ public class CartEndpoint extends BaseEndpoint {
     }
     
     @FrameworkMapping(path = "/create", method = RequestMethod.POST)
-    public ResponseEntity createCart(HttpServletRequest request, @RequestBody Map<String, Object> requestData) {
+    public ResponseEntity createCart(HttpServletRequest request, @RequestBody(required = false) OrderCustomerDTO dto) {
         Order order = orderService.createCart();
-        if (requestData.get("email") != null) {
-            order.setEmailAddress((String) requestData.get("email"));
+
+        if (dto != null) {
+            OrderCustomer customer = dto.unwrap(request, context);
+            customer = orderCustomerService.saveOrderCustomer(customer);
+            order.setOrderCustomer(customer);
+
+            if (StringUtils.isNotEmpty(dto.getEmailAddress())) {
+                order.setEmailAddress(dto.getEmailAddress());
+            }
+
             order = orderService.save(order);
         }
+
         OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
         response.wrapDetails(order, request);
         return new ResponseEntity(response, HttpStatus.OK);
