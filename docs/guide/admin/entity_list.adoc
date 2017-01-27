@@ -1,0 +1,58 @@
+:source-highlighter: highlightjs
+:title: Overview of List Pages
+:sectlinks: true
+:icons: font
+:module: BroadleafCommercePrivate
+:module-images: /images/{module}/
+:chapter: Basics
+:chapter-section: List Page
+:guide-type: admin
+:url-key: entity-list
+:document-url: /{guide-type}/{chapter}/{chapter-section}/{url-key}
+
+[subs="attributes"]
+= {title}
+Overview of common functionality shared by List Pages within the Broadleaf admin.
+
+
+== Introduction
+
+Every Admin "section" (Products, Catalogs, Offers, Content Items, etc.) will bring to you a page were all the section
+items are listed out. For this guide, we call these pages "List Pages".
+
+== Anatomy of a List Page
+
+.Product List Page
+image::{module-images}entity_list_annotated.png[]
+
+
+[horizontal]
+#<1>#:: Name of entity/item being displayed
+#<2>#:: Number of total records/items
+#<3>#:: Entity Add/Create button
+#<4>#:: Search bar where items can be searched by name
+#<5>#:: Filter Button (see: <<Filtering the List Page>> )
+#<6>#:: Field name and sorting button
+#<7>#:: Display of current record indices
+
+== Filtering the List Page
+
+List Pages can be filtered to only allow, or exclude, certain items on the page.
+
+.Product List Page Filter
+image::{module-images}entity_filter_annotated.png[]
+
+
+[horizontal]
+#<1>#:: Add Additional Filter
+#<2>#:: Edit Filter
+#<3>#:: Delete Filter
+#<4>#:: Name of field to filter Value to filter on
+#<5>#:: Condition on how to filter
+#<6>#:: Value(s) to filter on
+#<7>#:: Apply filter
+
+NOTE: Applied filters are distinguished by being displayed in plain text as a bulleted item
+containing the "edit" and "delete" icons.
+
+

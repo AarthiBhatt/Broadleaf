@@ -3,7 +3,7 @@
 :sectlinks: true
 :icons: font
 :module: BroadleafCommercePrivate
-:module-images: images/{module}/
+:module-images: /images/{module}/
 :chapter: Basics
 :chapter-section: Navigation
 :guide-type: admin
@@ -15,23 +15,34 @@
 
 This guide will teach you the basics of navigating the default Broadleaf Admin application.
 
-== Admin Modules and Sections
+== Overview
 
 [instruction]
 --
-The left navigation bar is where all admin navigation modules live. It is the base for navigation to
-all sections and pages of admin. The different sections and pages of the Admin are generally grouped together by concept
-to the corresponding admin module.
+The left navigation bar is where all Broadleaf Admin Modules live. It is the base for navigation to
+all the pages within the admin application. The different Admin Modules generally represent
+different concepts related to managing an eCommerce site, and each module
+contains a list of relevant Broadleaf Admin Sections.
 --
+
+== Anatomy of Left Navigation Menu
 
 [instruction]
 --
+.Search Module and sections
+image::{module-images}navigation_example_annotated.png[]
+[horizontal]
+#<1>#:: Module Icon
+#<2>#:: Current Module
+#<3>#:: Modules Sections
+--
+
+
+== Admin Modules and Admin Sections
+
 Here is a sample list of Broadleaf admin modules and some of their corresponding sections.
-++++
-<u><b>Broadleaf Admin Modules and Sections</u></b>
-++++
 
-
+.Broadleaf Admin Modules and Sections
 [horizontal]
 Catalog:::
 Catalogs, Category, Product, Inventory, Product Options, etc.
@@ -62,4 +73,4 @@ Current User Changes, Approvals, Workflow Audit, Deployments, Change History, et
 
 Sites:::
 Standard Sites, Template Sites, etc.
---
+
