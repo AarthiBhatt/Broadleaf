@@ -171,7 +171,7 @@ public class CartEndpoint extends BaseEndpoint {
         }
     }
     
-    @FrameworkMapping(path = "/{orderId}/udpate/{itemId}/options", method = RequestMethod.POST)
+    @FrameworkMapping(path = "/{orderId}/update/{itemId}/options", method = RequestMethod.POST)
     public ResponseEntity updateItemOptions(HttpServletRequest request,
                                             @PathVariable("orderId") Long orderId,
                                             @PathVariable("itemId") Long itemId,
@@ -180,7 +180,9 @@ public class CartEndpoint extends BaseEndpoint {
         orderItemRequestDTO.setItemAttributes(attributes);
         orderItemRequestDTO.setOrderItemId(itemId);
         try {
-            return new ResponseEntity(orderService.updateProductOptionsForItem(orderId, orderItemRequestDTO, true), HttpStatus.OK);
+            OrderDTO response = (OrderDTO) context.getBean(OrderDTO.class.getName());
+            response.wrapDetails(orderService.updateProductOptionsForItem(orderId, orderItemRequestDTO, true), request);
+            return new ResponseEntity(response, HttpStatus.OK);
         } catch (UpdateCartException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
