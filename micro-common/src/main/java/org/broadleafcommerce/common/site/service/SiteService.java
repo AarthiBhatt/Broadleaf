@@ -22,7 +22,6 @@ import org.broadleafcommerce.common.site.dao.SiteDaoImpl;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.SiteCatalogXref;
-import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 
 import java.util.List;
 
