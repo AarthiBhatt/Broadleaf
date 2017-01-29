@@ -56,7 +56,7 @@ public interface OrderServiceExtensionHandler extends ExtensionHandler {
      * @param erh the holder for the enhanced cart to be set by the handler
      * @return whether or not the enhancement was performed
      */
-    ExtensionResultStatusType findCartForCustomerWithEnhancements(Customer customer, ExtensionResultHolder erh);
+    ExtensionResultStatusType findCartForCustomerWithEnhancements(OrderCustomer customer, ExtensionResultHolder erh);
 
     /**
      * Retrieve an enhanced version of the cart for the customer. Use the candidateCart as the source cart to be enhanced.
@@ -67,6 +67,6 @@ public interface OrderServiceExtensionHandler extends ExtensionHandler {
      * @param erh the holder for the enhanced cart to be set by the handler
      * @return whether or not the enhancement was performed
      */
-    ExtensionResultStatusType findCartForCustomerWithEnhancements(Customer customer, Order candidateCart, ExtensionResultHolder erh);
+    ExtensionResultStatusType findCartForCustomerWithEnhancements(OrderCustomer customer, Order candidateCart, ExtensionResultHolder erh);
 
 }

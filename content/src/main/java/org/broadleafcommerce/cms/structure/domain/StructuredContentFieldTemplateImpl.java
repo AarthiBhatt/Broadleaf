@@ -20,7 +20,8 @@ package org.broadleafcommerce.cms.structure.domain;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Transformer;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
-import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -137,10 +138,9 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
         }
         StructuredContentFieldTemplate cloned = createResponse.getClone();
         cloned.setName(name);
-        for(FieldGroup entry : fieldGroups){
-            CreateResponse<FieldGroup> clonedGroupRsp = entry.createOrRetrieveCopyInstance(context);
-            FieldGroup clonedGroup = clonedGroupRsp.getClone();
-            cloned.getFieldGroups().add(clonedGroup);
+        for (StructuredContentFieldGroupXref entry : fieldGroupXrefs) {
+            CreateResponse<StructuredContentFieldGroupXref> clonedGroupRsp = entry.createOrRetrieveCopyInstance(context);
+            cloned.getFieldGroupXrefs().add(clonedGroupRsp.getClone());
         }
 
         return createResponse;

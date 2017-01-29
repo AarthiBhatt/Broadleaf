@@ -619,7 +619,7 @@ public interface OrderService {
      * @param customer the user for whom the enhanced cart is retrieved
      * @return the enhanced cart, or the basic cart if no enhancement is available
      */
-    Order findCartForCustomerWithEnhancements(Customer customer);
+    Order findCartForCustomerWithEnhancements(OrderCustomer customer);
 
     /**
      * For the customer, use the candidateOrder as the source of enhancement for generating an enhanced cart. Enhanced carts
@@ -629,7 +629,7 @@ public interface OrderService {
      * @param candidateOrder the source of enhancement
      * @return the enhanced cart, or the untouched candidateOrder if no enhancement is available
      */
-    Order findCartForCustomerWithEnhancements(Customer customer, Order candidateOrder);
+    Order findCartForCustomerWithEnhancements(OrderCustomer customer, Order candidateOrder);
 
 }
 

@@ -21,7 +21,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.payment.PaymentType;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
@@ -951,8 +953,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findCartForCustomerWithEnhancements(Customer customer) {
-        ExtensionResultHolder<Order> erh = new ExtensionResultHolder<Order>();
+    public Order findCartForCustomerWithEnhancements(OrderCustomer customer) {
+        ExtensionResultHolder<Order> erh = new ExtensionResultHolder<>();
         ExtensionResultStatusType resultStatusType = extensionManager.findCartForCustomerWithEnhancements(customer, erh);
         if (ExtensionResultStatusType.NOT_HANDLED != resultStatusType) {
             return erh.getResult();
@@ -961,8 +963,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findCartForCustomerWithEnhancements(Customer customer, Order candidateOrder) {
-        ExtensionResultHolder<Order> erh = new ExtensionResultHolder<Order>();
+    public Order findCartForCustomerWithEnhancements(OrderCustomer customer, Order candidateOrder) {
+        ExtensionResultHolder<Order> erh = new ExtensionResultHolder<>();
         ExtensionResultStatusType resultStatusType = extensionManager.findCartForCustomerWithEnhancements(customer, candidateOrder, erh);
         if (ExtensionResultStatusType.NOT_HANDLED != resultStatusType) {
             return erh.getResult();

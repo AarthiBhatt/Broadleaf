@@ -23,6 +23,8 @@ import org.broadleafcommerce.cms.url.dao.URLHandlerDao;
 import org.broadleafcommerce.cms.url.domain.NullURLHandler;
 import org.broadleafcommerce.cms.url.domain.URLHandler;
 import org.broadleafcommerce.cms.url.domain.URLHandlerDTO;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
@@ -55,7 +57,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     @Resource(name = "blURLHandlerDao")
     protected URLHandlerDao urlHandlerDao;
 
-    protected Map<String, Pattern> urlPatternMap = new EfficientLRUMap<String, Pattern>(2000);
+    protected Map<String, Pattern> urlPatternMap = new EfficientLRUMap<>(2000);
 
     /**
      * Checks the passed in URL to determine if there is a matching URLHandler.

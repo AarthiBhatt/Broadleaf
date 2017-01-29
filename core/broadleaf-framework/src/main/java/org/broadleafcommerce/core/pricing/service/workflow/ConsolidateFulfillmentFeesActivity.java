@@ -22,7 +22,6 @@ import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -57,10 +56,10 @@ public class ConsolidateFulfillmentFeesActivity extends BaseActivity<ProcessCont
             //create and associate all the Fulfillment Fees
             for (FulfillmentGroupItem item : fulfillmentGroup.getFulfillmentGroupItems()) {
                 List<SkuFee> fees = null;
-                if (item.getOrderItem() instanceof DiscreteOrderItem) {
-                    // TODO microservices - deal with fees (it has been suggested just to remove fees)
+                // TODO microservices - deal with fees (it has been suggested just to remove fees)
+                //if (item.getOrderItem() instanceof DiscreteOrderItem) {
                     //fees = ((DiscreteOrderItem)item.getOrderItem()).getSku().getFees();
-                }
+                //}
                 
                 if (fees != null) {
                     for (SkuFee fee : fees) {
@@ -101,7 +100,7 @@ public class ConsolidateFulfillmentFeesActivity extends BaseActivity<ProcessCont
         
         if (StringUtils.isNotEmpty(feeExpression)) {
             synchronized (EXPRESSION_CACHE) {
-                HashMap<String, Object> vars = new HashMap<String, Object>();
+                HashMap<String, Object> vars = new HashMap<>();
                 vars.put("fulfillmentGroup", fulfillmentGroup);
                 MvelHelper.evaluateRule(feeExpression, vars, EXPRESSION_CACHE);
             }

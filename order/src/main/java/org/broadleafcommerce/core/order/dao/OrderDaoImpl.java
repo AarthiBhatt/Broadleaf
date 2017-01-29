@@ -241,7 +241,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public void refresh(Order order) {
-        if (order != null && !(order instanceof NullOrderImpl)) {
+        if (order != null) {
             em.refresh(order);
         }
     }

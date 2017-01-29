@@ -25,8 +25,10 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
+
+import com.broadleafcommerce.order.common.domain.OrderCustomer;
+
 import java.util.List;
 
 
@@ -39,7 +41,7 @@ public class OrderServiceExtensionManager extends ExtensionManager<OrderServiceE
     public static final ExtensionManagerOperation attachAdditionalDataToNewNamedCart = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OrderServiceExtensionHandler) handler).attachAdditionalDataToNewNamedCart((Customer) params[0], (Order) params[1]);
+            return ((OrderServiceExtensionHandler) handler).attachAdditionalDataToNewNamedCart((OrderCustomer) params[0], (Order) params[1]);
         }
     };
 
@@ -74,14 +76,14 @@ public class OrderServiceExtensionManager extends ExtensionManager<OrderServiceE
     public static final ExtensionManagerOperation findStaleCacheAwareCartForCustomer = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OrderServiceExtensionHandler) handler).findCartForCustomerWithEnhancements((Customer) params[0], (ExtensionResultHolder) params[1]);
+            return ((OrderServiceExtensionHandler) handler).findCartForCustomerWithEnhancements((OrderCustomer) params[0], (ExtensionResultHolder) params[1]);
         }
     };
 
     public static final ExtensionManagerOperation findStaleCacheAwareCartForCustomer2 = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OrderServiceExtensionHandler) handler).findCartForCustomerWithEnhancements((Customer) params[0], (Order) params[1], (ExtensionResultHolder) params[2]);
+            return ((OrderServiceExtensionHandler) handler).findCartForCustomerWithEnhancements((OrderCustomer) params[0], (Order) params[1], (ExtensionResultHolder) params[2]);
         }
     };
 
@@ -92,12 +94,13 @@ public class OrderServiceExtensionManager extends ExtensionManager<OrderServiceE
     /**
      * By default,this extension manager will continue on handled allowing multiple handlers to interact with the order.
      */
+    @Override
     public boolean continueOnHandled() {
         return true;
     }
 
     @Override
-    public ExtensionResultStatusType attachAdditionalDataToNewNamedCart(Customer customer, Order cart) {
+    public ExtensionResultStatusType attachAdditionalDataToNewNamedCart(OrderCustomer customer, Order cart) {
         return execute(attachAdditionalDataToNewNamedCart, customer, cart);
     }
 
@@ -122,12 +125,12 @@ public class OrderServiceExtensionManager extends ExtensionManager<OrderServiceE
     }
 
     @Override
-    public ExtensionResultStatusType findCartForCustomerWithEnhancements(Customer customer, ExtensionResultHolder erh) {
+    public ExtensionResultStatusType findCartForCustomerWithEnhancements(OrderCustomer customer, ExtensionResultHolder erh) {
         return execute(findStaleCacheAwareCartForCustomer, customer, erh);
     }
 
     @Override
-    public ExtensionResultStatusType findCartForCustomerWithEnhancements(Customer customer, Order candidateCart, ExtensionResultHolder erh) {
+    public ExtensionResultStatusType findCartForCustomerWithEnhancements(OrderCustomer customer, Order candidateCart, ExtensionResultHolder erh) {
         return execute(findStaleCacheAwareCartForCustomer2, customer, candidateCart, erh);
     }
 

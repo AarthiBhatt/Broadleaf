@@ -61,12 +61,12 @@ public abstract class AbstractOrderServiceExtensionHandler extends AbstractExten
     }
 
     @Override
-    public ExtensionResultStatusType findCartForCustomerWithEnhancements(Customer customer, ExtensionResultHolder erh) {
+    public ExtensionResultStatusType findCartForCustomerWithEnhancements(OrderCustomer customer, ExtensionResultHolder erh) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
     @Override
-    public ExtensionResultStatusType findCartForCustomerWithEnhancements(Customer customer, Order candidateCart, ExtensionResultHolder erh) {
+    public ExtensionResultStatusType findCartForCustomerWithEnhancements(OrderCustomer customer, Order candidateCart, ExtensionResultHolder erh) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
