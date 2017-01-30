@@ -144,8 +144,6 @@
         </property>
     </bean>   
 
-    <bean id="blFrameworkBeanDefinitionPostProcessor" class="org.broadleafcommerce.common.extensibility.FrameworkBeanDefinitionPostProcessor"/>
-
     <bean id="blEntityExtensionManagers" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
