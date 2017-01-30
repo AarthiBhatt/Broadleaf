@@ -75,13 +75,6 @@ public class FulfillmentGroupFieldServiceImpl  extends AbstractRuleBuilderFieldS
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("rule_fulfillmentGroupCounty")
-                .name("address.county")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
                 .label("rule_fulfillmentGroupState")
                 .name("address.stateProvinceRegion")
                 .operators(RuleOperatorType.TEXT)
