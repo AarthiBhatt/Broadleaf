@@ -30,6 +30,7 @@ import com.broadleafcommerce.order.common.dto.FulfillmentOptionDTO;
 import com.broadleafcommerce.order.common.dto.OfferCodeDTO;
 import com.broadleafcommerce.order.common.dto.OfferDTO;
 import com.broadleafcommerce.order.common.dto.OrderAddressDTO;
+import com.broadleafcommerce.order.common.dto.OrderAttributeDTO;
 import com.broadleafcommerce.order.common.dto.OrderCustomerDTO;
 import com.broadleafcommerce.order.common.dto.OrderDTO;
 import com.broadleafcommerce.order.common.dto.OrderItemDTO;
@@ -77,6 +78,12 @@ public class OrderAutoConfiguration {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public OrderDTO orderDtoPrototype() {
         return new OrderDTO();
+    }
+
+    @Bean(name = "com.broadleafcommerce.order.common.dto.OrderAttributeDTO")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public OrderAttributeDTO orderAttributeDTOPrototype() {
+        return new OrderAttributeDTO();
     }
     
     @Bean(name = "com.broadleafcommerce.order.common.dto.OrderItemDetailDTO")
