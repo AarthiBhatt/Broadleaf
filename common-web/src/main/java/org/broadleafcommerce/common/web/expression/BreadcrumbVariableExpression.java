@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTO;
 import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.expression.BroadleafVariableExpression;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

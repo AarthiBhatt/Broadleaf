@@ -18,7 +18,7 @@
 
 package org.broadleafcommerce.common.web.payment.expression;
 
-import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
+import org.broadleafcommerce.presentation.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
 

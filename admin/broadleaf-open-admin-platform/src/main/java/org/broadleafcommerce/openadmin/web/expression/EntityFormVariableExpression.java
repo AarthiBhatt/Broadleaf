@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.web.expression;
 
-import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
+import org.broadleafcommerce.presentation.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;

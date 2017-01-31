@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
 import org.broadleafcommerce.common.enumeration.service.DataDrivenEnumerationService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.expression.BroadleafVariableExpression;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.expression.BroadleafVariableExpression;
 import org.springframework.stereotype.Component;
 
 import java.text.NumberFormat;

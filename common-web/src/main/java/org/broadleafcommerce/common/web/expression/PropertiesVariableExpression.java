@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.processor.ConfigVariableProcessor;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.broadleafcommerce.presentation.expression.BroadleafVariableExpression;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
