@@ -24,6 +24,7 @@ public class AutoImportStage {
 
     public static final int PRIMARY_EARLY = -100000;
     public static final int PRIMARY_FRAMEWORK_SECURITY = 1000;
+    public static final int SECONDARY_FRAMEWORK_SECURITY = 1500;
     public static final int PRIMARY_MODULE_SECURITY = 2000;
     public static final int PRIMARY_BASIC_DATA = 3000;
     public static final int ALL_TABLE_SEQUENCE = 4000;

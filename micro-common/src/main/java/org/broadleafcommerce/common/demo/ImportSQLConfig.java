@@ -38,7 +38,7 @@ public class ImportSQLConfig {
     @Bean
     @Conditional({DemoCondition.class, AdminExistsCondition.class})
     public AutoImportSql blCommonAdminData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_admin_users.sql", AutoImportStage.PRIMARY_FRAMEWORK_SECURITY);
+        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_admin_roles.sql,config/bc/sql/demo/load_admin_users.sql,config/bc/sql/demo/load_admin_permissions.sql,config/bc/sql/demo/load_admin_menu.sql", AutoImportStage.PRIMARY_FRAMEWORK_SECURITY);
     }
 
     @Bean
