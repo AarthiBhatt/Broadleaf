@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,27 +15,18 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.offer.domain;
-
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-
-import java.io.Serializable;
+package org.broadleafcommerce.common.presentation;
 
 /**
- * @author Jeff Fischer
+ * @author Jon Fleschler (jfleschler)
  */
-public interface OfferTargetCriteriaXref extends Serializable, MultiTenantCloneable<OfferTargetCriteriaXref> {
+public class RuleOptionType {
 
-    Long getId();
-
-    void setId(Long id);
-
-    Offer getOffer();
-
-    void setOffer(Offer offer);
-
-    OfferItemCriteria getOfferItemCriteria();
-
-    void setOfferItemCriteria(OfferItemCriteria offerItemCriteria);
-
+    public static final String EMPTY_COLLECTION = "[]";
+    public static final String HOUR_OF_DAY = "blcOptions_HourOfDay";
+    public static final String DAY_OF_WEEK = "blcOptions_DayOfWeek";
+    public static final String MONTH = "blcOptions_Month";
+    public static final String DAY_OF_MONTH = "blcOptions_DayOfMonth";
+    public static final String MINUTE = "blcOptions_Minute";
+    public static final String FULFILLMENT_TYPE = "blcOptions_FulfillmentType";
 }
