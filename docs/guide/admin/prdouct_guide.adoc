@@ -1,10 +1,8 @@
 :source-highlighter: highlightjs
 :title: Managing Products
-:url-page-title: Managing Products
+:url-page-key: Managing Products
 :sectlinks: true
 :icons: /images/
-:workflow: Workflow Docs
-:stylesheet: readthedocs.css
 :module: BroadleafCommercePrivate
 :module-images: /images/{module}/
 :chapter: Catalog Management
@@ -12,20 +10,91 @@
 :chapter-section: Product
 :sub-section:  Basic Management of Product
 :guide-type: admin
-:document-url: /{guide-type}/{chapter}/{chapter-section}/{url-page-title}
-:related-category: /admin/catalog/category/managing-categories
-:related-enterprise: /admin/site-updates/my-changes/promote-and-approve-workflow
-:add-button: {module-images}add_product_button.png
-:save-button: {module-images}save_button.png
-:edit-button: {module-images}edit_button.png
-:entity-options-button: {module-images}entity_option_button.png
-
+:document-url: /{guide-type}/{chapter}/{chapter-section}/{url-page-key}
+:admin-guide-link: /documentation/admin/
+:admin-guide-basic-link: {admin-guide-link}basics/
+:admin-basic-page-link: {admin-guide-basic-link}admin-page/admin-page#
 [subs="attributes"]
 = {title}
 
-This guide will walk you through creating, editing, and deleting a Product in the Admin application.
+This guide will walk you give a basic introduction to the Product page and its contents.
 
-== Creating a Product
+== Overview
+[instruction]
+--
+The Product page is where an Admin User can edit _most_ fields and information regarding a specific product.
+There are a couple of [required]##required## fields for product that most be set in order for the product to be saved.
+--
+
+[required-list]##Required Fields##
+
+- Name
+- Parent Category
+- MSRP
+
+== Product Page Tabs
+
+The default link:{admin-basic-page-link}#tabs[Tabs] for the Product link:{admin-basic-page-link}[Admin Page]
+
+[caption=]
+|===
+
+| <<General>>   | General information relating to products such as name, url, description, etc
+
+| <<Pricing>> | Information related to calculating the price of Product such as MSRP, Cost, Price List, etc
+
+| <<Marketing>> | Marketing information such as related products for cross-sells and upsells
+
+| Media a| see link:/documentation/[Media]
+
+| <<Options>> | Additonal Skus and Product Options related to a product
+
+| <<Shipping>> | Shipping information such as width, girth, fulfillment type, weight units, etc
+
+| Advanced a| see link:/documentation/[Custom Fields]
+
+| Audit a| see link:/documentation/[Audit]
+
+|===
+
+== General
+
+[instruction-label]##By default, the General tab has five link:{admin-basic-page-link}_Field_Groups[Field Groups].##
+[horizontal]
+Main/General:: Contains Fields like [required]##Name##, [required]##Parent Category##, Manufacturer, URL, and Keywords
+Primary Image:: Set the primary image that is displayed for the product on the site
+Active Date Range:: Set the range of dates that the product is active on the site
+Financial:: A small field group where you can set if the product is taxable or not
+Miscellaneous:: Fields such as UPC, Custom Template, and External Id.
+
+== Pricing
+
+By default, the Pricing Tab is constructed of four link:{admin-basic-page-link}_Field_Groups[Field Groups].
+[horizontal]
+Price:: Set [required]##MSRP##, Price, and Cost of a product
+Price List Data:: Add and Edit link:/documentation/pricelist[Price List] related to the product
+Sales That Target This Product:: A read-only list of current link:/documentation/sales[Sales] that target the product
+Discountable:: Indicator of whether or not the product can particiate in item level discounts.
+
+NOTE: If no *Price* is set, the system will use the *MSRP* by default.
+
+== Marketing
+
+By default, link:{admin-basic-page-link}_Field_Groups[Field Groups].
+
+== Media
+
+By default, link:{admin-basic-page-link}_Field_Groups[Field Groups].
+
+== Options
+
+By default, link:{admin-basic-page-link}_Field_Groups[Field Groups].
+
+== Shipping
+
+By default, link:{admin-basic-page-link}_Field_Groups[Field Groups].
+
+== Advanced
 
 [instruction]
 --

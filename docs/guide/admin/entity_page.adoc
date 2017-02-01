@@ -1,0 +1,116 @@
+:title: Admin Item/Entity Pages
+:icons: font
+:module: BroadleafCommercePrivate
+:module-images: /images/{module}/
+:chapter: Basics
+:chapter-section: Admin Page
+:guide-type: admin
+:url-key: admin-page
+:document-url: /{guide-type}/{chapter}/{chapter-section}/{url-key}
+
+[subs="attributes"]
+= {title}
+
+This guide will teach you about the basic make-up of an Admin Page
+
+== Overview
+
+The Admin Item/Entity Pages are where an admin user can edit and view all the information about any one particular
+item/entity. The content, and style, of each Admin Page is dependent on what item/entity is being displayed, the
+current admin user's link:documentation/roles[Admin Roles and Permissions], and whatever custom development has been
+been for the application. This guide will show some basic out-of-box features relating to Admin Item/Entity Pages (Admin
+Pages).
+
+== Anatomy of an Admin Page
+
+An Admin Page is generally made up of four parts.
+[instruction]
+--
+#[1]#. <<Breadcrumb/Navigation Bar>> +
+#[2]#. <<Tabs>> +
+#[3]#. <<Field Groups>> +
+#[4]#. <<Fields>>
+--
+.Admin Page for Product
+image::{module-images}entity_page_annotated.png[]
+
+
+== Breadcrumb/Navigation Bar
+
+The navigation bar displays the admin user's current path/location within the applications.
+
+== Delete Button
+
+== Save Button
+
+
+== Tabs
+
+The Tabs are were all related <<Field Groups>> reside. While the available tabs will differ depending on item being
+viewed, *_most_* pages will contain the following three tabs (in order of likelihood)
+
+* General
+* Audit
+* Advanced
+
+The *General* tab will always be displayed by default and will always have a default "general" <<Field Groups, Field Group>>.
+
+The *Audit* tab will generally contain information of when they item was created, last updated, and by whom.
+
+The *Advanced* tab is a generic tab that contains different <<Field Groups>> depending on the item.
+
+== Field Groups
+
+Field Groups are where concept related <<Fields>> are grouped together to be contained and displayed with a <<Tabs, Tab>>.
+Some <<Field Groups>> can have toggled visibility while others will always remain visible. Some <<Field Groups>> may also have a label on them
+while others may not. The default *General* <<Field Groups, Field Group>> is displayed on every <<Tabs, Tab>>
+as a static <<Field Groups, Field Group>> without a label.
+
+== Fields
+
+A <<Fields, Field>> is where users view and edit the data that comprises the item being viewed. The look, style, and
+values a <<Fields, Field>> can store varies depending the how the Admin Application is customized.
+
+[instruction]
+--
+Here are some common styles of <<Fields>>
+--
+
+[instruction]
+--
+[instruction-label]##Required Field that can Lookup its value##::
+image:{module-images}field_required_lookup.png[]
+[horizontal]
+#<1>#:: Indicates that the field is [required]##Required##
+#<2>#:: Indicates that the value is a lookup reference to another item
+--
+
+[instruction]
+--
+[instruction-label]##Field with ToolTip##::
+image:{module-images}field_tool_tip.png[]
+[horizontal]
+#<3>#:: Indicates the field has a tooltip that can be used to see more information about a particular field
+--
+
+[instruction]
+--
+[instruction-label]##Field with Help Text##::
+image:{module-images}field_help_text.png[]
+[horizontal]
+#<4>#:: This is caused Field *Help Text"*. It displays more information about the field
+--
+
+
+
+[instruction]
+--
+[instruction-label]##Field that has Translations##::
+image:{module-images}field_translation.png[]
+[horizontal]
+#<5>#:: Indicates that the value can be multiple translations that can be seen on the site. In the example, this could mean
+ that the value "$50 Gift Card" can have a spanish translation of "Tarjeta de Regalos de $50 ". Clicking the icon will
+bring up a screen that allows the admin user to edit, create, and view the different translation for the value.
+--
+
+=== Collection Field

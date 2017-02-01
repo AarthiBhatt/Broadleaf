@@ -9,68 +9,86 @@
 :guide-type: admin
 :url-key: admin-navigation
 :document-url: /{guide-type}/{chapter}/{chapter-section}/{url-key}
+:admin-page-list: /documentation/admin/basics/list-page/entity-list
 
 [subs="attributes"]
 = {title}
 
-This guide will teach you the basics of navigating the default Broadleaf Admin application.
+This guide will teach you the basics of navigating the default Broadleaf Admin application using
 
 == Overview
 
 [instruction]
 --
-The left navigation bar is where all Broadleaf Admin Modules live. It is the base for navigation to
-all the pages within the admin application. The different Admin Modules generally represent
-different concepts related to managing an eCommerce site, and each module
-contains a list of relevant Broadleaf Admin Sections.
+The left navigation bar is where all Broadleaf <<Admin Module, Admin Modules>> reside. The navigation menu
+is the base for navigation point to all the <<Admin Module, Admin Modules>> and <<Admin Section, Admin Sections>> within
+the admin application.
 --
 
-== Anatomy of Left Navigation Menu
 
-[instruction]
---
+Different <<Admin Module>> and <<Admin Section>> will be visible depending on the user's particular implementation
+of the BroadleafCommerce framework and how the user's link:/documentation/permissions[Admin User Permissions] are setup.
+
+
+== Anatomy of the left Navigation Menu
+
+
 .Search Module and sections
 image::{module-images}navigation_example_annotated.png[]
 [horizontal]
-#<1>#:: Module Icon
-#<2>#:: Current Module
-#<3>#:: Modules Sections
+#<1>#:: <<Admin Module>> Icon
+#<2>#:: Current <<Admin Module>> Name
+#<3>#:: <<Admin Section, Admin Sections>>
+
+
+== Admin Module
+
+[instruction]
+--
+An Admin Modules generally represents an overlaying concept related to managing the eCommerce application. These include,
+but are not limited too, Catalog, Pricing, Content, Search,etc.
+
+An <<Admin Module>> consist of a name, icon, and list of <<Admin Section, Admin Sections>>.
 --
 
+== Admin Section
+
+An <<Admin Section>> is a section designated to a particular item, or entity, in the Admin application.
+Clicking/Navigating to any <<Admin Section>> will load all the items (entities) and display them in an
+link:{admin-page-list}[Admin List Page].
 
 == Admin Modules and Admin Sections
 
-Here is a sample list of Broadleaf admin modules and some of their corresponding sections.
+[instructuion]
+--
+Sample list of default <<Admin Module, Admin Modules>> and corresponding
+<<Admin Section, Admin Sections>>
+--
 
-.Broadleaf Admin Modules and Sections
-[horizontal]
-Catalog:::
-Catalogs, Category, Product, Inventory, Product Options, etc.
+|===
+| <<Admin Module, Admin Modules>> | <<Admin Section, Admin Sections>>
 
-Content:::
-Menus, Content Items, URL Redirects, Media Assets, etc.
+| Catalog  | Catalogs, Category, Product, Inventory, Product Options, etc.
 
-Customer Care:::
-Accounts, Customers, CSR Orders, Customer Segments, Return Authorizations, Gift Card Accounts, etc.
+| Content | Menus, Content Items, URL Redirects, Media Assets, etc.
 
-Design:::
-Theme Configurations, Widgets, Content Zones, etc.
+| Customer Care | Accounts, Customers, CSR Orders, Customer Segments, Return Authorizations, Gift Card Accounts, etc.
 
-Internationalization:::
- Regional Forms, Messages, etc.
+|  Design | Theme Configurations, Widgets, Content Zones, etc.
 
-Pricing:::
-Offers, Price List, Contracts, Sales, etc.
+|  Internationalization | Regional Forms, Messages, etc.
 
-Search:::
-Redirects, Relevancy Rules, Type Ahead Configuration, Search Facets, etc.
+|  Pricing | Offers, Price List, Contracts, Sales, etc.
 
-Settings:::
-Sandboxes, Custom Fields, Admin Users, System Properties, Page Types, etc.
+| Search  | Redirects, Relevancy Rules, Type Ahead Configuration, Search Facets, etc.
 
-Site Updates:::
-Current User Changes, Approvals, Workflow Audit, Deployments, Change History, etc.
+|  Settings | Sandboxes, Custom Fields, Admin Users, System Properties, Page Types, etc.
 
-Sites:::
-Standard Sites, Template Sites, etc.
+|  Site Updates | Current User Changes, Approvals, Workflow Audit, Deployments, Change History, etc.
+
+| Sites  | Standard Sites, Template Sites, etc.
+
+|===
+
+
 

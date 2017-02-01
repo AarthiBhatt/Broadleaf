@@ -9,6 +9,7 @@
 :guide-type: admin
 :url-key: entity-list
 :document-url: /{guide-type}/{chapter}/{chapter-section}/{url-key}
+:admin-section-link: /documentation/admin/basics/navigation/admin-navigation
 
 [subs="attributes"]
 = {title}
@@ -17,7 +18,7 @@ Overview of common functionality shared by List Pages within the Broadleaf admin
 
 == Introduction
 
-Every Admin "section" (Products, Catalogs, Offers, Content Items, etc.) will bring to you a page were all the section
+Every link:{admin-section-link}[Admin Section] (Products, Catalogs, Offers, Content Items, etc.) will bring to you a page were all the section
 items are listed out. For this guide, we call these pages "List Pages".
 
 == Anatomy of a List Page
