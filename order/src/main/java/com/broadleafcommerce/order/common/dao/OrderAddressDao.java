@@ -28,6 +28,8 @@ public interface OrderAddressDao {
 
     public OrderAddress readOrderAddressById(Long orderAddressId);
 
+    public OrderAddress readOrderAddressByExternalId(Long externalId);
+
     public OrderAddress create();
 
     public void delete(OrderAddress address);

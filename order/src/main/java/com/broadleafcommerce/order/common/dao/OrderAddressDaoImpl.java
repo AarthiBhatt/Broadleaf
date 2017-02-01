@@ -17,13 +17,19 @@
  */
 package com.broadleafcommerce.order.common.dao;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import com.broadleafcommerce.order.common.domain.OrderAddress;
 import com.broadleafcommerce.order.common.domain.OrderAddressImpl;
+
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 @Repository("blOrderAddressDao")
 public class OrderAddressDaoImpl implements OrderAddressDao {
@@ -41,6 +47,17 @@ public class OrderAddressDaoImpl implements OrderAddressDao {
     public OrderAddress readOrderAddressById(Long id) {
 
         return (OrderAddress) em.find(OrderAddressImpl.class, id);
+    }
+
+    @Override
+    public OrderAddress readOrderAddressByExternalId(Long externalId) {
+        Query q = em.createQuery("SELECT a FROM com.broadleafcommerce.order.common.domain.OrderAddress a WHERE a.externalId = :id", OrderAddressImpl.class);
+        q.setParameter("id", externalId);
+        List<OrderAddress> results = q.getResultList();
+        if (CollectionUtils.isNotEmpty(results)) {
+            return results.get(0);
+        }
+        return null;
     }
 
     public OrderAddress create() {

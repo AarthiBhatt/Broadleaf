@@ -26,7 +26,9 @@ public interface OrderAddressService {
 
     public OrderAddress saveOrderAddress(OrderAddress orderAddress);
 
-    public OrderAddress readOrderAddressById(Long orderAddressId);
+    public OrderAddress findOrderAddressById(Long orderAddressId);
+
+    public OrderAddress findOrderAddressByExternalId(Long externalId);
 
     public OrderAddress create();
 
