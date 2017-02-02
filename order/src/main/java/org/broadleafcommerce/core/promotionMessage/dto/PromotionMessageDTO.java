@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.promotionMessage.dto;
 
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
+import org.broadleafcommerce.profile.core.dto.CustomerRuleHolder;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -40,6 +41,7 @@ public class PromotionMessageDTO implements Serializable {
     protected Date endDate;
 
     protected Media media;
+    protected CustomerRuleHolder customerRuleHolder;
 
     public PromotionMessageDTO(PromotionMessage promotionMessage) {
         this.message = promotionMessage.getMessage();
@@ -86,7 +88,17 @@ public class PromotionMessageDTO implements Serializable {
         return localeCode;
     }
 
-    public void setLocaleCode(String localeCode) { this.localeCode = localeCode; }
+    public void setLocaleCode(String localeCode) {
+        this.localeCode = localeCode;
+    }
+
+    public CustomerRuleHolder getCustomerRuleHolder() {
+        return customerRuleHolder;
+    }
+
+    public void setCustomerRuleHolder(CustomerRuleHolder customerRuleHolder) {
+        this.customerRuleHolder = customerRuleHolder;
+    }
 
     public Date getEndDate() {
         return endDate;

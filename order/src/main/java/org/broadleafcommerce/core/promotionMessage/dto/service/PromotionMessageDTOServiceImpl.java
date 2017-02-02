@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
 import org.broadleafcommerce.core.promotionMessage.dto.PromotionMessageDTO;
+import org.broadleafcommerce.profile.core.dto.CustomerRuleHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,10 +53,31 @@ public class PromotionMessageDTOServiceImpl implements PromotionMessageDTOServic
         for (PromotionMessage message : promotionMessages) {
             PromotionMessageDTO dto = new PromotionMessageDTO(message);
 
+            CustomerRuleHolder customerRuleHolder = buildCustomerRuleHolder(offer);
+            dto.setCustomerRuleHolder(customerRuleHolder);
+
             promotionMessageDTOs.put(dto.getMessagePlacement(), dto);
         }
 
         return promotionMessageDTOs;
     }
 
+    protected CustomerRuleHolder buildCustomerRuleHolder(Offer offer) {
+        String customerRule = getCustomerRule(offer);
+        return new CustomerRuleHolder(customerRule);
+    }
+
+    protected String getCustomerRule(Offer offer) {
+        if (offer != null) {
+            Map<String, OfferOfferRuleXref> offerMatchRuleXrefs = offer.getOfferMatchRulesXref();
+            OfferOfferRuleXref customerRuleXref = offerMatchRuleXrefs.get(RuleIdentifier.CUSTOMER_FIELD_KEY);
+
+            if (customerRuleXref != null && customerRuleXref.getOfferRule() != null) {
+                OfferRule customerOfferRule = customerRuleXref.getOfferRule();
+                return customerOfferRule.getMatchRule();
+            }
+        }
+
+        return null;
+    }
 }
