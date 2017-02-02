@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.email.service.EmailService;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
-import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordReset;
 import org.broadleafcommerce.common.security.util.PasswordUtils;
@@ -41,7 +40,6 @@ import org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityT
 import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.broadleafcommerce.profile.core.domain.CustomerRoleImpl;
 import org.broadleafcommerce.profile.core.domain.Role;
-import org.broadleafcommerce.profile.core.dto.CustomerRuleHolder;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -417,19 +415,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public boolean isPasswordValid(String rawPassword, String encodedPassword) {
         return passwordEncoderNew.matches(rawPassword, encodedPassword);
-    }
-
-    @Override
-    public boolean customerPassesCustomerRule(Customer customer, CustomerRuleHolder customerRuleHolder) {
-        String customerRule = customerRuleHolder.getCustomerRule();
-        Map<String, Object> ruleParams = buildCustomerRuleParams(customer);
-        return customerRule == null || MvelHelper.evaluateRule(customerRule, ruleParams);
-    }
-
-    protected Map<String, Object> buildCustomerRuleParams(Customer customer) {
-        HashMap<String, Object> vars = new HashMap<>();
-        vars.put("customer", customer);
-        return vars;
     }
 
     @Override

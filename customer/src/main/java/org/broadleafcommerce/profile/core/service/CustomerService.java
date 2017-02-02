@@ -21,7 +21,6 @@ import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordReset;
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.dto.CustomerRuleHolder;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
 import org.springframework.security.authentication.dao.SaltSource;
@@ -269,14 +268,5 @@ public interface CustomerService {
      * @return true if the unencoded password matches the encoded password, false otherwise
      */
     public boolean isPasswordValid(String rawPassword, String encodedPassword);
-
-    /**
-     * Determines if the given customer passes the MVEL customer rule
-     *
-     * @param customer
-     * @param customerRuleHolder an MVEL rule targeting Customers
-     * @return true if the customer passes the rule, false otherwise
-     */
-    public boolean customerPassesCustomerRule(Customer customer, CustomerRuleHolder customerRuleHolder);
 
 }
