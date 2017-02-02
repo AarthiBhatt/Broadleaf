@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.offer.service;
 
 import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.profile.core.dto.CustomerRuleHolder;
+import org.springframework.stereotype.Service;
 
 import com.broadleafcommerce.order.common.domain.OrderCustomer;
 
@@ -28,6 +29,7 @@ import java.util.Map;
 /**
  * Created by brandon on 2/2/17.
  */
+@Service("blCustomerRuleService")
 public class CustomerRuleServiceImpl implements CustomerRuleService {
 
     @Override
