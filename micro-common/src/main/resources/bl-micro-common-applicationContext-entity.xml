@@ -36,4 +36,5 @@
     <bean id="org.broadleafcommerce.common.config.domain.SystemProperty" class="org.broadleafcommerce.common.config.domain.SystemPropertyImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.sandbox.domain.SandBox" class="org.broadleafcommerce.common.sandbox.domain.SandBoxImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.common.sandbox.domain.SandBoxManagement" class="org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.profile.core.domain.IdGeneration" class="org.broadleafcommerce.profile.core.domain.IdGenerationImpl" scope="prototype"/>
 </beans>

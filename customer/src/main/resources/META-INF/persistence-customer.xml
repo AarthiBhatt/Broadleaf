@@ -27,7 +27,6 @@
         <mapping-file>config/bc/jpa/domain/CustomerAddress.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/CustomerPayment.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/CustomerPhone.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/IdGeneration.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Role.orm.xml</mapping-file>
         <class>org.broadleafcommerce.profile.core.domain.ChallengeQuestionImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerAddressImpl</class>
@@ -36,7 +35,6 @@
         <class>org.broadleafcommerce.profile.core.domain.CustomerPhoneImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerRoleImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityTokenImpl</class>
-        <class>org.broadleafcommerce.profile.core.domain.IdGenerationImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.RoleImpl</class>
         <class>org.broadleafcommerce.core.social.domain.UserConnectionImpl</class>
         <exclude-unlisted-classes/>

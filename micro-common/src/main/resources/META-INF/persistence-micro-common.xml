@@ -27,6 +27,7 @@
         <mapping-file>config/bc/jpa/domain/Locale.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/SystemProperty.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ISOCountry.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/IdGeneration.orm.xml</mapping-file>
         <class>org.broadleafcommerce.common.i18n.domain.ISOCountryImpl</class>
         <class>org.broadleafcommerce.common.i18n.domain.TranslationImpl</class>
         <class>org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration</class>
@@ -41,6 +42,7 @@
         <class>org.broadleafcommerce.common.config.domain.SystemPropertyImpl</class>
         <class>org.broadleafcommerce.common.sandbox.domain.SandBoxImpl</class>
         <class>org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl</class>
+        <class>org.broadleafcommerce.profile.core.domain.IdGenerationImpl</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="true"/>

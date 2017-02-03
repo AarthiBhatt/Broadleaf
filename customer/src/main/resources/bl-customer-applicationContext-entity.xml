@@ -27,10 +27,7 @@
     <bean id="org.broadleafcommerce.profile.core.domain.CustomerAttribute" class="org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityToken" class="org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityTokenImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.profile.core.domain.CustomerAddress" class="org.broadleafcommerce.profile.core.domain.CustomerAddressImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.profile.core.domain.CustomerPayment" class="org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.profile.core.domain.CustomerPhone" class="org.broadleafcommerce.profile.core.domain.CustomerPhoneImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.profile.core.domain.CustomerRole" class="org.broadleafcommerce.profile.core.domain.CustomerRoleImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.profile.core.domain.IdGeneration" class="org.broadleafcommerce.profile.core.domain.IdGenerationImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.profile.core.domain.Role" class="org.broadleafcommerce.profile.core.domain.RoleImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.profile.core.dto.CustomerRuleHolder" class="org.broadleafcommerce.profile.core.dto.CustomerRuleHolder" scope="prototype" />
 </beans>
