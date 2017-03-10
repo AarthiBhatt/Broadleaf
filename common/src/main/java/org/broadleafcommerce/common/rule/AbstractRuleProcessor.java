@@ -32,6 +32,8 @@ public abstract class AbstractRuleProcessor<T> implements RuleProcessor<T> {
     
     protected final Log LOG = LogFactory.getLog(this.getClass());
 
+    @SuppressWarnings("unchecked")
+    protected Map<String, Serializable> expressionCache = new EfficientLRUMap<String, Serializable>(1000);
     protected ParserContext parserContext;
     protected Map<String, String> contextClassNames = new HashMap<String, String> ();
 
@@ -56,7 +58,7 @@ public abstract class AbstractRuleProcessor<T> implements RuleProcessor<T> {
      * @return the result of the expression
      */
     protected Boolean executeExpression(String expression, Map<String, Object> vars) {
-        return MvelHelper.evaluateRule(expression, vars);
+        return MvelHelper.evaluateRule(expression, vars, expressionCache);
     }
 
     /**
