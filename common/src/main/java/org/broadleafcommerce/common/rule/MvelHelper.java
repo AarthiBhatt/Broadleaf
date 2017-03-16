@@ -203,10 +203,11 @@ public class MvelHelper {
 
                         rule = modifyExpression(rule, ruleParameters, context);
 
-                        exp = MVEL.compileExpression(rule, context);
-                        if (expressionCache != null) {
+                        synchronized(expressionCache) {
+                            exp = MVEL.compileExpression(rule, context);
                             expressionCache.put(rule, exp);
                         }
+
                         test = MVEL.executeExpression(exp, mvelParameters);
 
                         result = (Boolean) test;
@@ -232,7 +233,9 @@ public class MvelHelper {
 
                 // Just in case, let's remove this rule.
                 if (expressionCache != null && rule != null && expressionCache.containsKey(rule)) {
-                    expressionCache.remove(rule);
+                    synchronized(expressionCache) {
+                        expressionCache.remove(rule);
+                    }
                     if (LOG.isInfoEnabled()) {
                         LOG.info("Removed rule " + StringUtil.sanitize(rule) + " from expression cache.", e);
                     }
