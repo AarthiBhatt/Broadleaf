@@ -647,7 +647,9 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     }
 
     public void clearExpressionCache() {
-        EXPRESSION_CACHE.clear();
+        synchronized (EXPRESSION_CACHE) {
+            EXPRESSION_CACHE.clear();
+        }
     }
 
     public OfferTimeZoneProcessor getOfferTimeZoneProcessor() {
