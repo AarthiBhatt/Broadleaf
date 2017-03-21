@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.util.StringUtil;
@@ -138,7 +139,10 @@ public class MvelHelper {
      * @return
      */
     public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters,
-        Map<String, Serializable> expressionCache, Map<String, Class<?>> additionalContextImports) {
+            Map<String, Serializable> expressionCache, Map<String, Class<?>> additionalContextImports) {
+        if (BLCSystemProperty.resolveBooleanSystemProperty("disable.mvel.expression.cache")) {
+            return MvelHelper.evaluateRuleWithoutCache(rule, ruleParameters, additionalContextImports);
+        }
 
         // Null or empty is a match
         if (rule == null || "".equals(rule)) {

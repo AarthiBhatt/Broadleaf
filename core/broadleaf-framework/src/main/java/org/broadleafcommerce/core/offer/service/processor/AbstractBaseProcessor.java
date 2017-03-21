@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.logging.RequestLoggingUtil;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -378,11 +377,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         expression = usePriceBeforeAdjustments(expression);
         contextImports.put("OfferType", OfferType.class);
         contextImports.put("FulfillmentType", FulfillmentType.class);
-        if (BLCSystemProperty.resolveBooleanSystemProperty("disable.abstract.base.processor.mvel.expression.cache")) {
-            return MvelHelper.evaluateRuleWithoutCache(expression, vars, contextImports);
-        } else {
-            return MvelHelper.evaluateRule(expression, vars, EXPRESSION_CACHE, contextImports);
-        }
+        return MvelHelper.evaluateRule(expression, vars, EXPRESSION_CACHE, contextImports);
     }
 
     protected String usePriceBeforeAdjustments(String expression) {
