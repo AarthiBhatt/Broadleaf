@@ -212,7 +212,7 @@ public class MvelHelper {
 
                         result = (Boolean) test;
                         if (result) {
-                            RequestLoggingUtil.logDebugRequestMessage("********* result changed when not using MVEL cache",
+                            RequestLoggingUtil.logDebugRequestMessage("********* result changed when not using MVEL cache " + rule,
                                     RequestLoggingUtil.BL_OFFER_LOG);
                         }
                     }
@@ -384,5 +384,9 @@ public class MvelHelper {
        }
 
        return mvelParameters;
-   }    
+    }
+
+    public static void clearExpressionCache() {
+        DEFAULT_EXPRESSION_CACHE.clear();
+    }
 }
