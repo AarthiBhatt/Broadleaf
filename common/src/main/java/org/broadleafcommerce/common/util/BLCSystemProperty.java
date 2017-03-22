@@ -62,10 +62,16 @@ public class BLCSystemProperty implements ApplicationContextAware {
      * @see SystemPropertiesService#resolveBooleanSystemProperty(String)
      */
     public static boolean resolveBooleanSystemProperty(String name) {
+        if (getSystemPropertiesService() == null) {
+            return false;
+        }
         return getSystemPropertiesService().resolveBooleanSystemProperty(name);
     }
     
     public static boolean resolveBooleanSystemProperty(String name, boolean defaultValue) {
+        if (getSystemPropertiesService() == null) {
+            return defaultValue;
+        }
         return getSystemPropertiesService().resolveBooleanSystemProperty(name, defaultValue);
     }
 
@@ -84,6 +90,9 @@ public class BLCSystemProperty implements ApplicationContextAware {
      * @return the "blSystemPropertiesService" bean from the application context
      */
     protected static SystemPropertiesService getSystemPropertiesService() {
+        if (applicationContext == null) {
+            return null;
+        }
         return (SystemPropertiesService) applicationContext.getBean("blSystemPropertiesService");
     }
 
