@@ -166,10 +166,10 @@ public class MvelHelper {
                     }
                 }
                 
-                rule = modifyExpression(rule, ruleParameters, context);
+                String modifiedRule = modifyExpression(rule, ruleParameters, context);
 
                 synchronized (expressionCache) {
-                    exp = MVEL.compileExpression(rule, context);
+                    exp = MVEL.compileExpression(modifiedRule, context);
                     expressionCache.put(rule, exp);
                 }
 
