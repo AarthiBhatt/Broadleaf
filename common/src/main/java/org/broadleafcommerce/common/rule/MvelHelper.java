@@ -64,6 +64,43 @@ public class MvelHelper {
     private static boolean TEST_MODE = false;
     
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
+    
+    public static long FIVE_MINUTES = 5*60*1000;
+    
+    public static long lastCheckExpressionCacheTimeStamp=0;     
+    public static boolean disabledMvelExpressionCache=false;
+    
+    public static long lastCheckRemoveCachedMvelRuleTimeStamp=0;
+    public static boolean removeCachedMvelRule=false;
+
+
+    /**
+     * This method is potentially expensive so we want to only check to see if the property has been 
+     * updated at most once per minute
+     * @return
+     */
+    private static boolean getDisabledMvelExpressionCache() {
+        long currentTime = SystemTime.asMillis();
+        if (lastCheckExpressionCacheTimeStamp < (currentTime - FIVE_MINUTES)) {
+            lastCheckExpressionCacheTimeStamp = currentTime;
+            disabledMvelExpressionCache = BLCSystemProperty.resolveBooleanSystemProperty("disable.mvel.expression.cache", false);
+        }
+        return disabledMvelExpressionCache;
+    }
+
+    /**
+     * This method is potentially expensive so we want to only check to see if the property has been 
+     * updated at most once per minute
+     * @return
+     */
+    private static boolean getRemoveCachedMvelRule() {
+        long currentTime = SystemTime.asMillis();
+        if (lastCheckRemoveCachedMvelRuleTimeStamp < (currentTime - FIVE_MINUTES)) {
+            lastCheckRemoveCachedMvelRuleTimeStamp = currentTime;
+            removeCachedMvelRule = BLCSystemProperty.resolveBooleanSystemProperty("remove.mvel.rule.on.exception", false);
+        }
+        return removeCachedMvelRule;
+    }
 
     // The following attribute is set in BroadleafProcessURLFilter
     public static final String REQUEST_DTO = "blRequestDTO";    
@@ -140,7 +177,7 @@ public class MvelHelper {
      */
     public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters,
             Map<String, Serializable> expressionCache, Map<String, Class<?>> additionalContextImports) {
-        if (BLCSystemProperty.resolveBooleanSystemProperty("disable.mvel.expression.cache")) {
+        if (getDisabledMvelExpressionCache()) {
             return MvelHelper.evaluateRuleWithoutCache(rule, ruleParameters, additionalContextImports);
         }
 
@@ -230,18 +267,20 @@ public class MvelHelper {
 
                 //Unable to execute the MVEL expression for some reason
                 //Return false, but notify about the bad expression through logs
-                if (!TEST_MODE) {
-                    LOG.info("Unable to parse and/or execute the mvel expression (" + StringUtil.sanitize(rule) 
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Unable to parse and/or execute the mvel expression (" + StringUtil.sanitize(rule)
                             + "). Reporting to the logs and returning false for the match expression", e);
                 }
 
-                // Just in case, let's remove this rule.
-                if (expressionCache != null && rule != null && expressionCache.containsKey(rule)) {
-                    synchronized(expressionCache) {
-                        expressionCache.remove(rule);
-                    }
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("Removed rule " + StringUtil.sanitize(rule) + " from expression cache.", e);
+                if (getRemoveCachedMvelRule()) {
+                    // Just in case, let's remove this rule.
+                    if (expressionCache != null && rule != null && expressionCache.containsKey(rule)) {
+                        synchronized (expressionCache) {
+                            expressionCache.remove(rule);
+                        }
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("Removed rule " + StringUtil.sanitize(rule) + " from expression cache.");
+                        }
                     }
                 }
 
