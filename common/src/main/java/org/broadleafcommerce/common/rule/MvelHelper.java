@@ -18,7 +18,6 @@
 package org.broadleafcommerce.common.rule;
 
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
@@ -144,7 +143,10 @@ public class MvelHelper {
             return true;
         } else {
             // MVEL expression compiling can be expensive so let's cache the expression
-            Serializable exp = expressionCache.get(rule);
+            Serializable exp = null;
+            if (expressionCache != null) {
+                exp = expressionCache.get(rule);
+            }
             if (exp == null) {
                 ParserContext context = new ParserContext();
                 context.addImport("MVEL", MVEL.class);
@@ -156,10 +158,10 @@ public class MvelHelper {
                     }
                 }
                 
-                rule = modifyExpression(rule, ruleParameters, context);
+                String modifiedRule = modifyExpression(rule, ruleParameters, context);
 
                 synchronized (expressionCache) {
-                    exp = MVEL.compileExpression(rule, context);
+                    exp = MVEL.compileExpression(modifiedRule, context);
                     expressionCache.put(rule, exp);
                 }
 
@@ -184,7 +186,7 @@ public class MvelHelper {
             } catch (Exception e) {
                 //Unable to execute the MVEL expression for some reason
                 //Return false, but notify about the bad expression through logs
-                if (!TEST_MODE) {
+                if (!TEST_MODE && LOG.isInfoEnabled()) {
                     LOG.info("Unable to parse and/or execute the mvel expression (" + StringUtil.sanitize(rule) 
                             + "). Reporting to the logs and returning false for the match expression", e);
                 }
@@ -250,7 +252,6 @@ public class MvelHelper {
      * 
      * Should be called from within a valid web request.
      *
-     * @param request
      * @return
      */
     public static Map<String, Object> buildMvelParameters() {
