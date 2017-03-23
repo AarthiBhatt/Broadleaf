@@ -30,6 +30,8 @@ import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
+import org.mvel2.PropertyAccessException;
+import org.mvel2.UnresolveablePropertyException;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -187,14 +189,40 @@ public class MvelHelper {
                 //Unable to execute the MVEL expression for some reason
                 //Return false, but notify about the bad expression through logs
                 if (!TEST_MODE && LOG.isInfoEnabled()) {
-                    LOG.info("Unable to parse and/or execute the mvel expression (" + StringUtil.sanitize(rule) 
-                            + "). Reporting to the logs and returning false for the match expression", e);
+
+                    Boolean isMissingPropertyException = isMissingPropertyException(e);
+                    String exceptionMessage = "Unable to parse and/or execute the mvel expression (" + StringUtil.sanitize(rule)
+                            + "). Reporting to the logs and returning false for the match expression";
+
+                    if (!isMissingPropertyException && LOG.isDebugEnabled()) {
+                        LOG.debug(exceptionMessage, e);
+                    } else if (isMissingPropertyException && LOG.isDebugEnabled()) {
+                        LOG.debug(exceptionMessage, e);
+                    } else if (!isMissingPropertyException && LOG.isInfoEnabled()) {
+                        LOG.info(exceptionMessage, e);
+                    } else if (isMissingPropertyException && LOG.isInfoEnabled()) {
+                        LOG.info(exceptionMessage);
+                    }
+
                 }
                 return false;
             }
         }
     }
-    
+
+    protected static boolean isMissingPropertyException(Exception e) {
+        if (e instanceof PropertyAccessException) {
+            return true;
+        }
+        if (e instanceof UnresolveablePropertyException) {
+            return true;
+        }
+        if (e.getMessage().contains("NullOrderImpl")) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * <p>
      * Provides a hook point to modify the final expression before it's built. By default, this looks for attribute
