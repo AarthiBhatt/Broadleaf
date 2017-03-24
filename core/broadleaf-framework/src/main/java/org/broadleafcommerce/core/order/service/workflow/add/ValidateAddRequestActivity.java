@@ -24,21 +24,16 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
-import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
-
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
-
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
@@ -48,13 +43,12 @@ import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.beans.factory.annotation.Value;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.Objects;
 import javax.annotation.Resource;
 
 public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
@@ -153,16 +147,18 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     
     protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
         Sku sku = null;
+
+        // if the sku id is provided, and the sku does not match the product's default sku, this is an additional sku
+        if (skuId != null && (product == null || !Objects.equals(product.getDefaultSku().getId(), skuId))) {
+            sku = catalogService.findSkuById(skuId);
+        }
         
         //If sku browsing is enabled, product option data will not be available.
-        if (!useSku) {
+        if (sku == null && !useSku) {
             // Check whether the sku is correct given the product options.
             sku = findMatchingSku(product, attributeValues, messages);
         }
 
-        if (sku == null && skuId != null) {
-            sku = catalogService.findSkuById(skuId);
-        }
 
         if (sku == null && product != null) {
             // Set to the default sku
