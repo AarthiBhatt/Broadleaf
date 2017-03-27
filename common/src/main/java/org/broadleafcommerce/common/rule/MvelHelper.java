@@ -93,6 +93,10 @@ public class MvelHelper {
         throw new IllegalArgumentException("Unrecognized type(" + type + ") for map field conversion.");
     }
 
+    static { 
+        System.setProperty("mvel2.disable.jit", "true"); 
+    }
+
     public static Object toUpperCase(String value) {
         if (value == null) {
             return null;
