@@ -166,7 +166,13 @@
             </props>
         </property>
     </bean>
-    
+
+    <!-- This is a null sms service, swap in an implementation with appropriate accountId and authToken to use -->
+    <bean id="blSmsService" class="org.broadleafcommerce.common.sms.service.NullSmsServiceImpl">
+        <constructor-arg name="accountId" value="123456"/>
+        <constructor-arg name="authToken" value="123456"/>
+    </bean>
+
     <bean id="blSpringCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
         <property name="cacheManager" ref="blCacheManager"/>
     </bean>    

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="SendMessagesResponse" type="SendMessagesResponseType"/>
+  <xs:complexType name="MessagesType">
+    <xs:sequence>
+      <xs:element type="MessageType" name="Message" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SendMessagesResponseType">
+    <xs:sequence>
+      <xs:element type="MessagesType" name="Messages"/>
+      <xs:element type="xs:string" name="Error"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MessageType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="To"/>
+      <xs:element type="xs:string" name="Accepted"/>
+      <xs:element type="xs:string" name="ApiMessageId"/>
+      <xs:element type="xs:string" name="Error" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

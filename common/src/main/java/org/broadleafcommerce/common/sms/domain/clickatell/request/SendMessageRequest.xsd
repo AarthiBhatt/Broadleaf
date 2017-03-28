@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="SendMessageRequest" type="SendMessageRequestType">
+    <xs:annotation>
+      <xs:documentation>#%L
+  BroadleafCommerce Common Libraries
+  %%
+  Copyright (C) 2009 - 2017 Broadleaf Commerce
+  %%
+  Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+  (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+  unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+  the Broadleaf End User License Agreement (EULA), Version 1.1
+  (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+  shall apply.
+  
+  Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+  between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+  #L%</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SendMessageRequestType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="Charset" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Optional:</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="xs:string" name="ValidityPeriod" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Optional:</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="xs:string" name="UserDataHeader" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Optional:</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="xs:string" name="ScheduledDeliveryTime" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Optional:</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="xs:string" name="ClientMessageId" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Optional:</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="xs:string" name="Binary" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Optional:</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="xs:string" name="From" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Optional:</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="xs:string" name="To" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Optional:</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element type="xs:string" name="Content" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Optional:</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
