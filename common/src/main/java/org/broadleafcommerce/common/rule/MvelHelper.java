@@ -18,12 +18,12 @@
 package org.broadleafcommerce.common.rule;
 
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
-import org.broadleafcommerce.common.logging.RequestLoggingUtil;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
@@ -33,15 +33,12 @@ import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -62,25 +59,23 @@ import javax.servlet.http.HttpServletRequest;
 public class MvelHelper {
 
     private static final Map<String, Serializable> DEFAULT_EXPRESSION_CACHE = new EfficientLRUMap<String, Serializable>(5000);
-
     private static final Log LOG = LogFactory.getLog(MvelHelper.class);
-    public static final String BOGO_SALE_RULE = "CollectionUtils.intersection(orderItem.?sku.?getMultiValueSkuAttributes()[\"promotion-assortments\"],[\"Bogo Sale\"]).size()>0";
 
     private static boolean TEST_MODE = false;
     
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
-    
+
     public static long FIVE_MINUTES = 5*60*1000;
-    
-    public static long lastCheckExpressionCacheTimeStamp=0;     
+
+    public static long lastCheckExpressionCacheTimeStamp=0;
     public static boolean disabledMvelExpressionCache=false;
-    
+
     public static long lastCheckRemoveCachedMvelRuleTimeStamp=0;
     public static boolean removeCachedMvelRule=false;
 
 
     /**
-     * This method is potentially expensive so we want to only check to see if the property has been 
+     * This method is potentially expensive so we want to only check to see if the property has been
      * updated at most once per minute
      * @return
      */
@@ -94,7 +89,7 @@ public class MvelHelper {
     }
 
     /**
-     * This method is potentially expensive so we want to only check to see if the property has been 
+     * This method is potentially expensive so we want to only check to see if the property has been
      * updated at most once per minute
      * @return
      */
@@ -108,8 +103,25 @@ public class MvelHelper {
     }
 
     // The following attribute is set in BroadleafProcessURLFilter
-    public static final String REQUEST_DTO = "blRequestDTO";    
-    
+    public static final String REQUEST_DTO = "blRequestDTO";
+
+    static {
+        System.setProperty("mvel2.disable.jit", "true");
+    }
+
+    private static final String DELEGATION_CLASS_NAME = System.getProperty("mvel.helper.delegation.class");
+    private static Class<?> DELEGATION_CLASS = null;
+
+    static {
+        if (!StringUtils.isEmpty(DELEGATION_CLASS_NAME)) {
+            try {
+                DELEGATION_CLASS = Class.forName(DELEGATION_CLASS_NAME);
+            } catch (ClassNotFoundException e) {
+                throw ExceptionHelper.refineException(e);
+            }
+        }
+    }
+
     /**
      * Converts a field to the specified type.    Useful when 
      * @param type
@@ -117,6 +129,9 @@ public class MvelHelper {
      * @return
      */
     public static Object convertField(String type, String fieldValue) {
+        if (DELEGATION_CLASS != null) {
+            return delegateMethodCall("convertField", type, fieldValue);
+        }
         if (fieldValue == null) {
             return null;
         }
@@ -137,6 +152,9 @@ public class MvelHelper {
     }
 
     public static Object toUpperCase(String value) {
+        if (DELEGATION_CLASS != null) {
+            return delegateMethodCall("toUpperCase", value);
+        }
         if (value == null) {
             return null;
         }
@@ -157,6 +175,9 @@ public class MvelHelper {
      * @return
      */
     public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters) {
+        if (DELEGATION_CLASS != null) {
+            return (Boolean) delegateMethodCall("evaluateRule", rule, ruleParameters);
+        }
         return evaluateRule(rule, ruleParameters, DEFAULT_EXPRESSION_CACHE);
     }
 
@@ -169,6 +190,9 @@ public class MvelHelper {
      */
     public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters,
             Map<String, Serializable> expressionCache) {
+        if (DELEGATION_CLASS != null) {
+            return (Boolean) delegateMethodCall("evaluateRule", rule, ruleParameters, expressionCache);
+        }
         return evaluateRule(rule, ruleParameters, expressionCache, null);
     }
 
@@ -182,17 +206,11 @@ public class MvelHelper {
      */
     public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters,
             Map<String, Serializable> expressionCache, Map<String, Class<?>> additionalContextImports) {
+        if (DELEGATION_CLASS != null) {
+            return (Boolean) delegateMethodCall("evaluateRule", rule, ruleParameters, expressionCache, additionalContextImports);
+        }
         if (getDisabledMvelExpressionCache()) {
             return MvelHelper.evaluateRuleWithoutCache(rule, ruleParameters, additionalContextImports);
-        }
-
-        boolean ruleIsBogoSaleRule = false;
-        if (rule != null) {
-            ruleIsBogoSaleRule = rule.equals(BOGO_SALE_RULE);
-        }
-        if (LOG.isInfoEnabled() && RequestLoggingUtil.isRequestLoggingEnabled() && ruleIsBogoSaleRule) {
-            boolean mvelDisableJit = Boolean.getBoolean("mvel2.disable.jit");
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging : Property mvel2.disable.jit value: " + mvelDisableJit, RequestLoggingUtil.BL_OFFER_LOG);
         }
 
         // Null or empty is a match
@@ -204,9 +222,7 @@ public class MvelHelper {
                 // MVEL expression compiling can be expensive so let's cache the expression
                 exp = expressionCache.get(rule);
             }
-            boolean fromCache = true;
             if (exp == null) {
-                fromCache = false;
                 ParserContext context = new ParserContext();
                 context.addImport("MVEL", MVEL.class);
                 context.addImport("MvelHelper", MvelHelper.class);
@@ -223,8 +239,6 @@ public class MvelHelper {
                     exp = MVEL.compileExpression(modifiedRule, context);
                     expressionCache.put(rule, exp);
                 }
-
-
             }
 
             Map<String, Object> mvelParameters = new HashMap<String, Object>();
@@ -242,24 +256,8 @@ public class MvelHelper {
                     return true;
                 }
 
-                boolean result = (Boolean) test;
-
-                if (LOG.isInfoEnabled() && RequestLoggingUtil.isRequestLoggingEnabled() && ruleIsBogoSaleRule) {
-                    RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging : Result of executing Mvel expression: result=" + result, RequestLoggingUtil.BL_OFFER_LOG);
-                    try {
-                        result = smartLogging(mvelParameters, result);
-                    } catch (Exception e) {
-                        RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging ERROR : Caught exception from smart logging. Returning result=" + result, RequestLoggingUtil.BL_OFFER_LOG);
-                    }
-                }
-                return result;
+                return (Boolean) test;
             } catch (Exception e) {
-                if (LOG.isInfoEnabled() && RequestLoggingUtil.isRequestLoggingEnabled() && ruleIsBogoSaleRule) {
-                    RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging : Unable to parse and/or execute the mvel expression (" +
-                            rule + "). Reporting to the logs and returning false for the match expression", RequestLoggingUtil.BL_OFFER_LOG);
-                    RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging : Reason for expression failure: " + ExceptionUtils.getStackTrace(e), RequestLoggingUtil.BL_OFFER_LOG);
-                }
-
                 if (getRemoveCachedMvelRule()) {
                     // Just in case, let's remove this rule.
                     if (expressionCache != null && rule != null && expressionCache.containsKey(rule)) {
@@ -277,159 +275,18 @@ public class MvelHelper {
         }
     }
 
-    public static boolean smartLogging(Map<String, Object> mvelParameters, boolean result) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Class oiClass;
-        try {
-            oiClass = Class.forName("org.broadleafcommerce.core.order.domain.OrderItem");
-        } catch (Exception e) {
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging ERROR : " + e.getClass() + 
-                    " when attempting to get OrderItem class. Returning result=" + result, RequestLoggingUtil.BL_OFFER_LOG);
-            return result;
-        }
-
-        if (MapUtils.isEmpty(mvelParameters)) {
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging ERROR : mvelParameters is empty or null." +
-                    " Returning result=" + result, RequestLoggingUtil.BL_OFFER_LOG);
-            return result;
-        }
-        if (mvelParameters.get("orderItem") == null) {
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging ERROR : orderItem on mvelParameters is null." +
-                    " Returning result=" + result, RequestLoggingUtil.BL_OFFER_LOG);
-            return result;
-        }
-
-        Object orderItem;
-        try {
-            orderItem = oiClass.cast(mvelParameters.get("orderItem"));
-        } catch (Exception e) {
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging ERROR : orderItem from mvelParameters threw a " + e.getClass() +
-                    " when attempting to cast to OrderItem. Returning result=" + result, RequestLoggingUtil.BL_OFFER_LOG);
-            return result;
-        }
-
-        RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging : orderItem is an instance of " + 
-                orderItem.getClass(), RequestLoggingUtil.BL_OFFER_LOG);
-
-        try {
-            Method oiGetIdMethod = oiClass.getDeclaredMethod("getId", new Class[]{});
-            Object oiId = oiGetIdMethod.invoke(orderItem, new Class[]{});
-
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging : the id of the orderItem is " +
-                    oiId, RequestLoggingUtil.BL_OFFER_LOG);
-        } catch (Exception e) {
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging ERROR : orderItem threw a " + e.getClass() +
-                    " when attempting to retrieve id. Continuing.", RequestLoggingUtil.BL_OFFER_LOG);
-        }
-
-        try {
-            orderItem = orderItem.getClass().cast(orderItem);
-        } catch (Exception e) {
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging ERROR : threw a " + e.getClass() +
-                    " when attempting to cast orderItem to " + orderItem.getClass() + ". Returning result=" + result, RequestLoggingUtil.BL_OFFER_LOG);
-            return result;
-        }
-
-        Object sku;
-        try {
-            Method oiGetSkuMethod = orderItem.getClass().getDeclaredMethod("getSku", new Class[]{});
-            sku = oiGetSkuMethod.invoke(orderItem, new Class[]{});
-
-        } catch (Exception e) {
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging ERROR : threw a " + e.getClass() +
-                    " when attempting to get the sku from the orderItem. Returning result=" + result, RequestLoggingUtil.BL_OFFER_LOG);
-            return result;
-        }
-
-        RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging : sku is an instance of " +
-                sku.getClass(), RequestLoggingUtil.BL_OFFER_LOG);
-
-        try {
-            Method skuGetIdMethod = sku.getClass().getDeclaredMethod("getId", new Class[]{});
-            Object skuId = skuGetIdMethod.invoke(sku, new Class[]{});
-
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging : the id of the sku is " +
-                    skuId, RequestLoggingUtil.BL_OFFER_LOG);
-        } catch (Exception e) {
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging ERROR : sku threw a " + e.getClass() +
-                    " when attempting to retrieve id. Continuing.", RequestLoggingUtil.BL_OFFER_LOG);
-        }
-
-        Map<String, Object> skuAttributeMap;
-        try {
-            Method skuGetAttributesMethod = sku.getClass().getDeclaredMethod("getMultiValueSkuAttributes", new Class[]{});
-            skuAttributeMap = (Map<String, Object>) skuGetAttributesMethod.invoke(sku, new Class[]{});
-        } catch (Exception e) {
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging ERROR : threw a " + e.getClass() +
-                    " when attempting to get the multiValueAttributes from the sku. Returning result=" + result, RequestLoggingUtil.BL_OFFER_LOG);
-            return result;
-        }
-
-        if (MapUtils.isEmpty(skuAttributeMap)) {
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging ERROR : skuAttributeMap is empty or null." +
-                    " Returning result=" + result, RequestLoggingUtil.BL_OFFER_LOG);
-            return result;
-        }
-
-        RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging : skuAttributeMap is size " +
-                skuAttributeMap.size(), RequestLoggingUtil.BL_OFFER_LOG);
-
-        try {
-            for (String skuAttributeKey : skuAttributeMap.keySet()) {
-
-                Object skuAttributeList = skuAttributeMap.get(skuAttributeKey);
-                
-                for (Object skuAttribute : ((ArrayList)skuAttributeList)) {
-
-
-                    Method skuAttributeGetIdMethod = skuAttribute.getClass().getDeclaredMethod("getId", new Class[]{});
-                    Object skuAttributeId = skuAttributeGetIdMethod.invoke(skuAttribute, new Class[]{});
-
-                    Method skuAttributeGetValueMethod = skuAttribute.getClass().getDeclaredMethod("getValue", new Class[]{});
-                    Object skuAttributeValue = skuAttributeGetValueMethod.invoke(skuAttribute, new Class[]{});
-
-                    RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging : skuAttributeMap contains id=" + skuAttributeId +
-                            ", key=" + skuAttributeKey + ", value=" + skuAttributeValue, RequestLoggingUtil.BL_OFFER_LOG);
-                }
-            }
-        } catch (Exception e) {
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging ERROR : when attempting to get sku attributes map, " +
-                    "encountered " + e.getClass() + ". Continuing", RequestLoggingUtil.BL_OFFER_LOG);
-        }
-
-        if (skuAttributeMap.get("promotion-assortments") == null) {
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging ERROR : promotion-assortments on skuAttributeMap is null." +
-                    " Returning result=" + result, RequestLoggingUtil.BL_OFFER_LOG);
-            return result;
-        }
-
-        List<Object> promoAssortments = (List<Object>) skuAttributeMap.get("promotion-assortments");
-
-        RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging : Promotion assortments on this sku is of size: " + promoAssortments.size(), RequestLoggingUtil.BL_OFFER_LOG);
-
-        if (result) {
-            ArrayList<String> bogoSaleList = new ArrayList<String>();
-            bogoSaleList.add("Bogo Sale");
-
-            result = SelectizeCollectionUtils.intersection(promoAssortments, bogoSaleList).size() > 0;
-            
-            
-
-            RequestLoggingUtil.logInfoRequestMessage("MvelHelper Logging : Result of re-evaluating Mvel expression using Java, result=" + result, RequestLoggingUtil.BL_OFFER_LOG);
-        }
-        
-        return result;
-    }
-
     /**
      * @param rule
      * @param ruleParameters
      * @param additionalContextImports additional imports to give to the {@link ParserContext} besides "MVEL" ({@link MVEL} and
-     * "MvelHelper" ({@link MvelHelper}) since they are automatically added 
+     * "MvelHelper" ({@link MvelHelper}) since they are automatically added
      * @return
      */
     public static boolean evaluateRuleWithoutCache(String rule, Map<String, Object> ruleParameters,
                                                    Map<String, Class<?>> additionalContextImports) {
-
+        if (DELEGATION_CLASS != null) {
+            return (Boolean) delegateMethodCall("evaluateRuleWithoutCache", rule, ruleParameters, additionalContextImports);
+        }
         // Null or empty is a match
         if (rule == null || "".equals(rule)) {
             return true;
@@ -464,17 +321,12 @@ public class MvelHelper {
 
                 return (Boolean) test;
             } catch (Exception e) {
-                RequestLoggingUtil.logDebugRequestMessage("Unable to parse and/or execute the non-cached mvel expression (" +
-                        rule + "). Reporting to the logs and returning false for the match expression", RequestLoggingUtil.BL_OFFER_LOG);
-                RequestLoggingUtil.logDebugRequestMessage("Reason for expression failure: " + ExceptionUtils.getStackTrace(e), RequestLoggingUtil.BL_OFFER_LOG);
-
                 //Unable to execute the MVEL expression for some reason
                 //Return false, but notify about the bad expression through logs
-                if (!TEST_MODE) {
-                    LOG.info("Unable to parse and/or execute the non-cached mvel expression (" + rule + "). " +
-                            "Reporting to the logs and returning false for the match expression", e);
+                if (!TEST_MODE && LOG.isInfoEnabled()) {
+                    LOG.info("Unable to parse and/or execute the mvel expression (" + StringUtil.sanitize(rule)
+                            + "). Reporting to the logs and returning false for the match expression", e);
                 }
-
                 return false;
             }
         }
@@ -529,6 +381,10 @@ public class MvelHelper {
      * @param testMode
      */
     public static void setTestMode(boolean testMode) {
+        if (DELEGATION_CLASS != null) {
+            delegateMethodCall("setTestMode", testMode);
+            return;
+        }
         TEST_MODE = testMode;
     }
     
@@ -540,6 +396,9 @@ public class MvelHelper {
      * @return
      */
     public static Map<String, Object> buildMvelParameters() {
+        if (DELEGATION_CLASS != null) {
+            return (Map<String, Object>) delegateMethodCall("buildMvelParameters");
+        }
         Map<String, Object> mvelParameters = new HashMap<String, Object>();
        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null && brc.getRequest() != null) {
@@ -561,6 +420,18 @@ public class MvelHelper {
     }
 
     public static void clearExpressionCache() {
+        if (DELEGATION_CLASS != null) {
+            delegateMethodCall("clearExpressionCache");
+            return;
+        }
         DEFAULT_EXPRESSION_CACHE.clear();
+    }
+
+    private static Object delegateMethodCall(String methodName, Object... args) {
+        try {
+            return MethodUtils.invokeStaticMethod(DELEGATION_CLASS, methodName, args);
+        } catch (Exception e) {
+            throw ExceptionHelper.refineException(e);
+        }
     }
 }
