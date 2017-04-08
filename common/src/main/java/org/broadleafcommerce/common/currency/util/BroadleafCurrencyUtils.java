@@ -54,6 +54,18 @@ public class BroadleafCurrencyUtils {
         }
     }
 
+    public static Money getMoney(BigDecimal amount, BroadleafCurrency currency, int scale) {
+        if (amount == null) {
+            return null;
+        }
+
+        if (currency != null) {
+            return new Money(amount, currency, scale);
+        } else {
+            return new Money(amount, Money.defaultCurrency());
+        }
+    }
+
     public static Money getMoney(BigDecimal amount) {
         return getMoney(amount, null);
     }
