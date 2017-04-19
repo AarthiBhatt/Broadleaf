@@ -221,7 +221,7 @@ public class EntityForm {
             String translatedTab = BLCMessageUtils.getMessage(tabTitle);
 
             for (Tab tab : tabs) {
-                if (StringUtils.equals(tab.getKey(), translatedTab)) {
+                if (StringUtils.equals(tab.getTitle(), translatedTab)) {
                     return tab;
                 }
             }
