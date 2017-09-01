@@ -42,7 +42,7 @@ public abstract class AbstractAdminSecurityContributor implements AdminSecurityC
     }
 
     @Override
-    public List<AdminSection> getAdminSectionMap(Map<String, AdminModule> moduleMap) {
+    public List<AdminSection> getAdminSections(Map<String, AdminModule> moduleMap) {
         this.moduleMap = moduleMap;
         createAdminSections();
         return sections;

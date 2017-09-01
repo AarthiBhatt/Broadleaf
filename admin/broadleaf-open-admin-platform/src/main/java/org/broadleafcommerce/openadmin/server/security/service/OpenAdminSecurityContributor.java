@@ -27,27 +27,62 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component("blOpenAdminSecurityContributor")
-public class OpenAdminSecurityContributor extends AbstractAdminSecurityContributor implements AdminSecurityContributor {
+public class OpenAdminSecurityContributor extends AbstractAdminSecurityContributor {
 
-    
     protected void createAdminModules() {
+        createCatalogModule();
+        createPricingModule();
+        createContentModule();
+        createInventoryModule();
+        createDesignModule();
+        createSiteUpdatesModule();
+        createCustomerCareModule();
+        createSecurityModule();
+        createSettingsModule();
+    }
+    
+    protected void createCatalogModule() {
         // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-1,'Catalog','BLCMerchandising', 'blc-icon-catalog', 100);
         createModule("Catalog", ModuleKeys.CATALOG, "blc-icon-catalog", 100);
+    }
+    
+    protected void createPricingModule() {
         // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-8,'Pricing','BLCPricing', 'fa fa-usd', 150);
         createModule("Pricing", ModuleKeys.PRICING, "fa fa-usd", 150);
+    }
+    
+    protected void createContentModule() {
         // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-2,'Content','BLCContentManagement', 'blc-icon-content', 200);
         createModule("Content", ModuleKeys.CONTENT, "blc-icon-content", 200);
+    }
+    
+    protected void createInventoryModule() {
         // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-9,'Inventory','BLCInventory', 'blc-icon-inventory', 250);
         createModule("Inventory", ModuleKeys.INVENTORY, "blc-icon-inventory", 250);
+    }
+    
+    protected void createDesignModule() {
         //INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-6,'Design','BLCDesign', 'blc-icon-design', 400);
         createModule("Design", ModuleKeys.DESIGN, "blc-icon-design", 400);
-        //  INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-7,'Site Updates','BLCWorkflow', 'blc-icon-site-updates', 500);
+    }
+    
+    protected void createSiteUpdatesModule() {
+        // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-7,'Site Updates','BLCWorkflow', 'blc-icon-site-updates', 500);
         createModule("Site Updates", ModuleKeys.SITE_UPDATES, "blc-icon-site-updates", 500);
-        //  INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-3,'Customer Care','BLCCustomerCare', 'blc-icon-customer-care', 550);
+    }
+    
+    protected void createCustomerCareModule() {
+        // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-3,'Customer Care','BLCCustomerCare', 'blc-icon-customer-care', 550);
         createModule("Customer Care", ModuleKeys.CUSTOMER_CARE, "blc-icon-customer-care", 550);
-        //  INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-4,'Security','BLCOpenAdmin', 'blc-icon-security', 600);
+    }
+    
+    protected void createSecurityModule() {
+        // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-4,'Security','BLCOpenAdmin', 'blc-icon-security', 600);
         createModule("Security", ModuleKeys.SECURITY, "blc-icon-security", 600);
-        //  INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-5,'Settings','BLCModuleConfiguration', 'blc-icon-settings', 700);
+    }
+    
+    protected void createSettingsModule() {
+        // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-5,'Settings','BLCModuleConfiguration', 'blc-icon-settings', 700);
         createModule("Settings", ModuleKeys.SETTINGS, "blc-icon-settings", 700);
     }
     

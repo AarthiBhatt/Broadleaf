@@ -28,7 +28,7 @@ public interface AdminSecurityContributor {
 
     public Map<String, AdminModule> getAllAdminModuleMap();
     
-    public List<AdminSection> getAdminSectionMap(Map<String, AdminModule> moduleMap);
+    public List<AdminSection> getAdminSections(Map<String, AdminModule> moduleMap);
     
     public Map<String, List<AdminPermissionDTO>> getEntityPermissionMap();
 }

@@ -75,7 +75,7 @@ public class AdminSecurityAggregatorImpl implements AdminSecurityAggregator {
     protected List<AdminSection> buildSectionList(List<AdminSecurityContributor> contributors, Map<String, AdminModule> moduleMap) {
         List<AdminSection> sections = new ArrayList<>();
         for (AdminSecurityContributor contributor : contributors) {
-            sections.addAll(contributor.getAdminSectionMap(moduleMap));
+            sections.addAll(contributor.getAdminSections(moduleMap));
         }
         return sections;
     }
