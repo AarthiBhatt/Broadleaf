@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import org.broadleafcommerce.openadmin.server.security.service.domain.AdminPermissionDTO;
+
 /**
  * Created by IntelliJ IDEA.
  * User: jfischer
@@ -33,9 +35,17 @@ public interface AdminPermissionQualifiedEntity {
 
     void setCeilingEntityFullyQualifiedName(String ceilingEntityFullyQualifiedName);
 
-    public AdminPermission getAdminPermission();
+    public AdminPermissionDTO getAdminPermission();
 
     public void setAdminPermission(AdminPermission adminPermission);
 
     public AdminPermissionQualifiedEntity clone();
+    
+    /**
+     * Using this method will not result in any database persistence. This method should only be used
+     * when creating an AdminPermissionQualifiedEntity as a DTO
+     * 
+     * @param permissionDTO
+     */
+    public void setPermissionDTO(AdminPermissionDTO permissionDTO);
 }

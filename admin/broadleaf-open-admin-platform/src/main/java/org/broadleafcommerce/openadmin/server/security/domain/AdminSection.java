@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import org.broadleafcommerce.openadmin.server.security.service.domain.AdminPermissionDTO;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -41,10 +43,10 @@ public interface AdminSection extends Serializable {
 
     public void setUrl(String url);
 
-    public List<AdminPermission> getPermissions();
+    public List<AdminPermissionDTO> getPermissions();
 
     public void setPermissions(List<AdminPermission> permissions);
-
+    
     /**
      * No longer needed after GWT removal
      * @param displayController
@@ -84,4 +86,12 @@ public interface AdminSection extends Serializable {
     public Integer getDisplayOrder();
 
     public void setDisplayOrder(Integer displayOrder);
+    
+    /**
+     * Using this method will not result in any database persistence. This method should only be used
+     * when creating an AdminSection as a DTO
+     * 
+     * @param permissionDTOs
+     */
+    public void setPermissionDTOs(List<AdminPermissionDTO> permissionDTOs);
 }

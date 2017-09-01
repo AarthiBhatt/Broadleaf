@@ -23,7 +23,15 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.*;
+import org.broadleafcommerce.openadmin.server.security.service.domain.AdminPermissionDTO;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +48,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  *
@@ -123,6 +132,9 @@ public class AdminSectionImpl implements AdminSection {
     @AdminPresentation(friendlyName = "AdminSectionImpl_Display_Order", order = 7, group = "AdminSectionImpl_Section",
             prominent = true)
     protected Integer displayOrder;
+    
+    @Transient
+    protected List<AdminPermissionDTO> permissionDTOs = null;
 
     @Override
     public Long getId() {
@@ -174,12 +186,27 @@ public class AdminSectionImpl implements AdminSection {
     }
 
     @Override
-    public List<AdminPermission> getPermissions() {
-        return permissions;
+    public List<AdminPermissionDTO> getPermissions() {
+        if (permissionDTOs == null && permissions != null) {
+            permissionDTOs = new ArrayList<>();
+            for (AdminPermission perm : permissions) {
+                AdminPermissionDTO dto = new AdminPermissionDTO();
+                dto.setName(perm.getName());
+                dto.setType(perm.getType());
+                permissionDTOs.add(dto);
+            }
+        }
+        return permissionDTOs;
+    }
+    
+    @Override
+    public void setPermissionDTOs(List<AdminPermissionDTO> permissionDTOs) {
+        this.permissionDTOs = permissionDTOs;
     }
 
     @Override
     public void setPermissions(List<AdminPermission> permissions) {
+        permissionDTOs = null;
         this.permissions = permissions;
     }
 

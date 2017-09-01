@@ -273,6 +273,11 @@ public class AdminPermissionImpl implements AdminPermission {
         }
         return childPermissions;
     }
+    
+    @Override
+    public void setChildPermissions(List<AdminPermission> children) {
+        this.allChildPermissions = children;
+    }
 
     @Override
     public List<AdminPermission> getAllParentPermissions() {
@@ -285,5 +290,10 @@ public class AdminPermissionImpl implements AdminPermission {
             return false;
         }
         return isFriendly;
+    }
+    
+    @Override
+    public void setFriendly(Boolean isFriendly) {
+        this.isFriendly = isFriendly;
     }
 }
