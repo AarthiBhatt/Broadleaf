@@ -40,7 +40,7 @@ public class ImportSQLConfig {
 
     @Bean
     public AutoImportSql blFrameworkSecurityData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/load_admin_permissions.sql,config/bc/sql/load_admin_roles.sql,config/bc/sql/load_admin_menu.sql", AutoImportStage.PRIMARY_FRAMEWORK_SECURITY);
+        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/load_admin_permissions.sql,config/bc/sql/load_admin_roles.sql", AutoImportStage.PRIMARY_FRAMEWORK_SECURITY);
     }
 
     @Bean
