@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityAggregator;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -50,6 +51,9 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+    
+    @Resource(name = "blAdminSecurityAggregator")
+    protected AdminSecurityAggregator securityAggregator;
     
     @Override
     public AdminSection save(AdminSection adminSection) {
@@ -80,7 +84,18 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         TypedQuery<AdminModule> q = new TypedQueryBuilder<AdminModule>(AdminModule.class, "am")
             .addRestriction("am.moduleKey", "=", moduleKey)
             .toQuery(em);
-        return q.getSingleResult();
+        try {
+            q.getSingleResult();
+        } catch (NoResultException e) {
+            List<AdminModule> modules = securityAggregator.getAllAdminModules();
+            for (AdminModule module : modules) {
+                if (module.getModuleKey().equals(moduleKey)) {
+                    return module;
+                }
+            }
+            throw e;
+        }
+        return null;
     }
 
     @Override
@@ -98,17 +113,22 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         
         // Try to find a section for the exact input received
         List<AdminSection> sections = readAdminSectionForClassName(className);
-        if (CollectionUtils.isEmpty(sections)) {
+        List<AdminSection> memorySections = securityAggregator.getAdminSectionsByClass(className);
+        if (CollectionUtils.isEmpty(sections) || CollectionUtils.isEmpty(memorySections)) {
             // If we didn't find a section, and this class ends in Impl, try again without the Impl.
             // Most of the sections should match to the interface
             if (className.endsWith("Impl")) {
                 className = className.substring(0, className.length() - 4);
-                sections = readAdminSectionForClassName(className);
+                if (CollectionUtils.isEmpty(sections)) {
+                    sections = readAdminSectionForClassName(className);
+                } else {
+                    memorySections = securityAggregator.getAdminSectionsByClass(className);
+                }
             }
         }
-        
-        if (!CollectionUtils.isEmpty(sections)) {
-            AdminSection returnSection = sections.get(0);
+
+        if (!CollectionUtils.isEmpty(sections) || !CollectionUtils.isEmpty(memorySections)) {
+            AdminSection returnSection = !CollectionUtils.isEmpty(sections) ? sections.get(0) : memorySections.get(0);
             if (sectionId == null) {
                 // if no sectionId was passed, ensure we are returning the correct section based on the request's sectionkey
                 sectionId = getSectionKey(true);
@@ -118,10 +138,22 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
                 if (!sectionId.startsWith("/")) {
                     sectionId = "/" + sectionId;
                 }
-                for (AdminSection section : sections) {
-                    if (sectionId.equals(section.getUrl())) {
-                        returnSection = section;
-                        break;
+                boolean found = false;
+                if (!CollectionUtils.isEmpty(sections)) {
+                    for (AdminSection section : sections) {
+                        if (sectionId.equals(section.getUrl())) {
+                            returnSection = section;
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (!found && !CollectionUtils.isEmpty(memorySections)) {
+                    for (AdminSection section : memorySections) {
+                        if (sectionId.equals(section.getUrl())) {
+                            returnSection = section;
+                            break;
+                        }
                     }
                 }
             }
@@ -139,7 +171,7 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         q.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
         List<AdminSection> result = q.getResultList();
         if (CollectionUtils.isEmpty(result)) {
-            return null;
+            return securityAggregator.getAdminSectionsByClass(className);
         }
         return q.getResultList();
     }
@@ -154,7 +186,12 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         try {
              adminSection = (AdminSection) query.getSingleResult();
         } catch (NoResultException e) {
-           //do nothing
+           List<AdminSection> sections = securityAggregator.getAllAdminSections();
+           for (AdminSection section : sections) {
+               if (section.getUrl().equals(uri)) {
+                   return section;
+               }
+           }
         }
         return adminSection;
     }
@@ -169,7 +206,12 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         try {
             adminSection = (AdminSection) query.getSingleResult();
         } catch (NoResultException e) {
-            //do nothing
+            List<AdminSection> sections = securityAggregator.getAllAdminSections();
+            for (AdminSection section : sections) {
+                if (section.getSectionKey().equals(sectionKey)) {
+                    return section;
+                }
+            }
         }
         return adminSection;
     }

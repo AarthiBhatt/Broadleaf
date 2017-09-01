@@ -36,7 +36,9 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityAggregator;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
+import org.broadleafcommerce.openadmin.server.security.service.domain.AdminPermissionDTO;
 import org.broadleafcommerce.openadmin.web.controller.AbstractAdminAbstractControllerExtensionHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,8 +46,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -89,6 +93,9 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
 
     @Resource(name = "blAdminNavigationServiceExtensionManager")
     protected AdminNavigationServiceExtensionManager extensionManager;
+    
+    @Resource(name = "blAdminSecurityAggregator")
+    protected AdminSecurityAggregator securityAggregator;
 
     @Override
     @Transactional("blTransactionManager")
@@ -104,11 +111,11 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     @Override
     public AdminMenu buildMenu(AdminUser adminUser) {
         AdminMenu adminMenu = new AdminMenu();
-        List<AdminModule> modules = adminNavigationDao.readAllAdminModules();
+        List<AdminModule> modules = findAllAdminModules();
         populateAdminMenu(adminUser, adminMenu, modules);
         return adminMenu;
     }
-
+    
     @Override
     public boolean isUserAuthorizedToViewModule(AdminUser adminUser, AdminModule module) {
         List<AdminSection> moduleSections = module.getSections();
@@ -150,32 +157,51 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
 
     @Override
     public boolean isUserAuthorizedToViewSection(AdminUser adminUser, AdminSection section) {
-        List<AdminPermission> authorizedPermissions = section.getPermissions();
+        Set<String> permissions = new HashSet<>();
+        if (!CollectionUtils.isEmpty(adminUser.getAllRoles())) {
+            for (AdminRole role : adminUser.getAllRoles()) {
+                for (AdminPermission permission : role.getAllPermissions()){
+                    permissions.add(permission.getName());
+                }
+            }
+        }
+        if (!CollectionUtils.isEmpty(adminUser.getAllPermissions())) {
+            for (AdminPermission permission : adminUser.getAllPermissions()){
+                permissions.add(permission.getName());
+            }
+        }
+        boolean response = isUserAuthorizedToViewSectionInternal(permissions, section);
+        if (response) {
+            for (SectionAuthorization sectionAuthorization : additionalSectionAuthorizations) {
+                if (!sectionAuthorization.isUserAuthorizedToViewSection(adminUser, section)) {
+                    response = false;
+                    break;
+                }
+            }
+        }
+        return response;
+    }
+
+    protected boolean isUserAuthorizedToViewSectionInternal(Set<String> permissions, AdminSection section) {
+        if (section == null) {
+            return false;
+        }
+        List<AdminPermissionDTO> authorizedPermissions = section.getPermissions();
 
         Set<String> authorizedPermissionNames = null;
         if (authorizedPermissions != null) {
             authorizedPermissionNames = new HashSet<>((authorizedPermissions.size() * 2));
-            for (AdminPermission authorizedPermission : authorizedPermissions) {
+            for (AdminPermissionDTO authorizedPermission : authorizedPermissions) {
                 authorizedPermissionNames.add(authorizedPermission.getName());
                 authorizedPermissionNames.add(parseForAllPermission(authorizedPermission.getName()));
             }
         }
 
         boolean response = false;
-        if (!CollectionUtils.isEmpty(adminUser.getAllRoles())) {
-            for (AdminRole role : adminUser.getAllRoles()) {
-                for (AdminPermission permission : role.getAllPermissions()){
-                    if (checkPermissions(authorizedPermissionNames, permission.getName())) {
-                        response = true;
-                    }
-                }
-            }
-        }
-        if (!response && !CollectionUtils.isEmpty(adminUser.getAllPermissions())) {
-            for (AdminPermission permission : adminUser.getAllPermissions()){
-                if (checkPermissions(authorizedPermissionNames, permission.getName())) {
-                    response = true;
-                }
+        for (String permission : permissions) {
+            if (checkPermissions(authorizedPermissionNames, permission)) {
+                response = true;
+                break;
             }
         }
         if (!response) {
@@ -185,24 +211,44 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
                 }
             }
         }
-
-        if (response) {
-            for (SectionAuthorization sectionAuthorization : additionalSectionAuthorizations) {
-                if (!sectionAuthorization.isUserAuthorizedToViewSection(adminUser, section)) {
-                    response = false;
-                    break;
-                }
-            }
-        }
-
         return response;
+    }
+    
+    @Override
+    public List<AdminModule> findAllAdminModules() {
+        // Read DB modules
+        List<AdminModule> modules = adminNavigationDao.readAllAdminModules();
+        // Read in memory modules
+        List<AdminModule> aggregatedModules = securityAggregator.getAllAdminModules();
+        Map<String, AdminModule> keyedModules = new HashMap<>();
+        
+        // Populate the map with the in memory ones first
+        for (AdminModule module : aggregatedModules) {
+            keyedModules.put(module.getModuleKey(), module);
+        }
+        
+        // Populate the map with the db entries second so that if collisions occur
+        // we give precedence to the db entries
+        for (AdminModule module : modules) {
+            keyedModules.put(module.getModuleKey(), module);
+        }
+        return new ArrayList<>(keyedModules.values());
     }
     
     @Override
     public List<AdminSection> findAllAdminSections() {
         List<AdminSection> sections = adminNavigationDao.readAllAdminSections();
-        Collections.sort(sections, SECTION_COMPARATOR);
-        return sections;
+        List<AdminSection> aggregatedSections = securityAggregator.getAllAdminSections();
+        Map<String, AdminSection> keyedSections = new HashMap<>();
+        for (AdminSection section : aggregatedSections) {
+            keyedSections.put(section.getCeilingEntity() + section.getUrl(), section);
+        }
+        for (AdminSection section : sections) {
+            keyedSections.put(section.getCeilingEntity() + section.getUrl(), section);
+        }
+        List<AdminSection> result = new ArrayList<>(keyedSections.values());
+        Collections.sort(result, SECTION_COMPARATOR);
+        return result;
     }
 
     @Override
@@ -232,7 +278,7 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
         if (erh.getContextMap().get(AbstractAdminAbstractControllerExtensionHandler.NEW_CLASS_NAME) != null) {
             return (String) erh.getContextMap().get(AbstractAdminAbstractControllerExtensionHandler.NEW_CLASS_NAME);
         }
-
+        
         return (section == null) ? sectionKey : section.getCeilingEntity();
     }
 
@@ -282,7 +328,7 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
         BeanComparator displayComparator = new BeanComparator("displayOrder");
         Collections.sort(adminMenu.getAdminModules(), displayComparator);
     }
-
+    
     protected List<AdminSection> buildAuthorizedSectionsList(AdminUser adminUser, AdminModule module) {
         List<AdminSection> authorizedSections = new ArrayList<AdminSection>();
         BroadleafRequestContext broadleafRequestContext = BroadleafRequestContext.getBroadleafRequestContext();
@@ -304,4 +350,5 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
         Collections.sort(authorizedSections, SECTION_COMPARATOR);
         return authorizedSections;
     }
+    
 }

@@ -29,7 +29,7 @@ import java.util.Set;
 public interface AdminNavigationService {
 
     public AdminMenu buildMenu(AdminUser adminUser);
-
+    
     public boolean isUserAuthorizedToViewSection(AdminUser adminUser, AdminSection section);
 
     public boolean isUserAuthorizedToViewModule(AdminUser adminUser, AdminModule module);
@@ -61,6 +61,8 @@ public interface AdminNavigationService {
      * @return the list of all {@link AdminSection}s sorted by {@link AdminSection#getDisplayOrder()}
      */
     public List<AdminSection> findAllAdminSections();
+    
+    public List<AdminModule> findAllAdminModules();
 
     public AdminSection save(AdminSection adminSection);
 
@@ -87,4 +89,5 @@ public interface AdminNavigationService {
      * @return currently active admin sections in the order specified in the crumbList param
      */
     List<SectionCrumb> getSectionCrumbs(String crumbList);
+    
 }

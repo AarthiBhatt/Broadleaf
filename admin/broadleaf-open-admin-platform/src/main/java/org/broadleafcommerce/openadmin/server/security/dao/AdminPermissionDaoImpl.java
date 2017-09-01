@@ -22,14 +22,20 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityAggregator;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
+import org.broadleafcommerce.openadmin.server.security.service.domain.AdminPermissionDTO;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.hibernate.ejb.QueryHints;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -54,6 +60,9 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+    
+    @Resource(name="blAdminSecurityAggregator")
+    protected AdminSecurityAggregator securityAggregator;
 
     public void deleteAdminPermission(AdminPermission permission) {
         if (!em.contains(permission)) {
@@ -152,6 +161,16 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
                 return true;
             }
         }
+        SecurityContext ctx = SecurityContextHolder.getContext();
+        if (ctx != null) {
+            List<String> qualifiedPermissionNames = getQualifiedPermissionsFromMemory(testClasses, permissionType);
+            for (GrantedAuthority ga : ctx.getAuthentication().getAuthorities()) {
+                if (qualifiedPermissionNames.contains(ga.getAuthority())) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
@@ -180,7 +199,23 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
                 return true;
             }
         }
+        
         return false;
+    }
+    
+    public List<String> getQualifiedPermissionsFromMemory(List<String> testClasses, PermissionType permissionType) {
+        Map<String, List<AdminPermissionDTO>> entityPermissionMap = securityAggregator.getEntityPermissionMap();
+        List<String> qualifiedPermissionNames = new ArrayList<>();
+        for (String clazz : entityPermissionMap.keySet()) {
+            if (testClasses.contains(clazz)) {
+                for (AdminPermissionDTO dto : entityPermissionMap.get(clazz)) {
+                    if (permissionType == null || dto.getType().equals(PermissionType.ALL) || dto.getType().equals(permissionType)) {
+                        qualifiedPermissionNames.add(dto.getName());
+                    }
+                }
+            }
+        }
+        return qualifiedPermissionNames;
     }
 
     public boolean doesOperationExistForCeilingEntity(PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
@@ -208,6 +243,11 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
                 return true;
             }
         }
+        
+        if (!getQualifiedPermissionsFromMemory(testClasses, permissionType).isEmpty()) {
+            return true;
+        }
         return false;
     }
+    
 }

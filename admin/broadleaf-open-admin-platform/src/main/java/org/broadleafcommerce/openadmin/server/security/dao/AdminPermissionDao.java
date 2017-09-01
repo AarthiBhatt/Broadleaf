@@ -39,5 +39,6 @@ public interface AdminPermissionDao {
     public boolean isUserQualifiedForOperationOnCeilingEntityViaDefaultPermissions(String ceilingEntityFullyQualifiedName);
     public boolean doesOperationExistForCeilingEntity(PermissionType permissionType, String ceilingEntityFullyQualifiedName);
     public AdminPermission readAdminPermissionByNameAndType(String name, String type);
+    public List<String> getQualifiedPermissionsFromMemory(List<String> testClasses, PermissionType permissionType);
 
 }
