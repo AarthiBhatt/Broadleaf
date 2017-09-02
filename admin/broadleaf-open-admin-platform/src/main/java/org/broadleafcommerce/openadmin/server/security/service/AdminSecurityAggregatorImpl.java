@@ -41,7 +41,8 @@ public class AdminSecurityAggregatorImpl implements AdminSecurityAggregator {
         adminModules = new ArrayList<>(adminModuleMap.values());
         adminSections = buildSectionList(contributors, adminModuleMap);
         entitySectionMap = buildEntitySectionMap();
-        entityPermissionMap = buildPermissionEntities(contributors); 
+        entityPermissionMap = buildPermissionEntities(contributors);
+        modifySections(contributors, adminSections);
     }
     
     @Override
@@ -110,5 +111,10 @@ public class AdminSecurityAggregatorImpl implements AdminSecurityAggregator {
         }
         return resultingMap;
     }
-
+    
+    protected void modifySections(List<AdminSecurityContributor> contributors, List<AdminSection> sections) {
+        for (AdminSecurityContributor contrib : contributors) {
+            contrib.modifyAdminSections(sections);
+        }
+    }
 }

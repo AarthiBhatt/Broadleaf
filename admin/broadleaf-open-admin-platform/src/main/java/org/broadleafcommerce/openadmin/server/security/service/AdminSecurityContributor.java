@@ -31,4 +31,6 @@ public interface AdminSecurityContributor {
     public List<AdminSection> getAdminSections(Map<String, AdminModule> moduleMap);
     
     public Map<String, List<AdminPermissionDTO>> getEntityPermissionMap();
+    
+    public void modifyAdminSections(List<AdminSection> sections);
 }

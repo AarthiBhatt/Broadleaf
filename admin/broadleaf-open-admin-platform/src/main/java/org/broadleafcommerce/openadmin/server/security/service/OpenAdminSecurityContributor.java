@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.service.domain.AdminPermissionDTO;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
@@ -41,49 +42,49 @@ public class OpenAdminSecurityContributor extends AbstractAdminSecurityContribut
         createSettingsModule();
     }
     
-    protected void createCatalogModule() {
+    protected AdminModule createCatalogModule() {
         // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-1,'Catalog','BLCMerchandising', 'blc-icon-catalog', 100);
-        createModule("Catalog", ModuleKeys.CATALOG, "blc-icon-catalog", 100);
+        return createModule("Catalog", ModuleKeys.CATALOG, "blc-icon-catalog", 100);
     }
     
-    protected void createPricingModule() {
+    protected AdminModule createPricingModule() {
         // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-8,'Pricing','BLCPricing', 'fa fa-usd', 150);
-        createModule("Pricing", ModuleKeys.PRICING, "fa fa-usd", 150);
+        return createModule("Pricing", ModuleKeys.PRICING, "fa fa-usd", 150);
     }
     
-    protected void createContentModule() {
+    protected AdminModule createContentModule() {
         // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-2,'Content','BLCContentManagement', 'blc-icon-content', 200);
-        createModule("Content", ModuleKeys.CONTENT, "blc-icon-content", 200);
+        return createModule("Content", ModuleKeys.CONTENT, "blc-icon-content", 200);
     }
     
-    protected void createInventoryModule() {
+    protected AdminModule createInventoryModule() {
         // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-9,'Inventory','BLCInventory', 'blc-icon-inventory', 250);
-        createModule("Inventory", ModuleKeys.INVENTORY, "blc-icon-inventory", 250);
+        return createModule("Inventory", ModuleKeys.INVENTORY, "blc-icon-inventory", 250);
     }
     
-    protected void createDesignModule() {
+    protected AdminModule createDesignModule() {
         //INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-6,'Design','BLCDesign', 'blc-icon-design', 400);
-        createModule("Design", ModuleKeys.DESIGN, "blc-icon-design", 400);
+        return createModule("Design", ModuleKeys.DESIGN, "blc-icon-design", 400);
     }
     
-    protected void createSiteUpdatesModule() {
+    protected AdminModule createSiteUpdatesModule() {
         // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-7,'Site Updates','BLCWorkflow', 'blc-icon-site-updates', 500);
-        createModule("Site Updates", ModuleKeys.SITE_UPDATES, "blc-icon-site-updates", 500);
+        return createModule("Site Updates", ModuleKeys.SITE_UPDATES, "blc-icon-site-updates", 500);
     }
     
-    protected void createCustomerCareModule() {
+    protected AdminModule createCustomerCareModule() {
         // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-3,'Customer Care','BLCCustomerCare', 'blc-icon-customer-care', 550);
-        createModule("Customer Care", ModuleKeys.CUSTOMER_CARE, "blc-icon-customer-care", 550);
+        return createModule("Customer Care", ModuleKeys.CUSTOMER_CARE, "blc-icon-customer-care", 550);
     }
     
-    protected void createSecurityModule() {
+    protected AdminModule createSecurityModule() {
         // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-4,'Security','BLCOpenAdmin', 'blc-icon-security', 600);
-        createModule("Security", ModuleKeys.SECURITY, "blc-icon-security", 600);
+        return createModule("Security", ModuleKeys.SECURITY, "blc-icon-security", 600);
     }
     
-    protected void createSettingsModule() {
+    protected AdminModule createSettingsModule() {
         // INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-5,'Settings','BLCModuleConfiguration', 'blc-icon-settings', 700);
-        createModule("Settings", ModuleKeys.SETTINGS, "blc-icon-settings", 700);
+        return createModule("Settings", ModuleKeys.SETTINGS, "blc-icon-settings", 700);
     }
     
     protected void createAdminSections() {

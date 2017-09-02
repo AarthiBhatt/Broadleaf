@@ -54,6 +54,11 @@ public abstract class AbstractAdminSecurityContributor implements AdminSecurityC
         return qualifierMap;
     }
     
+    @Override
+    public void modifyAdminSections(List<AdminSection> sections) {
+        // Doing nothing by deafult and most contributors won't need to implement this
+    }
+    
     protected AdminSection createSection(String name, String sectionKey, String url, String ceilingEntity, 
                                          String moduleKey, Integer order, List<AdminPermissionDTO> permissions) {
         AdminModule module = moduleMap.get(moduleKey);
