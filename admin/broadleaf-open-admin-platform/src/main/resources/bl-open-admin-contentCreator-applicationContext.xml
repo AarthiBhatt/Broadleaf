@@ -56,6 +56,7 @@
     <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
+                <ref bean="blAdminRoleCustomPersistenceHandler" />
                 <ref bean="blAdminUserCustomPersistenceHandler" />
                 <ref bean="blAdminPermissionCustomPersistenceHandler" />
                 <ref bean="blSystemPropertyCustomPersistenceHandler" />

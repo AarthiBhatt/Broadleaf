@@ -34,13 +34,23 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityAggregator;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityRetrivalService;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Jeff Fischer
@@ -50,6 +60,15 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
 
     private static final Log LOG = LogFactory.getLog(AdminPermissionCustomPersistenceHandler.class);
 
+    @Resource(name = "blAdminSecurityAggregator")
+    protected AdminSecurityAggregator securityAggregator;
+    
+    @Resource(name = "blAdminSecurityRetrivalService")
+    protected AdminSecurityRetrivalService retrivalService;
+    
+    @Resource(name = "blAdminSecurityService")
+    protected AdminSecurityService securityService;
+    
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -137,10 +156,80 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
 
         PersistenceModule myModule = helper.getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
         DynamicResultSet results = myModule.fetch(persistencePackage, cto);
-
+        List<AdminPermission> configuredPermissions = securityAggregator.getAllFriendlyPermissions();
+        Map<Long, AdminPermission> configuredPermissionIdMap = new HashMap<>();
+        List<Long> roleFilterPermissions = filterPermissionsForRole(cto);
+        List<Long> userFilterPermissions = filterPermissionsForUser(cto);
+        List<Long> filterPermissions = null;
+        if (roleFilterPermissions != null || userFilterPermissions != null) {
+            filterPermissions = new ArrayList<>();
+        }
+        if (roleFilterPermissions != null) {
+            filterPermissions.addAll(roleFilterPermissions);
+        }
+        if (userFilterPermissions != null) {
+            filterPermissions.addAll(userFilterPermissions);
+        }
+        
+        for (AdminPermission perm : configuredPermissions) {
+            if (perm.getId() != null && (filterPermissions == null || filterPermissions.contains(perm.getId()))) {
+                configuredPermissionIdMap.put(perm.getId(), perm);
+            }
+        }
+        for (Entity entity : results.getRecords()) {
+            Property idProp = entity.findProperty("id");
+            Long id = Long.parseLong(idProp.getValue());
+            configuredPermissionIdMap.remove(id);
+        }
+        List<Entity> allEntities = new ArrayList<>(Arrays.asList(results.getRecords()));
+        for (AdminPermission configured : configuredPermissionIdMap.values()) {
+            Entity entity = helper.getRecord(configured.getClass(), persistencePackage.getPersistencePerspective(), configured);
+            allEntities.add(entity);
+        }
+        results.setRecords(allEntities.toArray(new Entity[allEntities.size()]));
+        results.setTotalRecords(allEntities.size());
         return results;
     }
 
+    protected List<Long> filterPermissionsForRole(CriteriaTransferObject cto) {
+        List<Long> filterPermissions = null;
+        FilterAndSortCriteria roleCriteria = cto.getCriteriaMap().get("allRoles");
+        if (roleCriteria != null) {
+            for (String id : roleCriteria.getFilterValues()) {
+                List<AdminPermission> permissions = retrivalService.findPermissionsForRoleId(Long.parseLong(id));
+                if (permissions != null) {
+                    if (filterPermissions == null) {
+                        filterPermissions = new ArrayList<>();
+                    }
+                    for (AdminPermission perm : permissions) {
+                        filterPermissions.add(perm.getId());
+                    }
+                }
+            }
+        }
+        return filterPermissions;
+    }
+    
+    protected List<Long> filterPermissionsForUser(CriteriaTransferObject cto) {
+        List<Long> filterPermissions = null;
+        FilterAndSortCriteria userCriteria = cto.getCriteriaMap().get("allUsers");
+        if (userCriteria != null) {
+            for (String id : userCriteria.getFilterValues()) {
+                AdminUser user = securityService.readAdminUserById(Long.parseLong(id));
+                List<AdminPermission> permissions = retrivalService.findPermissionsForAdminUser(user);
+                if (permissions != null) {
+                    if (filterPermissions == null) {
+                        filterPermissions = new ArrayList<>();
+                    }
+                }
+                for (AdminPermission perm : permissions) {
+                    filterPermissions.add(perm.getId());
+                }
+            }
+        }
+        return filterPermissions;
+    }
+    
     protected void addFriendlyRestriction(CriteriaTransferObject cto) {
         cto.add(new FilterAndSortCriteria("isFriendly", "true", cto.getCriteriaMap().size()));
     }
