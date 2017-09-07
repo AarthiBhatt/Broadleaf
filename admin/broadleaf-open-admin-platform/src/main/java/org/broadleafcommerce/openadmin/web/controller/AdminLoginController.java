@@ -25,6 +25,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityRetrivalService;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.security.service.user.AdminUserDetails;
@@ -65,6 +66,9 @@ public class AdminLoginController extends BroadleafAbstractController {
 
     @Resource(name="blAdminNavigationService")
     protected AdminNavigationService adminNavigationService;
+    
+    @Resource(name = "blAdminSecurityRetrivalService")
+    protected AdminSecurityRetrivalService securityRetrivalService;
 
     // Entry URLs
     protected static String loginView = "login/login";
@@ -86,7 +90,7 @@ public class AdminLoginController extends BroadleafAbstractController {
         AdminMenu adminMenu = adminNavigationService.buildMenu(getPersistentAdminUser());
         if (!adminMenu.getAdminModules().isEmpty()) {
             AdminModule first = adminMenu.getAdminModules().get(0);
-            List<AdminSection> sections = first.getSections();
+            List<AdminSection> sections = securityRetrivalService.findAdminSectionsForModule(first);
             if (!sections.isEmpty()) {
                 AdminSection adminSection = sections.get(0);
                 return "redirect:" + adminSection.getUrl();

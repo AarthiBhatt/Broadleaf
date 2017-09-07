@@ -33,12 +33,11 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModuleDTO;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModuleImpl;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityAggregator;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityRetrivalService;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
-import org.broadleafcommerce.openadmin.server.security.service.domain.AdminPermissionDTO;
 import org.broadleafcommerce.openadmin.web.controller.AbstractAdminAbstractControllerExtensionHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,6 +95,9 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     
     @Resource(name = "blAdminSecurityAggregator")
     protected AdminSecurityAggregator securityAggregator;
+    
+    @Resource(name = "blAdminSecurityRetrivalService")
+    protected AdminSecurityRetrivalService securityRetrivalService;
 
     @Override
     @Transactional("blTransactionManager")
@@ -118,7 +120,7 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     
     @Override
     public boolean isUserAuthorizedToViewModule(AdminUser adminUser, AdminModule module) {
-        List<AdminSection> moduleSections = module.getSections();
+        List<AdminSection> moduleSections = securityRetrivalService.findAdminSectionsForModule(module);
         if (moduleSections != null && !moduleSections.isEmpty()) {
             for (AdminSection section : moduleSections) {
                 if (isUserAuthorizedToViewSection(adminUser, section)) {
@@ -158,15 +160,9 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     @Override
     public boolean isUserAuthorizedToViewSection(AdminUser adminUser, AdminSection section) {
         Set<String> permissions = new HashSet<>();
-        if (!CollectionUtils.isEmpty(adminUser.getAllRoles())) {
-            for (AdminRole role : adminUser.getAllRoles()) {
-                for (AdminPermission permission : role.getAllPermissions()){
-                    permissions.add(permission.getName());
-                }
-            }
-        }
-        if (!CollectionUtils.isEmpty(adminUser.getAllPermissions())) {
-            for (AdminPermission permission : adminUser.getAllPermissions()){
+        List<AdminPermission> adminPerms = securityRetrivalService.findAllPermissionsForAdminUser(adminUser);
+        if (!CollectionUtils.isEmpty(adminPerms)) {
+            for (AdminPermission permission : adminPerms){
                 permissions.add(permission.getName());
             }
         }
@@ -186,12 +182,12 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
         if (section == null) {
             return false;
         }
-        List<AdminPermissionDTO> authorizedPermissions = section.getPermissions();
+        List<AdminPermission> authorizedPermissions = securityRetrivalService.findPermissionsForSection(section);
 
         Set<String> authorizedPermissionNames = null;
         if (authorizedPermissions != null) {
             authorizedPermissionNames = new HashSet<>((authorizedPermissions.size() * 2));
-            for (AdminPermissionDTO authorizedPermission : authorizedPermissions) {
+            for (AdminPermission authorizedPermission : authorizedPermissions) {
                 authorizedPermissionNames.add(authorizedPermission.getName());
                 authorizedPermissionNames.add(parseForAllPermission(authorizedPermission.getName()));
             }
@@ -220,17 +216,17 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
         List<AdminModule> modules = adminNavigationDao.readAllAdminModules();
         // Read in memory modules
         List<AdminModule> aggregatedModules = securityAggregator.getAllAdminModules();
-        Map<String, AdminModule> keyedModules = new HashMap<>();
+        Map<Long, AdminModule> keyedModules = new HashMap<>();
         
         // Populate the map with the in memory ones first
         for (AdminModule module : aggregatedModules) {
-            keyedModules.put(module.getModuleKey(), module);
+            keyedModules.put(module.getId(), module);
         }
         
         // Populate the map with the db entries second so that if collisions occur
         // we give precedence to the db entries
         for (AdminModule module : modules) {
-            keyedModules.put(module.getModuleKey(), module);
+            keyedModules.put(module.getId(), module);
         }
         return new ArrayList<>(keyedModules.values());
     }
@@ -239,12 +235,12 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     public List<AdminSection> findAllAdminSections() {
         List<AdminSection> sections = adminNavigationDao.readAllAdminSections();
         List<AdminSection> aggregatedSections = securityAggregator.getAllAdminSections();
-        Map<String, AdminSection> keyedSections = new HashMap<>();
+        Map<Long, AdminSection> keyedSections = new HashMap<>();
         for (AdminSection section : aggregatedSections) {
-            keyedSections.put(section.getCeilingEntity() + section.getUrl(), section);
+            keyedSections.put(section.getId(), section);
         }
         for (AdminSection section : sections) {
-            keyedSections.put(section.getCeilingEntity() + section.getUrl(), section);
+            keyedSections.put(section.getId(), section);
         }
         List<AdminSection> result = new ArrayList<>(keyedSections.values());
         Collections.sort(result, SECTION_COMPARATOR);
@@ -334,7 +330,8 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
         BroadleafRequestContext broadleafRequestContext = BroadleafRequestContext.getBroadleafRequestContext();
         Site site = broadleafRequestContext.getNonPersistentSite();
         Long siteId = site == null ? null : site.getId();
-        for (AdminSection section : module.getSections()) {
+        List<AdminSection> sections = securityRetrivalService.findAdminSectionsForModule(module);
+        for (AdminSection section : sections) {
             if (isUserAuthorizedToViewSection(adminUser, section)) {
                 if(section instanceof SiteDiscriminator){
                     Long sectionSiteId = ((SiteDiscriminator)section).getSiteDiscriminator();

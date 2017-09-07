@@ -34,6 +34,7 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityRetrivalService;
 import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
@@ -48,6 +49,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -84,18 +86,20 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
     @Resource(name = "blRowLevelSecurityService")
     protected RowLevelSecurityService rowLevelSecurityService;
     
+    @Resource(name = "blAdminSecurityRetrivalService")
+    protected AdminSecurityRetrivalService securityRetrivalService;
+    
     @Override
     public org.broadleafcommerce.openadmin.server.security.remote.AdminUser getAdminUser() throws ServiceException {
         AdminUser persistentAdminUser = getPersistentAdminUser();
         if (persistentAdminUser != null) {
             org.broadleafcommerce.openadmin.server.security.remote.AdminUser response = new org.broadleafcommerce.openadmin.server.security.remote.AdminUser();
-            for (AdminRole role : persistentAdminUser.getAllRoles()) {
+            List<AdminPermission> permissions = securityRetrivalService.findAllPermissionsForAdminUser(persistentAdminUser);
+            List<AdminRole> adminRoles = securityRetrivalService.findAllRolesForAdminUser(persistentAdminUser);
+            for (AdminRole role : adminRoles) {
                 response.getRoles().add(role.getName());
-                for (AdminPermission permission : role.getAllPermissions()) {
-                    response.getPermissions().add(permission.getName());
-                }
             }
-            for (AdminPermission permission : persistentAdminUser.getAllPermissions()) {
+            for (AdminPermission permission : permissions) {
                 response.getPermissions().add(permission.getName());
             }
             response.setUserName(persistentAdminUser.getLogin());

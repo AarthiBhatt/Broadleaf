@@ -17,10 +17,10 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service.user;
 
-import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityHelper;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityRetrivalService;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -46,6 +46,9 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
 
     @Resource(name="blAdminSecurityHelper")
     protected AdminSecurityHelper adminSecurityHelper;
+    
+    @Resource(name = "blAdminSecurityRetrivalService")
+    protected AdminSecurityRetrivalService securityRetrivalService;
 
     public static final String LEGACY_ROLE_PREFIX = "PERMISSION_";
     public static final String DEFAULT_SPRING_SECURITY_ROLE_PREFIX = "ROLE_";
@@ -58,11 +61,11 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
         }
 
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        for (AdminRole role : adminUser.getAllRoles()) {
+        for (AdminRole role : securityRetrivalService.findAllRolesForAdminUser(adminUser)) {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
-            adminSecurityHelper.addAllPermissionsToAuthorities(authorities, role.getAllPermissions());
+            adminSecurityHelper.addAllPermissionsToAuthorities(authorities, securityRetrivalService.findPermissionsForRole(role));
         }
-        adminSecurityHelper.addAllPermissionsToAuthorities(authorities, adminUser.getAllPermissions());
+        adminSecurityHelper.addAllPermissionsToAuthorities(authorities, securityRetrivalService.findPermissionsForAdminUser(adminUser));
         for (String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
             authorities.add(new SimpleGrantedAuthority(perm));
         }

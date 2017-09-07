@@ -17,32 +17,61 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
-import org.broadleafcommerce.openadmin.server.security.service.domain.AdminPermissionDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service("blAdminSecurityAggregator")
 public class AdminSecurityAggregatorImpl implements AdminSecurityAggregator {
 
+    private static final Log LOG = LogFactory.getLog(AdminSecurityAggregatorImpl.class);
+    
     protected List<AdminModule> adminModules;
     protected Map<String, AdminModule> adminModuleMap;
     protected List<AdminSection> adminSections;
     protected Map<String, List<AdminSection>> entitySectionMap;
-    protected Map<String, List<AdminPermissionDTO>> entityPermissionMap;
+    protected Map<String, List<AdminPermission>> entityPermissionMap;
+    protected Map<Long, List<AdminPermission>> rolePermissionMap;
+    protected List<AdminPermission> adminPermissions;
+    protected List<AdminPermission> friendlyPermissions;
+    protected List<AdminRole> adminRoles;
     
     public AdminSecurityAggregatorImpl(List<AdminSecurityContributor> contributors) {
+        // Build modules first since they're needed to build sections
         adminModuleMap = buildModuleMap(contributors);
         adminModules = new ArrayList<>(adminModuleMap.values());
+        
+        // Build sections
         adminSections = buildSectionList(contributors, adminModuleMap);
         entitySectionMap = buildEntitySectionMap();
+        
+        // Build entity permissions
         entityPermissionMap = buildPermissionEntities(contributors);
+        
+        // Modify sections now that all of the building is done
         modifySections(contributors, adminSections);
+        
+        // Build roles
+        adminRoles = buildAdminRoles(contributors);
+        
+        // Build role permssion map
+        rolePermissionMap = buildPermissionRoleMap(contributors);
+        
+        // Get permission list last because permissions will be added in the contributors
+        // throughout the building of the other parts
+        adminPermissions = buildPermissionList(contributors);
+        friendlyPermissions = buildFriendlyPermissionList(adminPermissions);
     }
     
     @Override
@@ -54,6 +83,16 @@ public class AdminSecurityAggregatorImpl implements AdminSecurityAggregator {
     public List<AdminSection> getAllAdminSections() {
         return adminSections;
     }
+    
+    @Override
+    public List<AdminPermission> getAllAdminPermissions() {
+        return adminPermissions;
+    }
+
+    @Override
+    public List<AdminPermission> getAllFriendlyPermissions() {
+        return friendlyPermissions;
+    }
 
     @Override
     public List<AdminSection> getAdminSectionsByClass(String className) {
@@ -61,8 +100,18 @@ public class AdminSecurityAggregatorImpl implements AdminSecurityAggregator {
     }
     
     @Override
-    public Map<String, List<AdminPermissionDTO>> getEntityPermissionMap() {
+    public Map<String, List<AdminPermission>> getEntityPermissionMap() {
         return entityPermissionMap;
+    }
+    
+    @Override
+    public List<AdminPermission> getPermissionsForRoleId(Long roleId) {
+        return rolePermissionMap.get(roleId);
+    }
+    
+    @Override
+    public List<AdminRole> getAllAdminRoles() {
+        return adminRoles;
     }
     
     protected Map<String, AdminModule> buildModuleMap(List<AdminSecurityContributor> contributors) {
@@ -95,13 +144,13 @@ public class AdminSecurityAggregatorImpl implements AdminSecurityAggregator {
         return entitySectionMap;
     }
     
-    protected Map<String, List<AdminPermissionDTO>> buildPermissionEntities(List<AdminSecurityContributor> contributors) {
-        Map<String, List<AdminPermissionDTO>> resultingMap = new HashMap<>();
+    protected Map<String, List<AdminPermission>> buildPermissionEntities(List<AdminSecurityContributor> contributors) {
+        Map<String, List<AdminPermission>> resultingMap = new HashMap<>();
         for (AdminSecurityContributor contributor : contributors) {
-            Map<String, List<AdminPermissionDTO>> contribMap = contributor.getEntityPermissionMap();
+            Map<String, List<AdminPermission>> contribMap = contributor.getEntityPermissionMap();
             for (String ceilingEntity : contribMap.keySet()) {
-                List<AdminPermissionDTO> dtos = contribMap.get(ceilingEntity);
-                List<AdminPermissionDTO> existingDtos = resultingMap.get(ceilingEntity);
+                List<AdminPermission> dtos = contribMap.get(ceilingEntity);
+                List<AdminPermission> existingDtos = resultingMap.get(ceilingEntity);
                 if (existingDtos == null) {
                     existingDtos = new ArrayList<>();
                 }
@@ -116,5 +165,55 @@ public class AdminSecurityAggregatorImpl implements AdminSecurityAggregator {
         for (AdminSecurityContributor contrib : contributors) {
             contrib.modifyAdminSections(sections);
         }
+    }
+    
+    protected Map<Long, List<AdminPermission>> buildPermissionRoleMap(List<AdminSecurityContributor> contributors) {
+        Map<Long, List<AdminPermission>> rolePermissionMap = new HashMap<>();
+        for (AdminSecurityContributor contributor : contributors) {
+            Map<Long, List<AdminPermission>> contribRoleMap = contributor.getRolePermissionMap();
+            for (Long roleId : contribRoleMap.keySet()) {
+                List<AdminPermission> matched = rolePermissionMap.get(roleId);
+                if (matched == null) {
+                    matched = new ArrayList<>();
+                }
+                matched.addAll(contribRoleMap.get(roleId));
+                rolePermissionMap.put(roleId, matched);
+            }
+        }
+        return rolePermissionMap;
+    }
+    
+    protected List<AdminPermission> buildPermissionList(List<AdminSecurityContributor> contributors) {
+        Set<AdminPermission> permissions = new HashSet<>();
+        for (AdminSecurityContributor contributor : contributors) {
+            permissions.addAll(contributor.getAllAdminPermissions());
+        }
+        return new ArrayList<>(permissions);
+    }
+    
+    protected List<AdminPermission> buildFriendlyPermissionList(List<AdminPermission> allPermissions) {
+        // We simply filter by which permissions are friendly. We assume that all of the permissions
+        // are in the list and will not dive deeper into the children permission for that reason
+        List<AdminPermission> friendlyPermissions = new ArrayList<>();
+        for (AdminPermission permission : allPermissions) {
+            if (permission.isFriendly()) {
+                friendlyPermissions.add(permission);
+            }
+        }
+        return friendlyPermissions;
+    }
+    
+    protected List<AdminRole> buildAdminRoles(List<AdminSecurityContributor> contributors) {
+        Map<Long, AdminRole> adminRoleMap = new HashMap<>();
+        for (AdminSecurityContributor contributor : contributors) {
+            List<AdminRole> contribRoles = contributor.getAllAdminRoles();
+            for (AdminRole role : contribRoles) {
+                if (adminRoleMap.get(role.getId()) != null) {
+                    LOG.warn("Found collision when merging all admin roles with role " + role.getId() + " with name " + role.getName());
+                }
+                adminRoleMap.put(role.getId(), role);
+            }
+        }
+        return new ArrayList<>(adminRoleMap.values());
     }
 }

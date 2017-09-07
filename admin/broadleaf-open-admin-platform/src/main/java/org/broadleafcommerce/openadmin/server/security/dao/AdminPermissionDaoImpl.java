@@ -24,7 +24,6 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImp
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityAggregator;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
-import org.broadleafcommerce.openadmin.server.security.service.domain.AdminPermissionDTO;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.security.core.GrantedAuthority;
@@ -204,13 +203,13 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
     }
     
     public List<String> getQualifiedPermissionsFromMemory(List<String> testClasses, PermissionType permissionType) {
-        Map<String, List<AdminPermissionDTO>> entityPermissionMap = securityAggregator.getEntityPermissionMap();
+        Map<String, List<AdminPermission>> entityPermissionMap = securityAggregator.getEntityPermissionMap();
         List<String> qualifiedPermissionNames = new ArrayList<>();
         for (String clazz : entityPermissionMap.keySet()) {
             if (testClasses.contains(clazz)) {
-                for (AdminPermissionDTO dto : entityPermissionMap.get(clazz)) {
-                    if (permissionType == null || dto.getType().equals(PermissionType.ALL) || dto.getType().equals(permissionType)) {
-                        qualifiedPermissionNames.add(dto.getName());
+                for (AdminPermission perm : entityPermissionMap.get(clazz)) {
+                    if (permissionType == null || perm.getType().equals(PermissionType.ALL) || perm.getType().equals(permissionType)) {
+                        qualifiedPermissionNames.add(perm.getName());
                     }
                 }
             }

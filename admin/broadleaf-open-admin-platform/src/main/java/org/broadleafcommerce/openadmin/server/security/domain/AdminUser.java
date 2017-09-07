@@ -20,7 +20,6 @@ package org.broadleafcommerce.openadmin.server.security.domain;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 
@@ -38,8 +37,6 @@ public interface AdminUser extends AdminSecurityContext {
     public void setPassword(String password);
     public String getEmail();
     public void setEmail(String email);
-    public Set<AdminRole> getAllRoles();
-    public void setAllRoles(Set<AdminRole> allRoles);
     public String getUnencodedPassword();
     public void setUnencodedPassword(String unencodedPassword);
 
@@ -92,8 +89,6 @@ public interface AdminUser extends AdminSecurityContext {
      */
     public void setOverrideSandBox(SandBox sandbox);
 
-    public Set<AdminPermission> getAllPermissions();
-    public void setAllPermissions(Set<AdminPermission> allPermissions);
     //public AdminUser clone();
 
     /**

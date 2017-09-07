@@ -18,8 +18,9 @@
 package org.broadleafcommerce.openadmin.server.security.service;
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
-import org.broadleafcommerce.openadmin.server.security.service.domain.AdminPermissionDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,14 @@ public interface AdminSecurityContributor {
     
     public List<AdminSection> getAdminSections(Map<String, AdminModule> moduleMap);
     
-    public Map<String, List<AdminPermissionDTO>> getEntityPermissionMap();
+    public Map<String, List<AdminPermission>> getEntityPermissionMap();
     
     public void modifyAdminSections(List<AdminSection> sections);
+    
+    public Map<Long, List<AdminPermission>> getRolePermissionMap();
+    
+    public List<AdminPermission> getAllAdminPermissions();
+    
+    public List<AdminRole> getAllAdminRoles();
+    
 }

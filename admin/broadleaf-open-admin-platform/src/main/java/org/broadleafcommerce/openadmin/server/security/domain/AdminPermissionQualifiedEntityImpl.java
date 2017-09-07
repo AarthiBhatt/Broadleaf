@@ -20,7 +20,6 @@ package org.broadleafcommerce.openadmin.server.security.domain;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.openadmin.server.security.service.domain.AdminPermissionDTO;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -38,7 +37,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 /**
  * Created by IntelliJ IDEA.
@@ -77,9 +75,6 @@ public class AdminPermissionQualifiedEntityImpl implements AdminPermissionQualif
     @JoinColumn(name = "ADMIN_PERMISSION_ID")
     protected AdminPermission adminPermission;
 
-    @Transient
-    protected AdminPermissionDTO adminPermissionDTO = null;
-    
     @Override
     public Long getId() {
         return id;
@@ -100,29 +95,11 @@ public class AdminPermissionQualifiedEntityImpl implements AdminPermissionQualif
         this.ceilingEntityFullyQualifiedName = ceilingEntityFullyQualifiedName;
     }
 
-    @Override
-    public AdminPermissionDTO getAdminPermission() {
-        updatePermissionDTO();
-        return adminPermissionDTO;
+    public AdminPermission getAdminPermission() {
+        return adminPermission;
     }
     
-    @Override
-    public void setPermissionDTO(AdminPermissionDTO adminPermissionDTO) {
-        this.adminPermissionDTO = adminPermissionDTO;
-    }
-    
-    protected void updatePermissionDTO() {
-        if (adminPermissionDTO == null && adminPermission != null) {
-            AdminPermissionDTO dto = new AdminPermissionDTO();
-            dto.setName(adminPermission.getName());
-            dto.setType(adminPermission.getType());
-            adminPermissionDTO = dto;
-        }
-    }
-
-    @Override
     public void setAdminPermission(AdminPermission adminPermission) {
-        updatePermissionDTO();
         this.adminPermission = adminPermission;
     }
 

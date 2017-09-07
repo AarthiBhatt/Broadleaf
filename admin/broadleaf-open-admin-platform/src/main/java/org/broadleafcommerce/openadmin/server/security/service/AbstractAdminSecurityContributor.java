@@ -19,9 +19,12 @@ package org.broadleafcommerce.openadmin.server.security.service;
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModuleImpl;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl;
-import org.broadleafcommerce.openadmin.server.security.service.domain.AdminPermissionDTO;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 
 import java.util.ArrayList;
@@ -33,7 +36,14 @@ public abstract class AbstractAdminSecurityContributor implements AdminSecurityC
 
     protected Map<String, AdminModule> moduleMap = new HashMap<>();
     protected List<AdminSection> sections = new ArrayList<>();
-    protected Map<String, List<AdminPermissionDTO>> qualifierMap = new HashMap<>();
+    protected Map<String, List<AdminPermission>> qualifierMap = new HashMap<>();
+    protected List<AdminRole> adminRoles = new ArrayList<>();
+    protected Map<Long, List<AdminPermission>> rolePermissionMap = new HashMap<>();
+    protected Map<Long, AdminPermission> adminPermissionMap = new HashMap<>();
+    
+    public AbstractAdminSecurityContributor() {
+        createPermissions();
+    }
     
     @Override
     public Map<String, AdminModule> getAllAdminModuleMap() {
@@ -49,51 +59,74 @@ public abstract class AbstractAdminSecurityContributor implements AdminSecurityC
     }
     
     @Override
-    public Map<String, List<AdminPermissionDTO>> getEntityPermissionMap() {
+    public Map<String, List<AdminPermission>> getEntityPermissionMap() {
         createAdminPermissionEntities();
         return qualifierMap;
     }
     
     @Override
+    public Map<Long, List<AdminPermission>> getRolePermissionMap() {
+        addPermissionsToRoles();
+        return rolePermissionMap;
+    }
+    
+    @Override
+    public List<AdminPermission> getAllAdminPermissions() {
+        return new ArrayList<>(adminPermissionMap.values());
+    }
+    
+    @Override
+    public List<AdminRole> getAllAdminRoles() {
+        createAdminRoles();
+        return adminRoles;
+    }
+    
+    @Override
     public void modifyAdminSections(List<AdminSection> sections) {
-        // Doing nothing by deafult and most contributors won't need to implement this
+        // Doing nothing by default and most contributors won't need to implement this
     }
     
     protected AdminSection createSection(String name, String sectionKey, String url, String ceilingEntity, 
-                                         String moduleKey, Integer order, List<AdminPermissionDTO> permissions) {
+                                         String moduleKey, Integer order, List<AdminPermission> permissions, Long id) {
         AdminModule module = moduleMap.get(moduleKey);
-        AdminSection section = new AdminSectionImpl();
+        AdminSectionImpl section = new AdminSectionImpl();
         section.setName(name);
         section.setSectionKey(sectionKey);
         section.setUrl(url);
         section.setCeilingEntity(ceilingEntity);
         section.setModule(module);
         section.setDisplayOrder(order);
-        section.setPermissionDTOs(permissions);
-        module.getSections().add(section);
+        section.setPermissions(permissions);
+        section.setId(id);
+        ((AdminModuleImpl) module).getSections().add(section);
         sections.add(section);
         return section;
     }
     
-    protected AdminModule createModule(String name, String moduleKey, String icon, Integer order) {
+    protected AdminModule createModule(String name, String moduleKey, String icon, Integer order, Long id) {
         AdminModule module = new AdminModuleImpl();
         module.setName(name);
         module.setModuleKey(moduleKey);
         module.setIcon(icon);
         module.setDisplayOrder(order);
+        module.setId(id);
         moduleMap.put(moduleKey, module);
         return module;
     }
     
-    protected AdminPermissionDTO createPermission(String name, PermissionType type) {
-        AdminPermissionDTO permission = new AdminPermissionDTO();
+    protected AdminPermission createPermission(String name, PermissionType type, Boolean isFriendly, Long id, String description) {
+        AdminPermission permission = new AdminPermissionImpl();
         permission.setName(name);
         permission.setType(type);
+        permission.setFriendly(isFriendly);
+        permission.setId(id);
+        permission.setDescription(description);
+        adminPermissionMap.put(id, permission);
         return permission;
     }
     
-    protected void createPermissionEntity(String ceilingEntity, AdminPermissionDTO permission) {
-        List<AdminPermissionDTO> matched = qualifierMap.get(ceilingEntity);
+    protected void createPermissionEntity(String ceilingEntity, AdminPermission permission) {
+        List<AdminPermission> matched = qualifierMap.get(ceilingEntity);
         if (matched == null) {
             matched = new ArrayList<>();
         }
@@ -101,15 +134,63 @@ public abstract class AbstractAdminSecurityContributor implements AdminSecurityC
         qualifierMap.put(ceilingEntity, matched);
     }
     
-    protected void createAdminPermissionEntitiesForPermission(AdminPermissionDTO permission, List<String> ceilingEntities) {
+    protected void createRole(Long id, String name, String description) {
+        AdminRoleImpl role = new AdminRoleImpl();
+        role.setId(id);
+        role.setName(name);
+        role.setDescription(description);
+        adminRoles.add(role);
+    }
+    
+    protected void addPermissionToRole(Long roleId, Long permissionId) {
+        List<AdminPermission> permissions = rolePermissionMap.get(roleId);
+        AdminPermission permission = adminPermissionMap.get(permissionId);
+        if (permission == null) {
+            throw new IllegalArgumentException("No permission exists with id " + permissionId + " when adding permission to role");
+        }
+        if (permissions == null) {
+            permissions = new ArrayList<>();
+        }
+        permissions.add(permission);
+        rolePermissionMap.put(roleId, permissions);
+    }
+    
+    protected void createAdminPermissionEntitiesForPermission(AdminPermission permission, List<String> ceilingEntities) {
         for (String ceilingEntity : ceilingEntities) {
             createPermissionEntity(ceilingEntity, permission);
         }
     }
     
+    protected AdminPermission findPermissionById(Long id) {
+        AdminPermission permission = adminPermissionMap.get(id);
+        if (permission == null) {
+            throw new IllegalArgumentException("No permission exists with id " + id + " when retrieving permission");
+        }
+        return permission;
+    }
+    
+    protected void addChildPermissionToPermission(Long parentId, Long... childIds) {
+        AdminPermission parent = findPermissionById(parentId);
+        if (parent == null) {
+            throw new IllegalArgumentException("No permission found with id " + parentId + " when trying to add child ids to it");
+        }
+        List<AdminPermission> children = new ArrayList<>();
+        for (Long id : childIds) {
+            AdminPermission child = findPermissionById(id);
+            if (child == null) {
+                throw new IllegalArgumentException("No child permission with id " + id + " found when trying to add it as a child permission to parent with id " + parentId);
+            }
+            children.add(child);
+        }
+        parent.setChildPermissions(children);
+    }
+    
+    protected abstract void createPermissions();
     protected abstract void createAdminModules();
     protected abstract void createAdminSections();
     protected abstract void createAdminPermissionEntities();
+    protected abstract void createAdminRoles();
+    protected abstract void addPermissionsToRoles();
     
     protected static class ModuleKeys {
         public static final String CATALOG = "BLCMerchandising";

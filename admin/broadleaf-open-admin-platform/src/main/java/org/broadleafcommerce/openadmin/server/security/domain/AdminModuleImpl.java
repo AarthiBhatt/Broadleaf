@@ -128,12 +128,10 @@ public class AdminModuleImpl implements AdminModule {
         this.icon = icon;
     }
 
-    @Override
     public List<AdminSection> getSections() {
         return sections;
     }
 
-    @Override
     public void setSections(List<AdminSection> sections) {
         this.sections = sections;
     }

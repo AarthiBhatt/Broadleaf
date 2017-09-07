@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityAggregator;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityRetrivalService;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -55,17 +56,20 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     @Resource(name = "blAdminSecurityAggregator")
     protected AdminSecurityAggregator securityAggregator;
     
+    @Resource(name = "blAdminSecurityRetrivalService")
+    protected AdminSecurityRetrivalService securityRetrivalService;
+    
     @Override
     public AdminSection save(AdminSection adminSection) {
         adminSection = em.merge(adminSection);
-        AdminModule module = adminSection.getModule();
+        AdminModule module = securityRetrivalService.findAdminModuleForSection(adminSection);
         em.refresh(module);
         return adminSection;
     }
 
     @Override
     public void remove(AdminSection adminSection) {
-        AdminModule module = adminSection.getModule();
+        AdminModule module = securityRetrivalService.findAdminModuleForSection(adminSection);
         em.remove(adminSection);
         em.refresh(module);
     }

@@ -18,7 +18,6 @@
 package org.broadleafcommerce.openadmin.server.security.domain;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  *
@@ -28,6 +27,8 @@ import java.util.List;
 public interface AdminModule extends Serializable {
 
     public Long getId();
+    
+    public void setId(Long id);
 
     public String getName();
 
@@ -40,10 +41,6 @@ public interface AdminModule extends Serializable {
     public String getIcon();
 
     public void setIcon(String icon);
-
-    public List<AdminSection> getSections();
-
-    public void setSections(List<AdminSection> sections);
 
     public Integer getDisplayOrder();
 

@@ -40,6 +40,7 @@ import org.broadleafcommerce.openadmin.server.domain.FetchPageRequest;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityRetrivalService;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.AdminSectionCustomCriteriaService;
@@ -114,6 +115,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
     @Resource(name="blClassNameRequestParamValidationService")
     protected ClassNameRequestParamValidationService validationService;
+    
+    @Resource(name = "blAdminSecurityRetrivalService")
+    protected AdminSecurityRetrivalService securityRetrivalService;
 
     // *********************************************************
     // UNBOUND CONTROLLER METHODS (USED BY DIFFERENT SECTIONS) *
@@ -705,7 +709,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
         if (section != null) {
             model.addAttribute("sectionKey", sectionKey);
-            model.addAttribute(CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME, section.getModule());
+            model.addAttribute(CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME, securityRetrivalService.findAdminModuleForSection(section));
             model.addAttribute(CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME, section);
         }
         

@@ -268,12 +268,10 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
         this.activeStatusFlag = activeStatusFlag;
     }
 
-    @Override
     public Set<AdminRole> getAllRoles() {
         return allRoles;
     }
 
-    @Override
     public void setAllRoles(Set<AdminRole> allRoles) {
         this.allRoles = allRoles;
     }
@@ -288,32 +286,26 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
         this.overrideSandBox = overrideSandBox;
     }
 
-    @Override
     public Set<AdminPermission> getAllPermissions() {
         return allPermissions;
     }
 
-    @Override
     public void setAllPermissions(Set<AdminPermission> allPermissions) {
         this.allPermissions = allPermissions;
     }
 
-    @Override
     public ContextType getContextType() {
         return ContextType.GLOBAL;
     }
 
-    @Override
     public void setContextType(ContextType contextType) {
         //do nothing
     }
 
-    @Override
     public String getContextKey() {
         return null;
     }
 
-    @Override
     public void setContextKey(String contextKey) {
         //do nothing
     }

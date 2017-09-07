@@ -24,6 +24,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
 import org.broadleafcommerce.openadmin.server.security.external.AdminExternalLoginUserExtensionManager;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityHelper;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityRetrivalService;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -57,6 +58,9 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
     protected AdminSecurityHelper adminSecurityHelper;
 
     protected Map<String, String[]> roleNameSubstitutions;
+    
+    @Resource(name = "blAdminSecurityRetrivalService")
+    protected AdminSecurityRetrivalService securityRetrivalService;
 
     @Override
     public AdminUserDetails provisionAdminUser(BroadleafExternalAuthenticationUserDetails details) {
@@ -90,7 +94,7 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
             for (AdminRole role : adminRoles) {
                 if (newRoles.contains(role.getName())) {
                     grantedRoles.add(role);
-                    adminSecurityHelper.addAllPermissionsToAuthorities(new ArrayList<>(newAuthorities), role.getAllPermissions());
+                    adminSecurityHelper.addAllPermissionsToAuthorities(new ArrayList<>(newAuthorities), securityRetrivalService.findPermissionsForRole(role));
                 }
             }
         }
@@ -120,24 +124,16 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
             adminUser.setName(details.getUsername());
         }
 
-        //We have to do this because BLC replies on the role relationships being stored in the DB
-        Set<AdminRole> roleSet = adminUser.getAllRoles();
-        //First, remove all roles associated with the user if they already existed
-        if (roleSet != null) {
-            //First, remove all role relationships in case they have changed
-            roleSet.clear();
-        } else {
-            roleSet = new HashSet<AdminRole>();
-            adminUser.setAllRoles(roleSet);
-        }
-
+        // Remove all existing roles
+        securityRetrivalService.clearRolesForAdminUser(adminUser);
+        Set<AdminRole> roleSet = new HashSet<>();
         //Now, add all of the role relationships back.
         if (grantedRoles != null) {
             for (AdminRole role : grantedRoles) {
                 roleSet.add(role);
             }
         }
-
+        securityRetrivalService.addRolesToAdminUser(adminUser, roleSet);
         //Add optional support for things like Multi-Tenant, etc...
         adminExternalLoginExtensionManager.getProxy().performAdditionalAuthenticationTasks(adminUser, details);
 

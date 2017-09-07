@@ -179,12 +179,10 @@ public class AdminPermissionImpl implements AdminPermission {
         this.description = description;
     }
 
-    @Override
     public Set<AdminRole> getAllRoles() {
         return allRoles;
     }
 
-    @Override
     public void setAllRoles(Set<AdminRole> allRoles) {
         this.allRoles = allRoles;
     }
@@ -201,22 +199,18 @@ public class AdminPermissionImpl implements AdminPermission {
         }
     }
 
-    @Override
     public List<AdminPermissionQualifiedEntity> getQualifiedEntities() {
         return qualifiedEntities;
     }
 
-    @Override
     public void setQualifiedEntities(List<AdminPermissionQualifiedEntity> qualifiedEntities) {
         this.qualifiedEntities = qualifiedEntities;
     }
 
-    @Override
     public Set<AdminUser> getAllUsers() {
         return allUsers;
     }
 
-    @Override
     public void setAllUsers(Set<AdminUser> allUsers) {
         this.allUsers = allUsers;
     }
@@ -249,9 +243,9 @@ public class AdminPermissionImpl implements AdminPermission {
 
             if (qualifiedEntities != null) {
                 for (AdminPermissionQualifiedEntity qualifiedEntity : qualifiedEntities) {
-                    AdminPermissionQualifiedEntity qualifiedEntityClone = qualifiedEntity.clone();
+                    AdminPermissionQualifiedEntityImpl qualifiedEntityClone = (AdminPermissionQualifiedEntityImpl) qualifiedEntity.clone();
                     qualifiedEntityClone.setAdminPermission(clone);
-                    clone.getQualifiedEntities().add(qualifiedEntityClone);
+                    ((AdminPermissionImpl) clone).getQualifiedEntities().add(qualifiedEntityClone);
                 }
             }
         } catch (Exception e) {

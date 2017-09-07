@@ -18,8 +18,9 @@
 package org.broadleafcommerce.openadmin.server.security.service;
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
-import org.broadleafcommerce.openadmin.server.security.service.domain.AdminPermissionDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -30,8 +31,17 @@ public interface AdminSecurityAggregator {
     
     public List<AdminSection> getAllAdminSections();
     
+    public List<AdminPermission> getAllAdminPermissions();
+    
+    public List<AdminPermission> getAllFriendlyPermissions();
+    
+    public List<AdminRole> getAllAdminRoles();
+    
     public List<AdminSection> getAdminSectionsByClass(String className);
     
-    public Map<String, List<AdminPermissionDTO>> getEntityPermissionMap();
+    public Map<String, List<AdminPermission>> getEntityPermissionMap();
+    
+    public List<AdminPermission> getPermissionsForRoleId(Long roleId);
+    
     
 }

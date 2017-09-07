@@ -28,10 +28,10 @@ import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityRetrivalService;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +42,10 @@ import org.springframework.web.context.request.ServletWebRequest;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -75,6 +77,9 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
     @Autowired
     @Qualifier("blGenericEntityService")
     GenericEntityService genericEntityService;
+    
+    @Resource(name = "blAdminSecurityRetrivalService")
+    protected AdminSecurityRetrivalService securityRetrivalService;
 
     @Override
     public void doFilterInternalUnlessIgnored(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
@@ -204,18 +209,11 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
     protected boolean adminUserHasAccess(AdminSection typedEntitySection) {
         AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
-        // Check permissions assigned directly to the user.
-        for (AdminPermission permission : adminUser.getAllPermissions()) {
-            if (typedEntitySection.getPermissions().contains(permission)) {
+        // Check all user permissions to see if they match
+        List<AdminPermission> qualifiedPermissions = securityRetrivalService.findPermissionsForSection(typedEntitySection);
+        for (AdminPermission permission : securityRetrivalService.findAllPermissionsForAdminUser(adminUser)) {
+            if (qualifiedPermissions.contains(permission)) {
                 return true;
-            }
-        }
-        // Check all role base permissions.
-        for (AdminRole role : adminUser.getAllRoles()) {
-            for (AdminPermission permission : role.getAllPermissions()) {
-                if (typedEntitySection.getPermissions().contains(permission)) {
-                    return true;
-                }
             }
         }
         return false;

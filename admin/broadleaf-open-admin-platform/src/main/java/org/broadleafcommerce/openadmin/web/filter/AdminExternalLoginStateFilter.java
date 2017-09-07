@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.security.BroadleafExternalAuthenticationUserDetails;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityRetrivalService;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -65,6 +66,9 @@ public class AdminExternalLoginStateFilter extends GenericFilterBean {
     
     @Resource(name="blEntityConfiguration")
     private EntityConfiguration entityConfiguration;
+    
+    @Resource(name = "blAdminSecurityRetrivalService")
+    protected AdminSecurityRetrivalService securityRetrivalService;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -119,15 +123,8 @@ public class AdminExternalLoginStateFilter extends GenericFilterBean {
         user.setName(name.toString());
         user.setEmail(broadleafUser.getEmail());
 
-        Set<AdminRole> roleSet = user.getAllRoles();
-        //First, remove all roles associated with the user if they already existed
-        if (roleSet != null){
-            roleSet.clear();
-        } else {
-            roleSet = new HashSet<AdminRole>();
-            user.setAllRoles(roleSet);
-        }
-        
+        securityRetrivalService.clearRolesForAdminUser(user);
+        Set<AdminRole> roleSet = new HashSet<>();
         //Now add the appropriate roles back in
         List<AdminRole> availableRoles = adminSecurityService.readAllAdminRoles();
         if (availableRoles != null) {
@@ -142,6 +139,7 @@ public class AdminExternalLoginStateFilter extends GenericFilterBean {
                 }
             }
         }
+        securityRetrivalService.addRolesToAdminUser(user, roleSet);
         //Save the user data and all of the roles...
         adminSecurityService.saveAdminUser(user);
     }

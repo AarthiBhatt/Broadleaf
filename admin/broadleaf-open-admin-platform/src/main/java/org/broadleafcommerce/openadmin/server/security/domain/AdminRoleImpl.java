@@ -115,7 +115,6 @@ public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, Adm
     protected Set<AdminPermission> allPermissions= new HashSet<AdminPermission>();
 
 
-    @Override
     public Set<AdminPermission> getAllPermissions() {
         return allPermissions;
     }
@@ -185,7 +184,7 @@ public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, Adm
             if (allPermissions != null) {
                 for (AdminPermission permission : allPermissions) {
                     AdminPermission permissionClone = permission.clone();
-                    clone.getAllPermissions().add(permissionClone);
+                    ((AdminRoleImpl) clone).getAllPermissions().add(permissionClone);
                 }
             }
         } catch (Exception e) {
