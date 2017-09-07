@@ -141,26 +141,4 @@ public class AdminSecurityRetrivalServiceImpl implements AdminSecurityRetrivalSe
         adminUser.setAllRoles(roles);
     }
     
-//    @Override
-//    public List<AdminPermission> findQualifiedPermissions(List<String> testClasses, PermissionType permissionType) {
-////        Map<String, List<AdminPermissionDTO>> entityPermissionMap = securityAggregator.getEntityPermissionMap();
-////        List<String> qualifiedPermissionNames = new ArrayList<>();
-////        for (String clazz : entityPermissionMap.keySet()) {
-////            if (testClasses.contains(clazz)) {
-////                for (AdminPermissionDTO dto : entityPermissionMap.get(clazz)) {
-////                    if (permissionType == null || dto.getType().equals(PermissionType.ALL) || dto.getType().equals(permissionType)) {
-////                        qualifiedPermissionNames.add(dto.getName());
-////                    }
-////                }
-////            }
-////        }
-////        return qualifiedPermissionNames;
-//        return null;
-//    }
-//    
-//    @Override
-//    public List<AdminModule> findAllAdminModules() {
-//        return null;
-//    }
-
 }

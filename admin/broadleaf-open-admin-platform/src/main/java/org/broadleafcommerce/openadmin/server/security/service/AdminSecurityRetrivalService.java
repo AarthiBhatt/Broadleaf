@@ -69,7 +69,4 @@ public interface AdminSecurityRetrivalService {
     
     public void addRolesToAdminUser(AdminUser adminUser, Set<AdminRole> roles);
     
-//    public List<AdminPermission> findQualifiedPermissions(List<String> testClasses, PermissionType type);
-//    
-//    public List<AdminModule> findAllAdminModules();
 }
