@@ -579,14 +579,23 @@ public class DataDTOToMVELTranslator {
                                 response.append(")");
                             }
                         } else {
+                            Object valueIndex = value[j];
+                            if (valueIndex instanceof String) {
+                                
+                                String stringValueIndex = (String) valueIndex;
+                                
+                                if (stringValueIndex.startsWith("\"") && stringValueIndex.endsWith("\"")) {
+                                    valueIndex = stringValueIndex.substring(1, stringValueIndex.length() - 1);
+                                }
+                            }
                             try {
-                                Integer.parseInt(value[j].toString());
+                                Integer.parseInt(valueIndex.toString());
                             } catch (Exception e) {
                                 throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_INTEGER_VALUE, "Cannot format value for the field (" +
                                         fieldName + ") based on field type. The type of field is Integer, " +
-                                        "and you entered: (" + value[j] +")");
+                                        "and you entered: (" + valueIndex +")");
                             }
-                            response.append(value[j]);
+                            response.append(valueIndex);
                         }
                         break;
                     case INTEGER:
