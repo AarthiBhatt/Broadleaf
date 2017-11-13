@@ -183,7 +183,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             tos.close();
 
             // Adding protection against this file already existing / being written by another thread.
-            // Adding locks would be useless here since another VM could be executing the code. 
+            // Adding locks would be useless here since another VM could be executing the code.
             if (!baseLocalFile.exists()) {
                 try {
                     FileUtils.moveFile(tmpFile, baseLocalFile);
@@ -239,18 +239,26 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         if (convertedParameters.isEmpty()) {
             return buildModel(baseLocalFile.getAbsolutePath(), mimeType);
         } else {
-            FileInputStream assetStream = new FileInputStream(baseLocalFile);
-            BufferedInputStream original = new BufferedInputStream(assetStream);
-            original.mark(0);                                    
-            
-            Operation[] operations = artifactService.buildOperations(convertedParameters, original, staticAsset.getMimeType());
-            InputStream converted = artifactService.convert(original, operations, staticAsset.getMimeType());
-            
-            createLocalFileFromInputStream(converted, cacheFile);
-            if ("image/gif".equals(mimeType)) {
-                mimeType = "image/png";
+            synchronized (this) {
+                FileInputStream assetStream = new FileInputStream(baseLocalFile);
+                java.nio.channels.FileLock lock = assetStream.getChannel().lock();
+                try {
+                    BufferedInputStream original = new BufferedInputStream(assetStream);
+                    original.mark(0);
+
+                    Operation[] operations = artifactService.buildOperations(convertedParameters, original, staticAsset.getMimeType());
+
+                    InputStream converted = artifactService.convert(original, operations, staticAsset.getMimeType());
+
+                    createLocalFileFromInputStream(converted, cacheFile);
+                    if ("image/gif".equals(mimeType)) {
+                        mimeType = "image/png";
+                    }
+                    return buildModel(cacheFile.getAbsolutePath(), mimeType);
+                } finally {
+                    lock.release();
+                }
             }
-            return buildModel(cacheFile.getAbsolutePath(), mimeType);
         }
     }
 
