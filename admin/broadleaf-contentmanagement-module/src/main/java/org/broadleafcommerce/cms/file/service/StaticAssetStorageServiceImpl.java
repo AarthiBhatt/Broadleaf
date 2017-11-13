@@ -59,6 +59,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
@@ -98,6 +99,8 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
     @Resource(name="blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
+
+    protected final ConcurrentHashMap<String, Object> lockLibrary = new ConcurrentHashMap<String, Object>();
 
     protected StaticAsset findStaticAsset(String fullUrl) {
         StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl);
@@ -239,9 +242,10 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         if (convertedParameters.isEmpty()) {
             return buildModel(baseLocalFile.getAbsolutePath(), mimeType);
         } else {
-            synchronized (this) {
+            //Only synchronize on the same file (i.e. don't block other files)
+            synchronized (getFileSpecificThreadInterlock(baseLocalFile)) {
                 FileInputStream assetStream = new FileInputStream(baseLocalFile);
-                java.nio.channels.FileLock lock = assetStream.getChannel().lock();
+                java.nio.channels.FileLock fileLock = assetStream.getChannel().lock();
                 try {
                     BufferedInputStream original = new BufferedInputStream(assetStream);
                     original.mark(0);
@@ -256,10 +260,19 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
                     }
                     return buildModel(cacheFile.getAbsolutePath(), mimeType);
                 } finally {
-                    lock.release();
+                    fileLock.release();
                 }
             }
         }
+    }
+
+    protected Object getFileSpecificThreadInterlock(File baseLocalFile) {
+        Object temp = new Object();
+        Object lock = lockLibrary.putIfAbsent(baseLocalFile.getAbsolutePath(), temp);
+        if (lock == null) {
+            lock = temp;
+        }
+        return lock;
     }
 
     protected Map<String, String> buildModel(String returnFilePath, String mimeType) {
