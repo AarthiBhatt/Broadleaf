@@ -73,14 +73,6 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
         // Use the DefaultSavedRequest URL
         String targetUrl = savedRequest.getRedirectUrl();
 
-        try {
-            UrlUtil.validateUrl(targetUrl, request);
-        } catch (IOException e) {
-            logger.error("SECURITY FAILURE Bad redirect location: " + StringUtil.sanitize(targetUrl), e);
-            response.sendError(403);
-            return;
-        }
-
         // Remove the sessionTimeout flag if necessary
         targetUrl = targetUrl.replace("sessionTimeout=true", "");
         if (targetUrl.charAt(targetUrl.length() - 1) == '?') {
@@ -95,6 +87,14 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
             } else {
                 targetUrl = targetUrl.substring(successUrlPosition, nextParamPosition);
             }
+        }
+
+        try {
+            UrlUtil.validateUrl(targetUrl, request);
+        } catch (IOException e) {
+            logger.error("SECURITY FAILURE Bad redirect location: " + StringUtil.sanitize(targetUrl), e);
+            response.sendError(403);
+            return;
         }
 
         // Remove the login URI so we don't continuously redirect to the login page

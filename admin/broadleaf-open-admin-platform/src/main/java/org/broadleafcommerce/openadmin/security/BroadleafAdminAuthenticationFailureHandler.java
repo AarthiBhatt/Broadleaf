@@ -20,6 +20,7 @@ package org.broadleafcommerce.openadmin.security;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.util.StringUtil;
+import org.broadleafcommerce.common.util.UrlUtil;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
@@ -61,7 +62,23 @@ public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthent
             //Grab url the user, was redirected from
             successUrlParam = request.getHeader("referer");
         }
-        
+        if (failureUrl != null) {
+            // Verify that the url passed in is a servlet path and not a link redirecting away from the webapp.
+            try {
+                UrlUtil.validateUrl(failureUrl, request);
+            } catch (IOException e) {
+                logger.error("SECURITY FAILURE Bad redirect location: " + StringUtil.sanitize(failureUrl), e);
+                failureUrl = null;
+            }
+        }
+        if (!StringUtils.isEmpty(successUrlParam)) {
+            try {
+                UrlUtil.validateUrl(successUrlParam, request);
+            } catch (IOException e) {
+                logger.error("SECURITY FAILURE Bad redirect location: " + StringUtil.sanitize(successUrlParam), e);
+                successUrlParam = null;
+            }
+        }
         if (failureUrl != null) {
             if (!StringUtils.isEmpty(successUrlParam)) {
             	//Preserve the original successUrl from the referer.  If there is one, it must be the last url segment
