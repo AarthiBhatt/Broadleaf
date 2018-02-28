@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.exception;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -77,7 +78,8 @@ public class BroadleafSimpleMappingExceptionResolver extends SimpleMappingExcept
         if (exceptionHandlerEnabled) {
             String uuid = UUID.randomUUID().toString();
             if (LOG.isErrorEnabled()) {
-                LOG.error(String.format("Error caught and handled.:%s", uuid), ex);
+                LOG.warn("Error caught and handled:" + uuid);
+                LOG.error(ExceptionUtils.getStackTrace(ex));
             }
             request.setAttribute("exceptionUUID", uuid);
             return doResolveException(request, response, handler, ex);
