@@ -32,7 +32,7 @@
     var topRowVisiblePart = 0.55; // part of top row visibility to consider full row as visible
     var bottomRowVisiblePart = 0.6; // part of bottom row visibility to consider full row as visible
 
-    var MIN_WIDTH = 60;
+    var MIN_WIDTH = 65;
     var CONTROL_WIDTH = 45;
 
     var tableResizing = {
@@ -63,11 +63,11 @@
         releaseLock : function() {
             LISTGRID_AJAX_LOCK = 0;
         },
-                
+
         // ****************************** *
         // RECORD RANGE RELATED FUNCTIONS *
         // ****************************** *
-        
+
         getPageSize : function($tbody) {
             return $tbody.data('pagesize');
         },
@@ -303,7 +303,7 @@
                     $nextHeaderText.outerWidth(nextNewWidth - CONTROL_WIDTH);
                 }
             });
-            
+
             $(document).mouseup(function() {
                 if (tableResizing.active) {
                     tableResizing.active = false;
@@ -311,11 +311,12 @@
                 }
             });
 
-            BLCAdmin.listGrid.paginate.initializeHeaderWidths($headerTable);
+            BLCAdmin.listGrid.paginate.initializeHeaderWidths($headerTable, $bodyTable);
         },
 
-        initializeHeaderWidths : function($headerTable) {
+        initializeHeaderWidths : function($headerTable, $bodyTable) {
             var $columnHeaders = $headerTable.find('thead tr th');
+
             $columnHeaders.each(function(index, header) {
                 var currentHeader = $($columnHeaders[index])[0];
                 var $currentHeaderText = $(currentHeader).find('.listgrid-title span');
@@ -323,8 +324,8 @@
                 var nextHeader = $($columnHeaders[index+1])[0];
                 var $nextHeaderText = $(nextHeader).find('.listgrid-title span');
 
-                var newCurrentHeaderWidth = ($(currentHeader).outerWidth() - CONTROL_WIDTH);
-                var newNextHeaderWidth = ($(nextHeader).outerWidth() - CONTROL_WIDTH);
+                var newCurrentHeaderWidth = $(currentHeader).outerWidth() - CONTROL_WIDTH;
+                var newNextHeaderWidth = $(nextHeader).outerWidth() - CONTROL_WIDTH;
 
                 newCurrentHeaderWidth = newCurrentHeaderWidth > MIN_WIDTH ? newCurrentHeaderWidth : MIN_WIDTH;
                 newNextHeaderWidth = newNextHeaderWidth > MIN_WIDTH ? newNextHeaderWidth : MIN_WIDTH;
@@ -332,6 +333,8 @@
                 $currentHeaderText.outerWidth(newCurrentHeaderWidth);
                 $nextHeaderText.outerWidth(newNextHeaderWidth);
             });
+            // set the column-text to align with its header
+            BLCAdmin.listGrid.paginate.updateGridSize($bodyTable);
         },
         
         // ********************** *

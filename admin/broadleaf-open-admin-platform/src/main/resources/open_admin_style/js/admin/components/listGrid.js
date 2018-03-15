@@ -102,7 +102,7 @@
                 }
             }
 
-            BLCAdmin.listGrid.paginate.initializeHeaderWidths($listGridContainer.find('table.list-grid-table'));
+            BLCAdmin.listGrid.paginate.initializeHeaderWidths($listGridContainer.find('table.list-grid-table'), $tbody);
 
             $listGridContainer.trigger('blc-listgrid-replaced', $listGridContainer);
         },
