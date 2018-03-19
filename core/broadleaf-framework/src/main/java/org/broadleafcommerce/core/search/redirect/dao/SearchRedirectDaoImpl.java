@@ -63,6 +63,9 @@ public class SearchRedirectDaoImpl implements SearchRedirectDao {
 
     @Override
     public SearchRedirect findSearchRedirectBySearchTerm(String searchTerm) {
+        if (searchTerm == null) {
+            return null;
+        }
         Query query = em.createQuery(buildFindSearchRedirectBySearchTermCriteria(searchTerm));
         query.setMaxResults(1);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
