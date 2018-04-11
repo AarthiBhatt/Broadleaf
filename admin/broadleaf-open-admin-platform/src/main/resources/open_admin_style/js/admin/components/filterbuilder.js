@@ -911,9 +911,12 @@
 
         getListGridFiltersAsURLParams: function($listGridContainer) {
             var $filterButton = $listGridContainer.find('.filter-button');
-            var hiddenId = $filterButton.data('hiddenid');
 
-            return BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
+            if ($filterButton.length > 0) {
+                var hiddenId = $filterButton.data('hiddenid');
+
+                return BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
+            }
         },
 
         getFiltersAsURLParams: function(hiddenId) {
