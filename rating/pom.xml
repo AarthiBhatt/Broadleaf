@@ -3,13 +3,12 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>6.0.0-SNAPSHOT</version>
+        <version>6.0.0-MS-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.broadleafcommerce</groupId>
     <artifactId>broadleaf-rating</artifactId>
-    <version>6.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>BroadleafCommerce Rating</name>
     <description>BroadleafCommerce Rating Module</description>
