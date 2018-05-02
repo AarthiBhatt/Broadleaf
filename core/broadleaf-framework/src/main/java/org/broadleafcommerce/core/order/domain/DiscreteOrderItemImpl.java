@@ -262,7 +262,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
         DynamicSkuPrices priceData = getSku().getPriceData();
         if (priceData != null) {
-            skuSalePrice = priceData.getPriceForQuantity(quantity);
+            skuSalePrice = priceData.getSalePriceForDiscreteOrderItem(this);
         }
         if (skuSalePrice == null) {
             skuSalePrice = getSku().getSalePrice();
@@ -306,7 +306,15 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         if (isRetailPriceOverride()) {
             return false;
         }
-        Money skuRetailPrice = getSku().getRetailPrice();
+        Money skuRetailPrice = null;
+
+        DynamicSkuPrices priceData = getSku().getPriceData();
+        if (priceData != null) {
+            skuRetailPrice = priceData.getRetailPriceForDiscreteOrderItem(this);
+        }
+        if (skuRetailPrice == null) {
+            skuRetailPrice = getSku().getRetailPrice();
+        }
 
         // Override retail/sale prices from skuBundle.
         if (skuBundleItem != null) {

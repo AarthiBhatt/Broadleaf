@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.catalog.service.dynamic;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 
 import java.io.Serializable;
 
@@ -68,6 +69,28 @@ public class DynamicSkuPrices implements Serializable {
      * @return
      */
     public Money getPriceForQuantity(long quantity) {
+        return getPrice();
+    }
+
+    /**
+     * The out of box implementation returns {@link #getRetailPrice()}.   Intended as a hook for
+     * advanced pricing considerations like those in BLC Enterprise pricing.
+     *
+     * @param discreteOrderItem
+     * @return
+     */
+    public Money getRetailPriceForDiscreteOrderItem(DiscreteOrderItem discreteOrderItem) {
+        return getRetailPrice();
+    }
+
+    /**
+     * The out of box implementation returns {@link #getPrice()}.   Intended as a hook for
+     * advanced pricing considerations like those in BLC Enterprise pricing.
+     *
+     * @param discreteOrderItem
+     * @return
+     */
+    public Money getSalePriceForDiscreteOrderItem(DiscreteOrderItem discreteOrderItem) {
         return getPrice();
     }
 
