@@ -166,6 +166,10 @@ public class OrderItemRequestDTO {
 
         return childOrderItems;
     }
+
+    public List<OrderItemRequestDTO> getUnsortedChildOrderItems() {
+        return childOrderItems;
+    }
     
     public void setChildOrderItems(List<OrderItemRequestDTO> childOrderItems) {
         this.childOrderItems = childOrderItems;
