@@ -1218,9 +1218,7 @@
             <dependency>
                 <groupId>org.springframework.social</groupId>
                 <artifactId>spring-social-web</artifactId>
-                <version>1.0.2.RELEASE</version>
-                <type>jar</type>
-                <scope>compile</scope>
+                <version>1.1.6.RELEASE</version>
             </dependency>
 
             <!-- Spring Security -->
