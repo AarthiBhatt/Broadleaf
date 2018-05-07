@@ -153,6 +153,10 @@ public class OrderItemRequestDTO {
     }
 
     public List<OrderItemRequestDTO> getChildOrderItems() {
+        return childOrderItems;
+    }
+
+    public List<OrderItemRequestDTO> getSortedChildOrderItems() {
         Collections.sort(childOrderItems, new Comparator<OrderItemRequestDTO>() {
             @Override
             public int compare(OrderItemRequestDTO o1, OrderItemRequestDTO o2) {
@@ -164,10 +168,6 @@ public class OrderItemRequestDTO {
             }
         });
 
-        return childOrderItems;
-    }
-
-    public List<OrderItemRequestDTO> getUnsortedChildOrderItems() {
         return childOrderItems;
     }
     
