@@ -319,7 +319,10 @@
                 var tmp = [];
                 for (var i = 0; i < this._tabs.length; i++) {
                     var tabName = this._tabs[i];
-                    if (tabName.indexOf('modal|') === -1) {
+                    // in certain situations, tabName was undefined creating a javascript error
+                    // which caused the page to stall and go on perma-load
+                    // Noticed when selecting a widget from listgrid for a content item
+                    if (tabName !== undefined && tabName.indexOf('modal|') === -1) {
                         tmp.push(tabName);
                     }
                 }
