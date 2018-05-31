@@ -229,10 +229,12 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
      */
     protected boolean getShouldUseShippingAddressDefaultValue(CustomerPayment customerPaymentUsedForOrder, PaymentInfoForm paymentInfoForm,
             ShippingInfoForm shippingInfoForm) {
-        boolean orderIsNotUsingCustomerPayment = (customerPaymentUsedForOrder == null);
+        boolean orderIsUsingCustomerPayment = (customerPaymentUsedForOrder != null);
         boolean shippingAddressEqualToBillingAddress = addressesContentsAreEqual(paymentInfoForm.getAddress(), shippingInfoForm.getAddress());
-
-        return orderIsNotUsingCustomerPayment && shippingAddressEqualToBillingAddress;
+        if (orderIsUsingCustomerPayment ||shippingAddressEqualToBillingAddress ){
+            return false;
+        }
+        return true;
     }
 
     @Override

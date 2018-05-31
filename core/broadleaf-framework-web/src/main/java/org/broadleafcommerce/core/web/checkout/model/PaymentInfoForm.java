@@ -31,7 +31,7 @@ import java.io.Serializable;
 public class PaymentInfoForm implements Serializable {
 
     protected Address address = new AddressImpl();
-    protected boolean shouldUseShippingAddress = false;
+    protected boolean shouldUseShippingAddress = true;
     protected Long customerPaymentId;
     protected boolean shouldSaveNewPayment = true;
     protected boolean shouldUseCustomerPayment = false;
