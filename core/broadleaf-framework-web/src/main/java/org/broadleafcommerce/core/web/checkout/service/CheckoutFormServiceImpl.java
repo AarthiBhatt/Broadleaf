@@ -23,6 +23,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
+import org.broadleafcommerce.core.order.service.FulfillmentOptionService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
@@ -56,6 +57,9 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
 
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
+
+    @Resource(name = "blFulfillmentOptionService")
+    protected FulfillmentOptionService fulfillmentOptionService;
 
     @Resource(name = "blCustomerAddressService")
     protected CustomerAddressService customerAddressService;
@@ -102,7 +106,14 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
                 shippingInfoForm.setFulfillmentOption(fulfillmentOption);
                 shippingInfoForm.setFulfillmentOptionId(fulfillmentOption.getId());
             }
-        }
+            else {
+                if (!fulfillmentOptionService.readAllFulfillmentOptions().isEmpty()){
+                    FulfillmentOption defaultFulfillmentOption = fulfillmentOptionService.readAllFulfillmentOptions().get(0);
+                    shippingInfoForm.setFulfillmentOption(defaultFulfillmentOption);
+                    shippingInfoForm.setFulfillmentOptionId(defaultFulfillmentOption.getId());
+                    }
+                }
+            }
 
         return shippingInfoForm;
     }
