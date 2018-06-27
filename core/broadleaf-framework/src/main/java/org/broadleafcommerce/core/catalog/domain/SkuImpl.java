@@ -35,17 +35,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.ConfigurationItem;
-import org.broadleafcommerce.common.presentation.OptionFilterParam;
-import org.broadleafcommerce.common.presentation.OptionFilterParamType;
-import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -82,29 +72,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.MapKeyClass;
-import javax.persistence.MapKeyJoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -341,6 +309,18 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @ManyToOne(optional = true, targetEntity = ProductImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "ADDL_PRODUCT_ID")
     protected Product product;
+
+    @OneToMany(mappedBy = "sku", targetEntity = CrossSaleSkuXref.class, cascade = { CascadeType.ALL })
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @OrderBy(value = "sequence")
+    @AdminPresentationAdornedTargetCollection(friendlyName = "Cross Sale Skus", order = 1500,
+            tab = ProductAdminPresentation.TabName.Marketing, tabOrder = ProductAdminPresentation.TabOrder.Marketing,
+            targetObjectProperty = "relatedSaleSku",
+            sortProperty = "sequence",
+            maintainedAdornedTargetFields = { "promotionMessage" },
+            gridVisibleFields = { "product.defaultSku.name", "name", "promotionMessage" })
+    protected List<RelatedSku> crossSaleSkus = new ArrayList<>();
 
     @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blProducts")
@@ -703,6 +683,16 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+
+
+    public List<RelatedSku> getCrossSaleSkus() {
+        return crossSaleSkus;
+    }
+
+    public void setCrossSaleSkus(List<RelatedSku> crossSaleSkus) {
+        this.crossSaleSkus = crossSaleSkus;
     }
 
     @Override
