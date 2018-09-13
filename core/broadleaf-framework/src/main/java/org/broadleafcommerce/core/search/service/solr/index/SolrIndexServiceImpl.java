@@ -63,6 +63,7 @@ import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -154,6 +155,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Resource(name = "blIndexFieldDao")
     protected IndexFieldDao indexFieldDao;
+
+    @Autowired
+    protected Environment environment;
 
     @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
@@ -420,12 +424,23 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
             List<IndexField> fields = null;
             FieldEntity currentFieldType = null;
+            int errorCounter = 0;
             for (Indexable indexable : indexables) {
                 if (fields == null || ObjectUtils.notEqual(currentFieldType, indexable.getFieldEntityType())) {
                     fields = indexFieldDao.readFieldsByEntityType(indexable.getFieldEntityType());
                 }
 
-                SolrInputDocument doc = buildDocument(indexable, fields, locales);
+                SolrInputDocument doc = null;
+                try {
+                    doc = buildDocument(indexable, fields, locales);
+                } catch (Exception e) {
+                    if (isIndexingFailSafe() && errorCounter < getMaximumErrorsPerBatch()) {
+                        LOG.error("Error occurred when indexing the indexable " + indexable.getClass().getName() + "#" + indexable.getId() + " with field entity type " + indexable.getFieldEntityType().getFriendlyType() + ". Continuing with indexing because the property solr.index.failsafe was set to true", e);
+                        errorCounter++;
+                    } else {
+                        throw e;
+                    }
+                }
                 //If someone overrides the buildDocument method and determines that they don't want a product 
                 //indexed, then they can return null. If the document is null it does not get added to 
                 //to the index.
@@ -852,4 +867,11 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
     }
 
+    protected boolean isIndexingFailSafe() {
+        return environment.getProperty("solr.index.failsafe", Boolean.class, false);
+    }
+
+    protected int getMaximumErrorsPerBatch() {
+        return environment.getProperty("solr.index.maxFailures", Integer.class, -1);
+    }
 }
