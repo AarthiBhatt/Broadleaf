@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.service.RequestLogService;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
@@ -29,6 +30,7 @@ import org.broadleafcommerce.core.order.service.exception.RemoveFromCartExceptio
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -59,6 +61,9 @@ public class MergeCartServiceImpl implements MergeCartService {
     @Resource(name = "blMergeCartServiceExtensionManager")
     protected MergeCartServiceExtensionManager extensionManager;
 
+    @Autowired
+    RequestLogService requestLogService;
+
     @Override
     public MergeCartResponse mergeCart(Customer customer, Order anonymousCart)
             throws PricingException, RemoveFromCartException {
@@ -73,6 +78,7 @@ public class MergeCartServiceImpl implements MergeCartService {
     @Override
     public MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder)
             throws PricingException, RemoveFromCartException {
+        try {
         MergeCartResponse mergeCartResponse = new MergeCartResponse();
         mergeCartResponse.setMerged(false); // We no longer merge items, only transition cart states
 
@@ -121,6 +127,10 @@ public class MergeCartServiceImpl implements MergeCartService {
         }
         
         return mergeCartResponse;
+        } catch (Throwable t) {
+            requestLogService.logThrowable(t);
+            throw t;
+        }
     }
     
     @Override

@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.payment.PaymentType;
+import org.broadleafcommerce.common.service.RequestLogService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
@@ -71,6 +72,7 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.exception.LockAcquisitionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -241,9 +243,17 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.readOrdersByIds(orderIds);
     }
 
+    @Autowired(required = false)
+    RequestLogService requestLogService;
+
     @Override
     public Order findOrderById(Long orderId, boolean refresh) {
-        return orderDao.readOrderById(orderId, refresh);
+        try {
+            return orderDao.readOrderById(orderId, refresh);
+        } catch (Throwable t) {
+            requestLogService.logThrowable(t);
+            throw t;
+        }
     }
 
     @Override
@@ -675,7 +685,7 @@ public class OrderServiceImpl implements OrderService {
             }
             ProcessContext<CartOperationRequest> context;
             try {
-                context = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(cartOpRequest);
+                context = addItemWorkflow.doActivities(cartOpRequest);
             } finally {
                 if (!autoFlushAddToCart) {
                     session.setHibernateFlushMode(current);
@@ -727,7 +737,7 @@ public class OrderServiceImpl implements OrderService {
                     }
                     ProcessContext<CartOperationRequest> childContext;
                     try {
-                        childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
+                        childContext = addItemWorkflow.doActivities(childCartOpRequest);
                     } finally {
                         if (!autoFlushAddToCart) {
                             session.setHibernateFlushMode(current);
@@ -768,7 +778,7 @@ public class OrderServiceImpl implements OrderService {
             }
             ProcessContext<CartOperationRequest> context;
             try {
-                context = (ProcessContext<CartOperationRequest>) updateItemWorkflow.doActivities(cartOpRequest);
+                context = updateItemWorkflow.doActivities(cartOpRequest);
             } finally {
                 if (!autoFlushUpdateCart) {
                     session.setHibernateFlushMode(current);
@@ -832,7 +842,7 @@ public class OrderServiceImpl implements OrderService {
         }
         ProcessContext<CartOperationRequest> context;
         try {
-            context = (ProcessContext<CartOperationRequest>) removeItemWorkflow.doActivities(cartOpRequest);
+            context = removeItemWorkflow.doActivities(cartOpRequest);
         } finally {
             if (!autoFlushRemoveFromCart) {
                 session.setHibernateFlushMode(current);
@@ -1035,7 +1045,7 @@ public class OrderServiceImpl implements OrderService {
     public Order updateProductOptionsForItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException {
         try {
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) updateProductOptionsForItemWorkflow.doActivities(cartOpRequest);
+            ProcessContext<CartOperationRequest> context = updateProductOptionsForItemWorkflow.doActivities(cartOpRequest);
             context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
             return context.getSeedData().getOrder();
         } catch (WorkflowException e) {

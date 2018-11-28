@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationServiceProvider;
+import org.broadleafcommerce.common.service.RequestLogService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.strategy.OrderPaymentConfirmationStrategy;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -41,6 +42,8 @@ import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import com.google.gson.Gson;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -192,7 +195,9 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                             createCustomerPaymentToken(transaction);
                             additionalConfirmedTransactions.put(payment, transaction.getType());
                         } else {
-                            failedTransactions.add(new ResponseTransactionPair(responseDTO, transaction.getId()));
+                            ResponseTransactionPair rtp = new ResponseTransactionPair(responseDTO, transaction.getId());
+                            requestLogService.logRequet(new Gson().toJson(rtp));
+                            failedTransactions.add(rtp);
                         }
 
                     } else if (PaymentTransactionType.AUTHORIZE.equals(tx.getType()) ||
@@ -257,14 +262,19 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         }
         
         if (paymentSum.lessThan(order.getTotal())) {
-            throw new IllegalArgumentException("There are not enough payments to pay for the total order. The sum of " + 
+            IllegalArgumentException e = new IllegalArgumentException("There are not enough payments to pay for the total order. The sum of " +
                     "the payments is " + paymentSum.getAmount().toPlainString() + " and the order total is " + order.getTotal().getAmount().toPlainString());
+            requestLogService.logThrowable(e);
+            throw e;
         }
         
         // There should also likely be something that says whether the payment was successful or not and this should check
         // that as well. Currently there isn't really a concept for that
         return context;
     }
+
+    @Autowired
+    RequestLogService requestLogService;
 
     /**
      * <p>
