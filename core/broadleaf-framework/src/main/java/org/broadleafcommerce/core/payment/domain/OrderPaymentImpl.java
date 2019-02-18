@@ -295,11 +295,18 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     
     @Override
     public Money getSuccessfulTransactionAmountForType(PaymentTransactionType type) {
-        Money amount = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
+        Money amount = null;
         for (PaymentTransaction tx : getTransactions()){
             if (type.equals(tx.getType()) && tx.getSuccess()){
-                amount = amount.add(tx.getAmount());
+                if (amount == null) {
+                    amount = tx.getAmount();
+                } else {
+                    amount = amount.add(tx.getAmount());
+                }
             }
+        }
+        if (amount == null) {
+            amount = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
         }
         return amount;
     }
