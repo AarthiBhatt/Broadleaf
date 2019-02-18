@@ -314,6 +314,13 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
 
     @Override
     public int compareTo(Money other) {
+        if (!other.getCurrency().equals(getCurrency())) {
+            if (CurrencyConversionContext.getCurrencyConversionContext() != null &&
+                    CurrencyConversionContext.getCurrencyConversionContext().size() > 0 &&
+                    CurrencyConversionContext.getCurrencyConversionService() != null) {
+                other = CurrencyConversionContext.getCurrencyConversionService().convertCurrency(other, getCurrency(), amount.scale());
+            }
+        }
         return amount.compareTo(other.amount);
     }
 
