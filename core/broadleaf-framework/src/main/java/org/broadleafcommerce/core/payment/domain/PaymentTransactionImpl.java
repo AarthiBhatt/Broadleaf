@@ -97,7 +97,7 @@ public class PaymentTransactionImpl implements PaymentTransaction {
             prominent = true, gridOrder = 1000)
     protected String type;
 
-    @Column(name = "TRANSACTION_AMOUNT")
+    @Column(name = "TRANSACTION_AMOUNT", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "PaymentTransactionImpl_Amount", fieldType = SupportedFieldType.MONEY,
         prominent = true, gridOrder = 2000)
     protected BigDecimal amount;
